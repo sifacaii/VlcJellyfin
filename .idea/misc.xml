@@ -3,10 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus.xml" value="0.1625" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus_VH.xml" value="0.1625" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus_vholder.xml" value="0.1625" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_collection.xml" value="0.14895833333333333" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_detail.xml" value="0.14895833333333333" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_vlc_player.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/item_h.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/item_v.xml" value="0.14895833333333333" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/loading.xml" value="0.2957427536231884" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/loading_alert.xml" value="0.14895833333333333" />
       </map>
