@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="100dp"
+    android:maxWidth="300dp"
+    android:padding="10dp"
+    android:layout_margin="0dp"
+    android:textColor="@color/white"
+    android:textSize="20dp"
+    android:background="@drawable/popmenu_focus"
+    android:focusable="true" >
+
+</TextView>

@@ -3,16 +3,14 @@ package org.sifacai.vlcjellyfin;
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -143,6 +141,29 @@ public class Utils {
         String url = baseUrl + "/Sessions/Playing/Stopped";
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
         okhttpSend(url,json);
+    }
+
+    /**
+     * 根据缩放类型取名称
+     * @param scaleName
+     * @return
+     */
+    public static String getVlcScaleTypeName(String scaleName){
+        switch (scaleName){
+            case "SURFACE_BEST_FIT":
+                return "自动";
+            case "SURFACE_FIT_SCREEN":
+                return "适应屏幕";
+            case "SURFACE_FILL":
+                return "满屏";
+            case "SURFACE_16_9":
+                return "16:9";
+            case "SURFACE_4_3":
+                return "4:3";
+            case "SURFACE_ORIGINAL":
+                return "原始";
+        }
+        return "";
     }
 
     public static int dp2px(Context context, float value) {

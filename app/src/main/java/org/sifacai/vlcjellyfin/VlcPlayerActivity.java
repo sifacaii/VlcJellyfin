@@ -22,12 +22,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.EventListener
-                                                                    , View.OnClickListener
-                                                                    , PopupMenu.OnMenuItemClickListener{
+        , View.OnClickListener {
     private static final String TAG = "VLC播放器";
-    public final int TrackType_Subtitle = 0;
-    public final int TrackType_Audio = 1;
-    public final int TrackType_Playlist = 2;
+    public final int Type_SubtitleTrack = 0;
+    public final int Type_AudioTrack = 1;
+    public final int Type_Playlist = 2;
+    public final int Type_Scale = 3;
+    public final int Type_Speed = 4;
 
     private Activity mActivity;
     private MediaPlayer mediaPlayer;
@@ -42,6 +43,8 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private TextView videoTitle;
     private TextView currTime;
     private TextView countTime;
+    private TextView speedBtn;
+    private TextView scaleBtn;
     private ImageView preBtn;
     private ImageView nextBtn;
     private ImageView playPauseBtn;
@@ -54,9 +57,11 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
 
     private Timer progressTime = null;
 
-    private PopupMenu playListMenu = null; //播放列表
-    private PopupMenu subTrackMenu = null; //字幕菜单
-    private PopupMenu audioTrackMenu = null; //单轨菜单
+    private PopMenu playListMenu = null; //播放列表
+    private PopMenu subTrackMenu = null; //字幕菜单
+    private PopMenu audioTrackMenu = null; //单轨菜单
+    private PopMenu scaleTypeMenu = null; //缩放菜单
+    private PopMenu speedMenu = null;    //播放速率菜单
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +109,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                     showLoadingDialog();
                 }
                 setLoadingText("加载进度：%" + Buffering);
-                if(Buffering >= 100){
+                if (Buffering >= 100) {
                     Log.d(TAG, "onEvent: 取消loading");
                     dismissLoadingDialog();
                 }
@@ -160,6 +165,8 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         videoTitle = findViewById(R.id.videoTitle); // 标题
         currTime = findViewById(R.id.currTime);
         countTime = findViewById(R.id.countTime);
+        speedBtn = findViewById(R.id.speedBtn);
+        scaleBtn = findViewById(R.id.scaleBtn);
         preBtn = findViewById(R.id.preBtn);
         nextBtn = findViewById(R.id.nextBtn);
         playPauseBtn = findViewById(R.id.playPauseBtn);
@@ -176,9 +183,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 boolean rv = false;
                 int keycode = keyEvent.getKeyCode();
-                if(keycode == KeyEvent.KEYCODE_DPAD_RIGHT){
+                if (keycode == KeyEvent.KEYCODE_DPAD_RIGHT) {
                     rv = setTimeOnSeekBar(mediaPlayer.getTime() + (long) (mediaPlayer.getLength() * 0.05));
-                }else if(keycode == KeyEvent.KEYCODE_DPAD_LEFT){
+                } else if (keycode == KeyEvent.KEYCODE_DPAD_LEFT) {
                     rv = setTimeOnSeekBar(mediaPlayer.getTime() - (long) (mediaPlayer.getLength() * 0.05));
                 }
                 return rv;
@@ -189,61 +196,110 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     /**
      * 初始化字幕和单轨菜单
      */
-    private void initMenu(){
+    private void initMenu() {
         MediaPlayer.TrackDescription[] subTrackList = mediaPlayer.getSpuTracks();
         MediaPlayer.TrackDescription[] audioTrackList = mediaPlayer.getAudioTracks();
 
         playListBtn = findViewById(R.id.playListBtn);
         subTracksBtn = findViewById(R.id.subTracksBtn);
         audioTracksBtn = findViewById(R.id.audioTracksBtn);
-        if(Utils.playList.size() > 1){
+        if (Utils.playList.size() > 1) {
             initPlayListMenu();
-        }else{
+        } else {
             playListBtn.setVisibility(View.GONE);
         }
 
-        if(null != subTrackList && subTrackList.length > 1){
+        if (null != subTrackList && subTrackList.length > 1) {
             initSubTrackMenu(subTrackList);
-        }else{
+        } else {
             subTracksBtn.setVisibility(View.GONE);
         }
 
-        if(null != audioTrackList && audioTrackList.length > 1) {
+        if (null != audioTrackList && audioTrackList.length > 1) {
             initAudioTrackMenu(audioTrackList);
-        }else{
+        } else {
             audioTracksBtn.setVisibility(View.GONE);
         }
 
+        //初始化缩放键
+        scaleBtn.setOnClickListener(this);
+        scaleBtn.setText(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
+        scaleTypeMenu = new PopMenu(this,scaleBtn);
+        MediaPlayer.ScaleType[] scaleTypes = MediaPlayer.ScaleType.values();
+        for(int i=0;i<scaleTypes.length;i++){
+            PopMenu.menu menu = scaleTypeMenu.add(Type_Scale,i,i,Utils.getVlcScaleTypeName(scaleTypes[i].name()));
+            final int Si = i;
+            menu.v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    scaleTypeMenu.dismiss();
+                    if(mediaPlayer.getVideoScale() != scaleTypes[Si]){
+                        mediaPlayer.setVideoScale(scaleTypes[Si]);
+                        scaleBtn.setText(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
+                    }
+                }
+            });
+        }
+
+        //初始化速率键
+        speedBtn.setOnClickListener(this);
+        speedMenu = new PopMenu(this,speedBtn);
     }
 
-    private void initPlayListMenu(){
-        playListMenu = new PopupMenu(this,playListBtn);
-        for(int i=0;i<Utils.playList.size();i++){
-            playListMenu.getMenu().add(TrackType_Playlist,i,i,Utils.playList.get(i).Name);
+    private void initPlayListMenu() {
+        playListMenu = new PopMenu(this, playListBtn); //new PopupMenu(this,playListBtn);
+        for (int i = 0; i < Utils.playList.size(); i++) {
+            PopMenu.menu m = playListMenu.add(Type_Playlist, i, i, Utils.playList.get(i).Name);
+            m.v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    playListMenu.dismiss();
+                    if (m.id != Utils.playIndex) {
+                        Utils.playIndex = m.id;
+                        play();
+                    }
+                }
+            });
         }
-        playListMenu.setOnMenuItemClickListener(this);
-        subTracksBtn.setOnClickListener(this);
+        playListBtn.setOnClickListener(this);
     }
 
     /**
      * 初始化字幕菜单
+     *
      * @param subTrackList
      */
-    private void initSubTrackMenu(MediaPlayer.TrackDescription[] subTrackList){
-        subTrackMenu = new PopupMenu(this,subTracksBtn);
-        for(int i=0;i<subTrackList.length;i++){
-            subTrackMenu.getMenu().add(0,i,i,subTrackList[i].name);
+    private void initSubTrackMenu(MediaPlayer.TrackDescription[] subTrackList) {
+        subTrackMenu = new PopMenu(this, subTracksBtn);
+        for (int i = 0; i < subTrackList.length; i++) {
+            PopMenu.menu m  = subTrackMenu.add(Type_SubtitleTrack,i,i,subTrackList[i].name);
+            m.v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    subTrackMenu.dismiss();
+                    if(m.id != mediaPlayer.getSpuTrack()){
+                        mediaPlayer.setSpuTrack(m.id);
+                    }
+                }
+            });
         }
-        subTrackMenu.setOnMenuItemClickListener(this);
         subTracksBtn.setOnClickListener(this);
     }
 
-    private void initAudioTrackMenu(MediaPlayer.TrackDescription[] audioTrackList){
-        audioTrackMenu = new PopupMenu(this,audioTracksBtn);
-        for(int i=0;i<audioTrackList.length;i++){
-            audioTrackMenu.getMenu().add(TrackType_Audio,i,i,audioTrackList[i].name);
+    private void initAudioTrackMenu(MediaPlayer.TrackDescription[] audioTrackList) {
+        audioTrackMenu = new PopMenu(this, audioTracksBtn);
+        for (int i = 0; i < audioTrackList.length; i++) {
+            PopMenu.menu m  = audioTrackMenu.add(Type_SubtitleTrack,i,i,audioTrackList[i].name);
+            m.v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    audioTrackMenu.dismiss();
+                    if(m.id != mediaPlayer.getAudioTrack()){
+                        mediaPlayer.setAudioTrack(m.id);
+                    }
+                }
+            });
         }
-        audioTrackMenu.setOnMenuItemClickListener(this);
         audioTracksBtn.setOnClickListener(this);
     }
 
@@ -374,7 +430,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     /**
      * 设置播放器位置
      */
-    public boolean setTimeOnSeekBar(Long p){
+    public boolean setTimeOnSeekBar(Long p) {
         if (p < mediaPlayer.getLength() && p > 0) {
             mediaPlayer.setTime(p);
             setSeekBar(p);
@@ -445,33 +501,14 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             playOrpause();
         } else if (id == R.id.stopBtn) {
             stop();
-        } else if (id == R.id.subTracksBtn){
-            subTrackMenu.show();
-            subTrackMenu.getMenu().getItem(mediaPlayer.getSpuTrack()).setChecked(true);
-        } else if (id == R.id.audioTracksBtn){
-            audioTrackMenu.show();
-            audioTrackMenu.getMenu().getItem(mediaPlayer.getAudioTrack()).setChecked(true);
-        } else if (id == R.id.playListBtn){
-            playListMenu.show();
-            playListMenu.getMenu().getItem(Utils.playIndex).setChecked(true);
+        } else if (id == R.id.subTracksBtn) {
+            subTrackMenu.show(mediaPlayer.getSpuTrack());
+        } else if (id == R.id.audioTracksBtn) {
+            audioTrackMenu.show(mediaPlayer.getAudioTrack());
+        } else if (id == R.id.playListBtn) {
+            playListMenu.show(Utils.playIndex);
+        } else if (id == R.id.scaleBtn){
+            scaleTypeMenu.show(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
         }
-    }
-
-
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        int groupid = menuItem.getGroupId();
-        int itemid = menuItem.getItemId();
-        if(groupid == TrackType_Subtitle){
-            mediaPlayer.setSpuTrack(itemid);
-            return true;
-        }else if(groupid == TrackType_Audio){
-            mediaPlayer.setAudioTrack(itemid);
-            return true;
-        }else if(groupid == TrackType_Playlist){
-            Utils.playIndex = itemid;
-            play();
-        }
-        return false;
     }
 }

@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/drawable/popmenu_focus.xml" value="0.1555" />
         <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/activity_vlc_player.xml" value="0.286231884057971" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/popmenu.xml" value="0.14479166666666668" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/popmenu_item.xml" value="0.14479166666666668" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus.xml" value="0.1625" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus_VH.xml" value="0.1625" />
         <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus_vholder.xml" value="0.1625" />
