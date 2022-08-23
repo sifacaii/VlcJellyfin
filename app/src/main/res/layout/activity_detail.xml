@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding_border"
+    tools:context=".DetailActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadingEdge="vertical"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/tvCover"
+                android:layout_width="420dp"
+                android:layout_height="620dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/icon_img_placeholder" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/padding_border"
+                android:paddingTop="6dp"
+                android:paddingRight="@dimen/padding_border"
+                android:paddingBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:text="标题："
+                    android:textColor="@android:color/white"
+                    android:textSize="30dp" />
+
+                <TextView
+                    android:id="@+id/tvGenres"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_marginTop="6dp"
+                    android:text="风格："
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/tvRating"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:text="评分："
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/tvVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:text="视频："
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/tvAudio"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:text="音频："
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/tvSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:text="字幕："
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/tvOverview"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="6dp"
+                    android:ellipsize="end"
+                    android:maxLines="8"
+                    android:text="简介："
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp" />
+
+                <ImageView
+                    android:id="@+id/tvPlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:padding="20dp"
+                    android:layout_marginTop="120dp"
+                    android:focusable="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_outline_play_arrow_48"
+                    android:background="@drawable/shape_user_focus"
+                    android:visibility="gone"/>
+
+
+                <org.sifacai.vlcjellyfin.JRecyclerView
+                    android:id="@+id/mGridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="312dp"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:padding="@dimen/padding_border"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone"
+                    app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
+                    app:tv_selectedItemIsCentered="true"
+                    app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
