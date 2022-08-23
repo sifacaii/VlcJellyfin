@@ -60,7 +60,7 @@ public class PopMenu extends PopupWindow {
         contentView.measure(makeDropDownMeasureSpec(getWidth())
                 ,makeDropDownMeasureSpec(getHeight()));
         int offx = 0;
-        int offy = contentView.getMeasuredHeight() + attView.getHeight();
+        int offy = contentView.getMeasuredHeight() + attView.getHeight() + 2;
         showAsDropDown(attView,offx,-offy);
     }
 
