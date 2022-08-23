@@ -245,6 +245,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
 
         //初始化速率键
         speedBtn.setOnClickListener(this);
+        speedBtn.setText(String.valueOf(mediaPlayer.getRate()));
         speedMenu = new PopMenu(this, speedBtn);
         for (int i = 0; i < speedRate.length; i++) {
             PopMenu.menu menu = speedMenu.add(Type_Speed, i, i, String.valueOf(speedRate[i]));
@@ -525,7 +526,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             playListMenu.show(Utils.playIndex);
         } else if (id == R.id.scaleBtn) {
             scaleTypeMenu.show(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
-        } else if (id == R.id.scaleBtn) {
+        } else if (id == R.id.speedBtn) {
             speedMenu.show(String.valueOf(mediaPlayer.getRate()));
         }
     }
