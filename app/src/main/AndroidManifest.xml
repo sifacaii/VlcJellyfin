@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/touchicon144"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Material3.Dark.NoActionBar"
+        android:theme="@style/jellyfin"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"

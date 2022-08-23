@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity {
         layoutManager.setOrientation(layoutManager.HORIZONTAL);
         tvRecyclerView.setLayoutManager(layoutManager);
         int spm = Utils.getPixelsFromDp(mActivity, tvContiner.getResources().getDimensionPixelSize(R.dimen.vh_space_width));
-        tvRecyclerView.setSpacingWithMargins(0, spm);
+        tvRecyclerView.setSpacingWithMargins(0, 12);
 
         JAdapter jAdapter = new JAdapter(data, horizon);
         jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
