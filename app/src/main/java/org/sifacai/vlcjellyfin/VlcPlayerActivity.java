@@ -63,6 +63,8 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private PopMenu scaleTypeMenu = null; //缩放菜单
     private PopMenu speedMenu = null;    //播放速率菜单
 
+    private float speedRate[] = {0.5f, 1.0f, 1.5f, 2.0f}; //倍速播放列表
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,16 +226,16 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         //初始化缩放键
         scaleBtn.setOnClickListener(this);
         scaleBtn.setText(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
-        scaleTypeMenu = new PopMenu(this,scaleBtn);
+        scaleTypeMenu = new PopMenu(this, scaleBtn);
         MediaPlayer.ScaleType[] scaleTypes = MediaPlayer.ScaleType.values();
-        for(int i=0;i<scaleTypes.length;i++){
-            PopMenu.menu menu = scaleTypeMenu.add(Type_Scale,i,i,Utils.getVlcScaleTypeName(scaleTypes[i].name()));
+        for (int i = 0; i < scaleTypes.length; i++) {
+            PopMenu.menu menu = scaleTypeMenu.add(Type_Scale, i, i, Utils.getVlcScaleTypeName(scaleTypes[i].name()));
             final int Si = i;
             menu.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     scaleTypeMenu.dismiss();
-                    if(mediaPlayer.getVideoScale() != scaleTypes[Si]){
+                    if (mediaPlayer.getVideoScale() != scaleTypes[Si]) {
                         mediaPlayer.setVideoScale(scaleTypes[Si]);
                         scaleBtn.setText(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
                     }
@@ -243,7 +245,22 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
 
         //初始化速率键
         speedBtn.setOnClickListener(this);
-        speedMenu = new PopMenu(this,speedBtn);
+        speedMenu = new PopMenu(this, speedBtn);
+        for (int i = 0; i < speedRate.length; i++) {
+            PopMenu.menu menu = speedMenu.add(Type_Speed, i, i, String.valueOf(speedRate[i]));
+            final int Fi = i;
+            menu.v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    speedMenu.dismiss();
+                    if (mediaPlayer.getRate() != speedRate[Fi]) {
+                        mediaPlayer.setRate(speedRate[Fi]);
+                        speedBtn.setText(String.valueOf(mediaPlayer.getRate()));
+                    }
+                }
+            });
+        }
+
     }
 
     private void initPlayListMenu() {
@@ -272,12 +289,12 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private void initSubTrackMenu(MediaPlayer.TrackDescription[] subTrackList) {
         subTrackMenu = new PopMenu(this, subTracksBtn);
         for (int i = 0; i < subTrackList.length; i++) {
-            PopMenu.menu m  = subTrackMenu.add(Type_SubtitleTrack,i,i,subTrackList[i].name);
+            PopMenu.menu m = subTrackMenu.add(Type_SubtitleTrack, i, i, subTrackList[i].name);
             m.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     subTrackMenu.dismiss();
-                    if(m.id != mediaPlayer.getSpuTrack()){
+                    if (m.id != mediaPlayer.getSpuTrack()) {
                         mediaPlayer.setSpuTrack(m.id);
                     }
                 }
@@ -289,12 +306,12 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private void initAudioTrackMenu(MediaPlayer.TrackDescription[] audioTrackList) {
         audioTrackMenu = new PopMenu(this, audioTracksBtn);
         for (int i = 0; i < audioTrackList.length; i++) {
-            PopMenu.menu m  = audioTrackMenu.add(Type_SubtitleTrack,i,i,audioTrackList[i].name);
+            PopMenu.menu m = audioTrackMenu.add(Type_SubtitleTrack, i, i, audioTrackList[i].name);
             m.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     audioTrackMenu.dismiss();
-                    if(m.id != mediaPlayer.getAudioTrack()){
+                    if (m.id != mediaPlayer.getAudioTrack()) {
                         mediaPlayer.setAudioTrack(m.id);
                     }
                 }
@@ -302,7 +319,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         }
         audioTracksBtn.setOnClickListener(this);
     }
-
 
     /**
      * 显示控制器
@@ -507,8 +523,10 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             audioTrackMenu.show(mediaPlayer.getAudioTrack());
         } else if (id == R.id.playListBtn) {
             playListMenu.show(Utils.playIndex);
-        } else if (id == R.id.scaleBtn){
+        } else if (id == R.id.scaleBtn) {
             scaleTypeMenu.show(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
+        } else if (id == R.id.scaleBtn) {
+            speedMenu.show(String.valueOf(mediaPlayer.getRate()));
         }
     }
 }

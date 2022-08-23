@@ -133,10 +133,14 @@
 
                 <TextView
                     android:id="@+id/speedBtn"
-                    android:layout_width="@dimen/button_width"
+                    android:layout_width="wrap_content"
+                    android:minWidth="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:gravity="center"
                     android:textSize="@dimen/title_size"
                     android:focusable="true" />
 
