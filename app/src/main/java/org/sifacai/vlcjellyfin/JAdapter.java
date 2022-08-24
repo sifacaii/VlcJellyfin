@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ public class JAdapter extends RecyclerView.Adapter {
         public String type;
         public TextView tvName;
         public ImageView tvCover;
+        public SeekBar tvPlayedPercentage;
 
         public VH(View v) {
             super(v);
@@ -33,6 +35,7 @@ public class JAdapter extends RecyclerView.Adapter {
             type = "";
             tvName = v.findViewById(R.id.tvName);
             tvCover = v.findViewById(R.id.ivThumb);
+            tvPlayedPercentage = v.findViewById(R.id.tvPlayedPercentage);
         }
     }
 
@@ -62,9 +65,24 @@ public class JAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         VH v = (VH)holder;
         JsonObject jo = items.get(position).getAsJsonObject();
+        String SeriesName = Utils.getJsonString(jo,"SeriesName").getAsString();
+        String SeasonName = Utils.getJsonString(jo,"SeasonName").getAsString();
+        String Name = Utils.getJsonString(jo,"Name").getAsString();
         String itemid = jo.get("Id").getAsString();
         v.id = itemid;
-        v.tvName.setText(" " + jo.get("Name").getAsString());
+        v.tvName.setText(" " + SeriesName + " " + SeasonName + " " + Name);
+
+        if(jo.has("UserData")){
+            JsonObject ujo = jo.get("UserData").getAsJsonObject();
+            if(ujo.has("PlayedPercentage")){
+                int pp = ujo.get("PlayedPercentage").getAsInt();
+                v.tvPlayedPercentage.setVisibility(View.VISIBLE);
+                v.tvPlayedPercentage.setMax(100);
+                v.tvPlayedPercentage.setProgress(pp);
+            }
+        }
+
+
         if(jo.has("CollectionType")){
             v.type = jo.get("CollectionType").getAsString();
         }

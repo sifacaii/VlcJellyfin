@@ -17,13 +17,13 @@
             android:padding="0dp"
             android:scaleType="fitXY" />
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/color_99000000"
-            android:padding="1dp">
+            android:padding="1dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvName"
@@ -34,6 +34,22 @@
                 android:padding="0dp"
                 android:gravity="center"
                 android:singleLine="true" />
+
         </LinearLayout>
+
     </FrameLayout>
+
+    <SeekBar
+        android:id="@+id/tvPlayedPercentage"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:max="100"
+        android:progress="0"
+        android:layout_gravity="bottom"
+        android:paddingEnd="0dp"
+        android:paddingStart="0dp"
+        android:thumb="@null"
+        android:progressDrawable="@drawable/played_percentage"
+        android:visibility="gone"/>
+
 </FrameLayout>

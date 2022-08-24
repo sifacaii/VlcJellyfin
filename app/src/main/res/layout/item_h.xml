@@ -34,6 +34,21 @@
                 android:padding="0dp"
                 android:gravity="center"
                 android:singleLine="true" />
+
         </LinearLayout>
     </FrameLayout>
+
+    <SeekBar
+        android:id="@+id/tvPlayedPercentage"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:max="100"
+        android:progress="0"
+        android:layout_gravity="bottom"
+        android:paddingEnd="0dp"
+        android:paddingStart="0dp"
+        android:thumb="@null"
+        android:progressDrawable="@drawable/played_percentage"
+        android:visibility="gone"/>
+
 </FrameLayout>
