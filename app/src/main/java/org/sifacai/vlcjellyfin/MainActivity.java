@@ -130,13 +130,8 @@ public class MainActivity extends BaseActivity {
         });
         tvRecyclerView.setAdapter(jAdapter);
 
-        int ts = tvContiner.getResources().getDimensionPixelSize(R.dimen.title_size);
-        ts = Utils.getPixelsFromDp(mActivity,ts);
         TextView titleView = new TextView(tvRecyclerView.getContext());
         titleView.setText(title);
-        //titleView.setTextSize(ts);
-        //titleView.setTextColor(0xFFFFFFFF);
-
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
