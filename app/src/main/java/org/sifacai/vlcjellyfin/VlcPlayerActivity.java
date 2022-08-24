@@ -65,6 +65,10 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
 
     private float speedRate[] = {0.5f, 1.0f, 1.5f, 2.0f}; //倍速播放列表
 
+    private int ReportTime = 20; // 报告进度间隔次数
+    private int ReportVal = 0;    //累积次数
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,16 +98,17 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 Hide();
                 pauseFlag.setVisibility(View.GONE);
                 Log.d(TAG, "onEvent: 打开成功");
+                ReportPlayState(Utils.ReportType.playing);
                 initMenu();
                 break;
             case MediaPlayer.Event.Paused: //暂停
                 pauseFlag.setVisibility(View.VISIBLE);
                 break;
             case MediaPlayer.Event.Stopped:
+                ReportPlayState(Utils.ReportType.stop);
                 playNext();
                 break;
             case MediaPlayer.Event.Opening:  //媒体打开
-                Log.d(TAG, "onEvent: 媒体打开");
                 break;
             case MediaPlayer.Event.Buffering: //媒体加载public float getBuffering() 获取加载视频流的进度0-100
                 int Buffering = (int) event.getBuffering();
@@ -115,7 +120,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                     Log.d(TAG, "onEvent: 取消loading");
                     dismissLoadingDialog();
                 }
-                Log.d(TAG, "onEvent: 加载：" + Buffering);
                 break;
             case MediaPlayer.Event.EndReached://媒体播放结束
                 Log.d(TAG, "onEvent: EndReached");
@@ -124,7 +128,11 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 Log.d(TAG, "onEvent: EncounteredError");
                 break;
             case MediaPlayer.Event.TimeChanged://视频时间变化
-                //setSeekBar(event.getTimeChanged());
+                ReportVal += 1;
+                if(ReportVal > ReportTime){
+                    ReportPlayState(Utils.ReportType.Progress);
+                    ReportVal = 0;
+                }
                 break;
             case MediaPlayer.Event.PositionChanged://视频总时长的百分比
                 Log.d(TAG, "onEvent: 百分之:" + mediaPlayer.getPosition());
@@ -530,5 +538,21 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         } else if (id == R.id.speedBtn) {
             speedMenu.show(String.valueOf(mediaPlayer.getRate()));
         }
+    }
+
+    private void ReportPlayState(Utils.ReportType type){
+        long currplaytime = mediaPlayer.getTime();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(type == Utils.ReportType.playing){
+                    Utils.ReportPlaying(currplaytime);
+                }else if(type == Utils.ReportType.stop){
+                    Utils.ReportPlaybackStop(currplaytime);
+                }else if(type == Utils.ReportType.Progress){
+                    Utils.ReportPlaybackProgress(!mediaPlayer.isPlaying(),currplaytime);
+                }
+            }
+        }).start();
     }
 }

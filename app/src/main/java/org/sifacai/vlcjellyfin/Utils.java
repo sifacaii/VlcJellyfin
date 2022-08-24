@@ -115,31 +115,41 @@ public class Utils {
         return (i * metrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT;
     }
 
+    public enum ReportType{
+        playing,
+        Progress,
+        stop
+    }
+
+    /**
+     * 报告播放开始
+     * @param PositionTicks
+     */
+    public static void ReportPlaying(long PositionTicks){
+        String url = JellyfinUrl + "/Sessions/Playing";
+        String json = "{\"itemId\":\"" + playList.get(playIndex).Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
+        okhttpSend(url,json);
+    }
+
     /**
      * 报告播放进度
-     * @param baseUrl
-     * @param Id
      * @param paused
      * @param PositionTicks
-     * @param token
      */
-    public static void ReportPlaybackProgress(String baseUrl, String Id, boolean paused, long PositionTicks,String token) {
-        String json = "{\"itemId\" : \"" + Id + "\",\"canSeek\" : \"true\",\"isPaused\":\"" + paused + "\",\"isMuted\":\"false\",";
-        json += "\"positionTicks\": \"" + PositionTicks * 10000 + "\",\"PlayMethod\":\"DirectStream\"}";
-        String url = baseUrl + "/Sessions/Playing/Progress";
+    public static void ReportPlaybackProgress(boolean paused, long PositionTicks) {
+        String json = "{\"itemId\" : \"" + playList.get(playIndex).Id + "\",\"canSeek\" : \"true\",\"isPaused\":\"" + paused + "\",\"isMuted\":\"false\",";
+        json += "\"positionTicks\": \"" + PositionTicks * 10000 + "\",\"PlayMethod\":\"DirectPlay\"}";
+        String url = JellyfinUrl + "/Sessions/Playing/Progress";
         okhttpSend(url,json);
     }
 
     /**
      * 播放停止
-     * @param baseUrl
-     * @param Id
      * @param PositionTicks
-     * @param token
      */
-    public static void ReportPlaybackStop(String baseUrl, String Id, long PositionTicks,String token) {
-        String url = baseUrl + "/Sessions/Playing/Stopped";
-        String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
+    public static void ReportPlaybackStop(long PositionTicks) {
+        String url = JellyfinUrl + "/Sessions/Playing/Stopped";
+        String json = "{\"itemId\":\"" + playList.get(playIndex).Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
         okhttpSend(url,json);
     }
 
@@ -164,25 +174,5 @@ public class Utils {
                 return "原始";
         }
         return "";
-    }
-
-    public static int dp2px(Context context, float value) {
-        return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.getResources().getDisplayMetrics()) + 0.5f);
-    }
-
-    public static int sp2px(Context context, float value) {
-        return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, context.getResources().getDisplayMetrics()) + 0.5f);
-    }
-
-    public static int pt2px(Context context, float value) {
-        return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value, context.getResources().getDisplayMetrics()) + 0.5f);
-    }
-
-    public static int in2px(Context context, float value) {
-        return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, value, context.getResources().getDisplayMetrics()) + 0.5f);
-    }
-
-    public static int mm2px(Context context, float value) {
-        return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, value, context.getResources().getDisplayMetrics()) + 0.5f);
     }
 }
