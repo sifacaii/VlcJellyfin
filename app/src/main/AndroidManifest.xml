@@ -16,6 +16,7 @@
         android:roundIcon="@drawable/touchicon144"
         android:supportsRtl="true"
         android:theme="@style/jellyfin"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="jellyfin" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="jellyfin" parent="Theme.Material3.Dark.NoActionBar">
         <!-- hide title bar -->
-        <item name="windowNoTitle">true</item>
-        <item name="android:background">@null</item>
-        <item name="android:windowBackground">@drawable/app_bg</item>
+<!--        <item name="windowNoTitle">true</item>-->
+<!--        <item name="android:background">@null</item>-->
+<!--        <item name="android:windowBackground">@drawable/app_bg</item>-->
 
         <item name="android:textSize">22dp</item>
         <!-- 默认 Button,TextView的文字颜色 -->
@@ -14,7 +14,7 @@
         <!-- RadioButton checkbox等控件的文字 -->
         <item name="android:textColorPrimaryDisableOnly">#1C71A9</item>
         <!-- 应用的主要文字颜色,actionBar的标题文字默认使用该颜色 -->
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
         <!-- 辅助的文字颜色，一般比textColorPrimary的颜色弱一点，用于一些弱化的表示 -->
         <item name="android:textColorSecondary">#C1C1C1</item>
 

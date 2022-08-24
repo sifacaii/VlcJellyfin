@@ -3,11 +3,13 @@ package org.sifacai.vlcjellyfin;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,7 +27,8 @@ public class PopMenu extends PopupWindow {
     private Context context;
     private ArrayList<menu> items;
     private View attView;
-    private LinearLayout contentView;
+    private ScrollView contentView;
+    private LinearLayout itemContiner;
 
     public PopMenu(Context context, View attView) {
         super(context);
@@ -37,9 +40,11 @@ public class PopMenu extends PopupWindow {
         setOutsideTouchable(true);
         setFocusable(true);
         setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        contentView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.popmenu,null);
+        contentView = (ScrollView) LayoutInflater.from(context).inflate(R.layout.popmenu,null);
         setContentView(contentView);
+        itemContiner = contentView.findViewById(R.id.popitemContiner);
         this.attView = attView;
+        setClippingEnabled(true);
     }
 
     public menu add(int groupid,int id,int orderid,String name){
@@ -52,11 +57,14 @@ public class PopMenu extends PopupWindow {
         m.v = v;
         ((TextView)v).setText(name);
         items.add(m);
-        contentView.addView(v);
+        itemContiner.addView(v);
         return m;
     }
 
     public void show(){
+        if(items.size() > 12){
+            setHeight(500);
+        }
         contentView.measure(makeDropDownMeasureSpec(getWidth())
                 ,makeDropDownMeasureSpec(getHeight()));
         int offx = 0;
@@ -66,7 +74,9 @@ public class PopMenu extends PopupWindow {
 
     public void show(int index){
         show();
-        items.get(index).v.requestFocus();
+        if(index >=0 && index < items.size()) {
+            items.get(index).v.requestFocus();
+        }
     }
 
     public void show(String name){
