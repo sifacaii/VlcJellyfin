@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,6 +18,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 
 import me.jessyan.autosize.internal.CustomAdapt;
 
@@ -48,10 +52,33 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         return 0;
     }
 
+    public void showLoadingDialog(String msg) {
+        mAA.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showLoadingDialog(1);
+                setLoadingText(msg);
+            }
+        });
+    }
+
+    public void showLoadingDialog() {
+        mAA.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showLoadingDialog(1);
+            }
+        });
+
+    }
+
     /**
      * 显示加载动画框
      */
-    public void showLoadingDialog() {
+    public void showLoadingDialog(int i) {
+        if (null != alertDialogLoading && alertDialogLoading.isShowing()) {
+            alertDialogLoading.dismiss();
+        }
         alertDialogLoading = new AlertDialog.Builder(this).create();
         alertDialogLoading.getWindow().setBackgroundDrawable(new ColorDrawable());
         alertDialogLoading.setCancelable(false);
@@ -71,10 +98,19 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         alertDialogLoading.setCanceledOnTouchOutside(false);
     }
 
+    public void dismissLoadingDialog() {
+        mAA.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dismissLoadingDialog(1);
+            }
+        });
+    }
+
     /**
      * 隐藏加载框
      */
-    public void dismissLoadingDialog() {
+    public void dismissLoadingDialog(int i) {
         if (null != alertDialogLoading && alertDialogLoading.isShowing()) {
             alertDialogLoading.dismiss();
         }
@@ -85,9 +121,14 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
      * @param text
      */
     public void setLoadingText(String text){
-        if (null != alertDialogLoading && alertDialogLoading.isShowing()) {
-            TextView tv = alertDialogLoading.getWindow().getDecorView().findViewById(R.id.progressText);
-            tv.setText(text);
-        }
+        mAA.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (null != alertDialogLoading && alertDialogLoading.isShowing()) {
+                    TextView tv = alertDialogLoading.getWindow().getDecorView().findViewById(R.id.progressText);
+                    tv.setText(text);
+                }
+            }
+        });
     }
 }

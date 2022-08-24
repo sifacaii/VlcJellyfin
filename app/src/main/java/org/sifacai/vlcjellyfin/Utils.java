@@ -1,5 +1,8 @@
 package org.sifacai.vlcjellyfin;
 
+import static android.net.sip.SipErrorCode.TIME_OUT;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
@@ -9,8 +12,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -51,7 +66,12 @@ public class Utils {
         }else{
             url = JellyfinUrl + url;
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        OkHttpClient client = builder.sslSocketFactory(RxUtils.createSSLSocketFactory())
+                .hostnameVerifier(new RxUtils.TrustAllHostnameVerifier())
+                .retryOnConnectionFailure(true).build();
+        //OkHttpClient client = new OkHttpClient();
+
 
         String xea = XEmbyAuthorization;
         if(AccessToken != ""){
@@ -125,9 +145,9 @@ public class Utils {
      * 报告播放开始
      * @param PositionTicks
      */
-    public static void ReportPlaying(long PositionTicks){
+    public static void ReportPlaying(String Id,long PositionTicks){
         String url = JellyfinUrl + "/Sessions/Playing";
-        String json = "{\"itemId\":\"" + playList.get(playIndex).Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
+        String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
         okhttpSend(url,json);
     }
 
@@ -136,8 +156,8 @@ public class Utils {
      * @param paused
      * @param PositionTicks
      */
-    public static void ReportPlaybackProgress(boolean paused, long PositionTicks) {
-        String json = "{\"itemId\" : \"" + playList.get(playIndex).Id + "\",\"canSeek\" : \"true\",\"isPaused\":\"" + paused + "\",\"isMuted\":\"false\",";
+    public static void ReportPlaybackProgress(String Id,boolean paused, long PositionTicks) {
+        String json = "{\"itemId\" : \"" + Id + "\",\"canSeek\" : \"true\",\"isPaused\":\"" + paused + "\",\"isMuted\":\"false\",";
         json += "\"positionTicks\": \"" + PositionTicks * 10000 + "\",\"PlayMethod\":\"DirectPlay\"}";
         String url = JellyfinUrl + "/Sessions/Playing/Progress";
         okhttpSend(url,json);
@@ -147,9 +167,9 @@ public class Utils {
      * 播放停止
      * @param PositionTicks
      */
-    public static void ReportPlaybackStop(long PositionTicks) {
+    public static void ReportPlaybackStop(String Id,long PositionTicks) {
         String url = JellyfinUrl + "/Sessions/Playing/Stopped";
-        String json = "{\"itemId\":\"" + playList.get(playIndex).Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
+        String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
         okhttpSend(url,json);
     }
 
@@ -175,4 +195,5 @@ public class Utils {
         }
         return "";
     }
+
 }

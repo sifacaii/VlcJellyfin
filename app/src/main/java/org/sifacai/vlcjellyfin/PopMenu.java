@@ -74,8 +74,13 @@ public class PopMenu extends PopupWindow {
 
     public void show(int index){
         show();
-        if(index >=0 && index < items.size()) {
-            items.get(index).v.requestFocus();
+//        if(index >=0 && index < items.size()) {
+//            items.get(index).v.requestFocus();
+//        }
+        for (menu m:items) {
+            if(m.id == index){
+                m.v.requestFocus();
+            }
         }
     }
 

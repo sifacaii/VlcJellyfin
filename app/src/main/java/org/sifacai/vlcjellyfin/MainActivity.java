@@ -62,8 +62,8 @@ public class MainActivity extends BaseActivity {
             @Override
             public void run() {
                 //showLoading("正在加载首页，请稍候…………");
-                showLoadingDialog();
-                setLoadingText("正在加载首页，请稍候…………");
+                showLoadingDialog("正在加载首页，请稍候…………");
+                tvContiner.removeAllViews();
             }
         });
 
@@ -299,6 +299,7 @@ public class MainActivity extends BaseActivity {
      * @return
      */
     private boolean ValidUrl(String url) {
+        //showLoadingDialog("正在验证服务器地址!");
         boolean valid = false;
         if (url.length() > 0) {
             if (url.startsWith("http://") || url.startsWith("https://")) {
@@ -320,6 +321,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
+        //dismissLoadingDialog();
         return false;
     }
 
@@ -333,8 +335,8 @@ public class MainActivity extends BaseActivity {
     private boolean authenticateByName(String username, String password) {
         String url = "/Users/authenticatebyname";
         String reqjson = "{\"Username\":\"" + username + "\",\"Pw\":\"" + password + "\"}";
+        //showLoadingDialog("正在验证用户名和密码！");
         String userinfo = Utils.okhttpSend(url, reqjson);
-        Log.d(TAG, "authenticateByName: " + userinfo);
         if (userinfo.length() > 0) {
             JsonObject userObj = new Gson().fromJson(userinfo, JsonObject.class);
             String userId = userObj.getAsJsonObject("User").get("Id").getAsString();
@@ -345,21 +347,14 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         }
-
+        //dismissLoadingDialog();
         return false;
     }
 
     @Override
     protected void onResume() {
         if(!Utils.AccessToken.equals("")){
-            tvLoginOut.setVisibility(View.VISIBLE);
-            tvLoginOut.setText("注 销");
-            tvLoginOut.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    logout();
-                }
-            });
+            showLogoutBtn();
         }
         super.onResume();
     }

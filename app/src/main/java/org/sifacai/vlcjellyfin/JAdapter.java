@@ -76,12 +76,10 @@ public class JAdapter extends RecyclerView.Adapter {
             JsonObject ujo = jo.get("UserData").getAsJsonObject();
             if(ujo.has("PlayedPercentage")){
                 int pp = ujo.get("PlayedPercentage").getAsInt();
-                v.tvPlayedPercentage.setVisibility(View.VISIBLE);
-                v.tvPlayedPercentage.setMax(100);
                 v.tvPlayedPercentage.setProgress(pp);
+                v.tvPlayedPercentage.setVisibility(View.VISIBLE);
             }
         }
-
 
         if(jo.has("CollectionType")){
             v.type = jo.get("CollectionType").getAsString();
