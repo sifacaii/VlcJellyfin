@@ -37,8 +37,7 @@ public class CollectionActivity extends BaseActivity {
         setContentView(R.layout.activity_collection);
 
         if (Utils.UserId.equals("") || Utils.AccessToken.equals("")) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish();
         }
 
         mActivity = this;
