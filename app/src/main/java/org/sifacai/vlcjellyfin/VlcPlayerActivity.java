@@ -336,7 +336,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             ControllerTop.setVisibility(View.VISIBLE);
         }
         if (ControllerBottom.getVisibility() == View.GONE) {
-            ControllerBottom.setVisibility(View.VISIBLE);
             progressTime = new Timer();
             progressTime.schedule(new TimerTask() {
                 @Override
@@ -348,7 +347,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                         }
                     });
                 }
-            }, 500, 500);
+            }, 0, 1000);
+            ControllerBottom.setVisibility(View.VISIBLE);
+            playPauseBtn.requestFocus();
         }
     }
 

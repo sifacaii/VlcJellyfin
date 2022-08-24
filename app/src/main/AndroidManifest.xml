@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/jellyfin"
         android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
