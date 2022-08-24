@@ -32,9 +32,8 @@
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:padding="0dp"
-                android:singleLine="true"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/title_size" />
+                android:gravity="center"
+                android:singleLine="true" />
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>

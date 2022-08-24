@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -107,20 +108,9 @@ public class MainActivity extends BaseActivity {
      */
     private void addRowTvRecyclerView(String title, JsonArray data, boolean horizon) {
         Log.d(TAG, "addRowTvRecyclerView: " + data.toString());
-        JRecyclerView tvRecyclerView = new JRecyclerView(tvContiner.getContext());
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        tvRecyclerView.setLayoutParams(layoutParams);
-        tvRecyclerView.setClipChildren(false);
-        tvRecyclerView.setClipToPadding(false);
-        tvRecyclerView.setSelectedItemAtCentered(true);
-        int mg = Utils.getPixelsFromDp(mActivity,tvContiner.getResources().getDimensionPixelSize(R.dimen.padding_border));
-        tvRecyclerView.setPadding(0, mg, mg, mg);
-        V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(tvRecyclerView.getContext());
-        layoutManager.setOrientation(layoutManager.HORIZONTAL);
-        tvRecyclerView.setLayoutManager(layoutManager);
-        int spm = Utils.getPixelsFromDp(mActivity, tvContiner.getResources().getDimensionPixelSize(R.dimen.vh_space_width));
-        tvRecyclerView.setSpacingWithMargins(0, 12);
+        JRecyclerView tvRecyclerView = (JRecyclerView) LayoutInflater.from(this)
+                                                        .inflate(R.layout.home_horizon_tvrecycler,null);
+        ((V7LinearLayoutManager)tvRecyclerView.getLayoutManager()).setOrientation(V7LinearLayoutManager.HORIZONTAL);
 
         JAdapter jAdapter = new JAdapter(data, horizon);
         jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
@@ -144,8 +134,8 @@ public class MainActivity extends BaseActivity {
         ts = Utils.getPixelsFromDp(mActivity,ts);
         TextView titleView = new TextView(tvRecyclerView.getContext());
         titleView.setText(title);
-        titleView.setTextSize(ts);
-        titleView.setTextColor(0xFFFFFFFF);
+        //titleView.setTextSize(ts);
+        //titleView.setTextColor(0xFFFFFFFF);
 
         mActivity.runOnUiThread(new Runnable() {
             @Override

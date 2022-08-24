@@ -6,8 +6,6 @@
     android:maxWidth="300dp"
     android:padding="10dp"
     android:layout_margin="0dp"
-    android:textColor="@color/white"
-    android:textSize="20dp"
     android:background="@drawable/popmenu_focus"
     android:focusable="true" >
 
