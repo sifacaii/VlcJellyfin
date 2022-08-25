@@ -41,7 +41,12 @@ public class MainActivity extends BaseActivity {
         tvLoginOut = findViewById(R.id.tvLoginOut);
         tvContiner = findViewById(R.id.tvItems);
         getConfigFromSP();
+    }
+
+    @Override
+    protected void onResume() {
         initView();
+        super.onResume();
     }
 
     private void initView() {
@@ -61,8 +66,8 @@ public class MainActivity extends BaseActivity {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //showLoading("正在加载首页，请稍候…………");
                 showLoadingDialog("正在加载首页，请稍候…………");
+                showLogoutBtn();
                 tvContiner.removeAllViews();
             }
         });
@@ -299,7 +304,6 @@ public class MainActivity extends BaseActivity {
      * @return
      */
     private boolean ValidUrl(String url) {
-        //showLoadingDialog("正在验证服务器地址!");
         boolean valid = false;
         if (url.length() > 0) {
             if (url.startsWith("http://") || url.startsWith("https://")) {
@@ -321,7 +325,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
-        //dismissLoadingDialog();
         return false;
     }
 
@@ -335,7 +338,6 @@ public class MainActivity extends BaseActivity {
     private boolean authenticateByName(String username, String password) {
         String url = "/Users/authenticatebyname";
         String reqjson = "{\"Username\":\"" + username + "\",\"Pw\":\"" + password + "\"}";
-        //showLoadingDialog("正在验证用户名和密码！");
         String userinfo = Utils.okhttpSend(url, reqjson);
         if (userinfo.length() > 0) {
             JsonObject userObj = new Gson().fromJson(userinfo, JsonObject.class);
@@ -347,16 +349,7 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         }
-        //dismissLoadingDialog();
         return false;
-    }
-
-    @Override
-    protected void onResume() {
-        if(!Utils.AccessToken.equals("")){
-            showLogoutBtn();
-        }
-        super.onResume();
     }
 
     @Override
