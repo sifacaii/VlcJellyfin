@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -128,6 +129,15 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
                     TextView tv = alertDialogLoading.getWindow().getDecorView().findViewById(R.id.progressText);
                     tv.setText(text);
                 }
+            }
+        });
+    }
+
+    public void ShowToask(String msg){
+        mAA.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mAA,msg,Toast.LENGTH_LONG).show();
             }
         });
     }

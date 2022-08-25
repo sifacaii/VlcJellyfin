@@ -13,9 +13,12 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.videolan.libvlc.LibVLC;
+import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
+import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
 import java.util.Timer;
@@ -67,9 +70,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private float speedRate[] = {0.5f, 1.0f, 1.5f, 2.0f}; //倍速播放列表
 
     private long currPlaybackTimeTrack = 0;  //当前播放进度
-    private int ReportTime = 20; // 报告进度间隔次数
-    private int ReportVal = 0;    //累积次数
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +129,8 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 break;
             case MediaPlayer.Event.EncounteredError://媒体播放错误
                 Log.d(TAG, "onEvent: EncounteredError");
+                ShowToask("播放错误!");
+                stop();
                 break;
             case MediaPlayer.Event.TimeChanged://视频时间变化
                 currPlaybackTimeTrack = event.getTimeChanged();
@@ -136,6 +138,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             case MediaPlayer.Event.PositionChanged://视频总时长的百分比
                 break;
             case MediaPlayer.Event.SeekableChanged:
+                Log.d(TAG, "onEvent: SeekableChanged:" + event.getSeekable());
                 break;
             case MediaPlayer.Event.PausableChanged:
                 Log.d(TAG, "onEvent: PausableChanged");
@@ -315,7 +318,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private void initAudioTrackMenu(MediaPlayer.TrackDescription[] audioTrackList) {
         audioTrackMenu = new PopMenu(this, audioTracksBtn);
         for (int i = 0; i < audioTrackList.length; i++) {
-            PopMenu.menu m = audioTrackMenu.add(Type_SubtitleTrack, audioTrackList[i].id, i, audioTrackList[i].name);
+            PopMenu.menu m = audioTrackMenu.add(Type_AudioTrack, audioTrackList[i].id, i, audioTrackList[i].name);
             m.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -412,17 +415,19 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      * 播放下一集
      */
     public void playNext() {
-        ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
-        Utils.playIndex += 1;
-        play();
+        if(Utils.playIndex < (Utils.playList.size() - 1)){
+            ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
+            Utils.playIndex += 1;
+            play();
+        }
     }
 
     /**
      * 上一集
      */
     public void playPre() {
-        ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
         if (Utils.playIndex > 0) {
+            ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
             Utils.playIndex -= 1;
             play();
         }
@@ -435,6 +440,10 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
         if (progressTime != null) {
             progressTime.cancel();
+            progressTime = null;
+        }
+        if (reportProcessTime != null){
+            reportProcessTime.cancel();
             progressTime = null;
         }
         mediaPlayer.stop();
@@ -567,7 +576,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                     Utils.ReportPlaybackStop(Id, currPlaybackTimeTrack);
                 } else if (type == Utils.ReportType.Progress) {
                     Log.d(TAG, "run: 报告时空：" + currPlaybackTimeTrack);
-                    Utils.ReportPlaybackProgress(Id, !mediaPlayer.isPlaying(), currPlaybackTimeTrack);
+                    Utils.ReportPlaybackProgress(Id, currPlaybackTimeTrack);
                 }
             }
         }).start();

@@ -155,10 +155,9 @@ public class Utils {
 
     /**
      * 报告播放进度
-     * @param paused
      * @param PositionTicks
      */
-    public static void ReportPlaybackProgress(String Id,boolean paused, long PositionTicks) {
+    public static void ReportPlaybackProgress(String Id,long PositionTicks) {
         String json = "{\"itemId\" : \"" + Id + "\",\"positionTicks\": \"" + PositionTicks * 10000 + "\"}";
         //JsonObject rjo = new JsonObject();
         //rjo.addProperty("itemId",Id);
