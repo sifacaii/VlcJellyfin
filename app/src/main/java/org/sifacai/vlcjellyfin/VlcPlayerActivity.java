@@ -112,6 +112,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 playNext();
                 break;
             case MediaPlayer.Event.Opening:  //媒体打开
+                Log.d(TAG, "onEvent: 播放停止");
                 break;
             case MediaPlayer.Event.Buffering: //媒体加载public float getBuffering() 获取加载视频流的进度0-100
                 int Buffering = (int) event.getBuffering();
@@ -146,13 +147,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 Log.d(TAG, "onEvent: Vout");
                 break;
             case MediaPlayer.Event.ESAdded:
-                Log.d(TAG, "onEvent: ESAdded");
-                break;
             case MediaPlayer.Event.ESDeleted:
-                Log.d(TAG, "onEvent: ESDeleted");
-                break;
             case MediaPlayer.Event.ESSelected:
-                Log.d(TAG, "onEvent: ESSelected");
+                Log.d(TAG, "onEvent: ES:" + event.type + ":" + event.getEsChangedType() + ":" + event.getEsChangedID());
                 break;
             case MediaPlayer.Event.RecordChanged:
                 Log.d(TAG, "onEvent: RecordChanged");
