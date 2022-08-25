@@ -99,7 +99,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             case MediaPlayer.Event.Playing: //媒体打开成功
                 Hide();
                 pauseFlag.setVisibility(View.GONE);
-                Log.d(TAG, "onEvent: 打开成功");
+                Log.d(TAG, "onEvent: Playing");
                 ReportPlayState(Utils.ReportType.playing, Utils.playList.get(Utils.playIndex).Id);
                 initMenu();
                 break;
@@ -107,12 +107,12 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 pauseFlag.setVisibility(View.VISIBLE);
                 break;
             case MediaPlayer.Event.Stopped:
-                Log.d(TAG, "onEvent: 播放停止");
+                Log.d(TAG, "onEvent: Stopped");
                 ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
                 playNext();
                 break;
             case MediaPlayer.Event.Opening:  //媒体打开
-                Log.d(TAG, "onEvent: 播放停止");
+                Log.d(TAG, "onEvent: Opening");
                 break;
             case MediaPlayer.Event.Buffering: //媒体加载public float getBuffering() 获取加载视频流的进度0-100
                 int Buffering = (int) event.getBuffering();
