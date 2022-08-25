@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.google.gson.Gson;
@@ -148,7 +149,8 @@ public class Utils {
     public static void ReportPlaying(String Id,long PositionTicks){
         String url = JellyfinUrl + "/Sessions/Playing";
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
-        okhttpSend(url,json);
+        String rsp = okhttpSend(url,json);
+        //Log.d("VLC播放器", "ReportPlaying: " + Id + " : " + rsp);
     }
 
     /**
@@ -157,10 +159,18 @@ public class Utils {
      * @param PositionTicks
      */
     public static void ReportPlaybackProgress(String Id,boolean paused, long PositionTicks) {
-        String json = "{\"itemId\" : \"" + Id + "\",\"canSeek\" : \"true\",\"isPaused\":\"" + paused + "\",\"isMuted\":\"false\",";
-        json += "\"positionTicks\": \"" + PositionTicks * 10000 + "\",\"PlayMethod\":\"DirectPlay\"}";
+        String json = "{\"itemId\" : \"" + Id + "\",\"positionTicks\": \"" + PositionTicks * 10000 + "\"}";
+        //JsonObject rjo = new JsonObject();
+        //rjo.addProperty("itemId",Id);
+        //rjo.addProperty("canSeek",true);
+        //rjo.addProperty("isPaused",paused);
+        //rjo.addProperty("isMuted",false);
+        //rjo.addProperty("positionTicks",PositionTicks * 10000);
+        //rjo.addProperty("PlayMethod","DirectPlay");
+        //String json = rjo.toString();
         String url = JellyfinUrl + "/Sessions/Playing/Progress";
-        okhttpSend(url,json);
+        String rsp = okhttpSend(url,json);
+        //Log.d("VLC播放器", "ReportPlaybackProgress: 返回：" + Id + ":" + rsp);
     }
 
     /**
@@ -170,7 +180,8 @@ public class Utils {
     public static void ReportPlaybackStop(String Id,long PositionTicks) {
         String url = JellyfinUrl + "/Sessions/Playing/Stopped";
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
-        okhttpSend(url,json);
+        String rsp = okhttpSend(url,json);
+        //Log.d("VLC播放器", "ReportPlaybackStop: " + Id + " : " + rsp);
     }
 
     /**
