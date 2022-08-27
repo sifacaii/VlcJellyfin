@@ -12,6 +12,7 @@ import android.util.TypedValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -42,29 +43,34 @@ public class Utils {
     public static String PassWord = "";
     public static String UserId = "";
     public static String AccessToken = "";
+    public static String SortBy = "DateCreated";
+    public static String SortOrder = "Descending";
 
     public static int playIndex = 0; //当前播放
     public static ArrayList<Video> playList = new ArrayList<>(); //播放列表
 
+
     /**
      * GET请求
+     *
      * @param url
      * @return
      */
-    public static String okhttpSend(String url){
-        return okhttpSend(url,null);
+    public static String okhttpSend(String url) {
+        return okhttpSend(url, null);
     }
 
     /**
      * POST JSON数据
+     *
      * @param url
      * @param jsonStr
      * @return
      */
-    public static String okhttpSend(String url, String jsonStr){
-        if(url.startsWith("http")){
+    public static String okhttpSend(String url, String jsonStr) {
+        if (url.startsWith("http")) {
 
-        }else{
+        } else {
             url = JellyfinUrl + url;
         }
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -75,7 +81,7 @@ public class Utils {
 
 
         String xea = XEmbyAuthorization;
-        if(AccessToken != ""){
+        if (AccessToken != "") {
             xea += ", Token=\"" + AccessToken + "\"";
         }
         Headers headers = new Headers.Builder()
@@ -85,14 +91,14 @@ public class Utils {
                 .build();
 
         Request request = null;
-        if(jsonStr != null) {
+        if (jsonStr != null) {
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
             request = new Request.Builder()
                     .url(url)
                     .headers(headers)
                     .post(body)
                     .build();
-        }else{
+        } else {
             request = new Request.Builder().url(url).headers(headers).build();
         }
         Response response = null;
@@ -108,6 +114,7 @@ public class Utils {
 
     /**
      * 获取条目图片URL
+     *
      * @return
      */
     public static String getImgUrl(String itemid, String tagid) {
@@ -116,11 +123,11 @@ public class Utils {
         return url;
     }
 
-    public static <T> T JsonToObj(String jsonStr,Class<T> tClass){
-        if(jsonStr != null && jsonStr.length() > 0){
+    public static <T> T JsonToObj(String jsonStr, Class<T> tClass) {
+        if (jsonStr != null && jsonStr.length() > 0) {
             try {
-                return new Gson().fromJson(jsonStr,tClass);
-            }catch (Exception e){
+                return new Gson().fromJson(jsonStr, tClass);
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -129,25 +136,26 @@ public class Utils {
 
     /**
      * 获取Json项
+     *
      * @param jo
      * @param key
      * @return
      */
-    public static JsonElement getJsonString(JsonObject jo,String key){
-        JsonElement je = new Gson().toJsonTree("",String.class);
-        if(jo.has(key)){
+    public static JsonElement getJsonString(JsonObject jo, String key) {
+        JsonElement je = new Gson().toJsonTree("", String.class);
+        if (jo.has(key)) {
             je = jo.get(key);
         }
         return je;
     }
 
-    public static int getPixelsFromDp(Activity context, int i){
-        DisplayMetrics metrics =new DisplayMetrics();
+    public static int getPixelsFromDp(Activity context, int i) {
+        DisplayMetrics metrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         return (i * metrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT;
     }
 
-    public enum ReportType{
+    public enum ReportType {
         playing,
         Progress,
         stop
@@ -155,20 +163,22 @@ public class Utils {
 
     /**
      * 报告播放开始
+     *
      * @param PositionTicks
      */
-    public static void ReportPlaying(String Id,long PositionTicks){
+    public static void ReportPlaying(String Id, long PositionTicks) {
         String url = JellyfinUrl + "/Sessions/Playing";
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
-        String rsp = okhttpSend(url,json);
+        String rsp = okhttpSend(url, json);
         //Log.d("VLC播放器", "ReportPlaying: " + Id + " : " + rsp);
     }
 
     /**
      * 报告播放进度
+     *
      * @param PositionTicks
      */
-    public static void ReportPlaybackProgress(String Id,long PositionTicks) {
+    public static void ReportPlaybackProgress(String Id, long PositionTicks) {
         String json = "{\"itemId\" : \"" + Id + "\",\"positionTicks\": \"" + PositionTicks * 10000 + "\"}";
         //JsonObject rjo = new JsonObject();
         //rjo.addProperty("itemId",Id);
@@ -179,28 +189,30 @@ public class Utils {
         //rjo.addProperty("PlayMethod","DirectPlay");
         //String json = rjo.toString();
         String url = JellyfinUrl + "/Sessions/Playing/Progress";
-        String rsp = okhttpSend(url,json);
+        String rsp = okhttpSend(url, json);
         //Log.d("VLC播放器", "ReportPlaybackProgress: 返回：" + Id + ":" + rsp);
     }
 
     /**
      * 播放停止
+     *
      * @param PositionTicks
      */
-    public static void ReportPlaybackStop(String Id,long PositionTicks) {
+    public static void ReportPlaybackStop(String Id, long PositionTicks) {
         String url = JellyfinUrl + "/Sessions/Playing/Stopped";
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
-        String rsp = okhttpSend(url,json);
+        String rsp = okhttpSend(url, json);
         //Log.d("VLC播放器", "ReportPlaybackStop: " + Id + " : " + rsp);
     }
 
     /**
      * 根据缩放类型取名称
+     *
      * @param scaleName
      * @return
      */
-    public static String getVlcScaleTypeName(String scaleName){
-        switch (scaleName){
+    public static String getVlcScaleTypeName(String scaleName) {
+        switch (scaleName) {
             case "SURFACE_BEST_FIT":
                 return "自动";
             case "SURFACE_FIT_SCREEN":
@@ -217,17 +229,30 @@ public class Utils {
         return "";
     }
 
-    public enum SortType{
+    public enum SortByType {
         评分("CommunityRating"),
         加入日期("DateCreated"),
         播放日期("DatePlayed"),
         家长分级("OfficialRating"),
         播放次数("PlayCount"),
         发行日期("PremiereDate"),
-        放时长("Runtime");
+        播放时长("Runtime");
 
-        SortType(String sortname) {
+        public String value;
 
+        SortByType(String value) {
+            this.value = value;
+        }
+    }
+
+    public enum SotrOrderType{
+        升序("Ascending"),
+        降序("Descending");
+
+        public String value;
+
+        SotrOrderType(String value) {
+            this.value = value;
         }
     }
 }

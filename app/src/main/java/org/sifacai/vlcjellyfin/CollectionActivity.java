@@ -2,6 +2,7 @@ package org.sifacai.vlcjellyfin;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +36,8 @@ public class CollectionActivity extends BaseActivity {
     private JAdapter currAdapter = null;
 
     private TextView sortMenuBtn;
+
+    private PopupMenu SortByMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,28 +73,37 @@ public class CollectionActivity extends BaseActivity {
                     initData();
                 }
             }).start();
+
+            sortMenuBtn = findViewById(R.id.activeBar_sortBtn);
+            initSortByMenu(sortMenuBtn);
+            sortMenuBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int i = 0;
+                    for(Utils.SortByType sbt : Utils.SortByType.values()){
+                        if(sbt.value.equals(Utils.SortBy)){
+                            i = sbt.ordinal();
+                        }
+                    }
+                    SortByMenu.getMenu().getItem(i).setCheckable(true);
+                    SortByMenu.getMenu().getItem(i).setChecked(true);
+                    SortByMenu.show();
+                }
+            });
         }
-
-        sortMenuBtn = findViewById(R.id.activeBar_sortBtn);
-        sortMenuBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //new Men
-                showSortMenu(view);
-            }
-        });
-
     }
 
     public void initData() {
         String url = "/Users/" + Utils.UserId + "/Items/" + ItemId;
         String CollectionStr = Utils.okhttpSend(url);
-        if (!CollectionStr.equals("")) {
-            JsonObject Collection = new Gson().fromJson(CollectionStr, JsonObject.class);
+        JsonObject Collection = Utils.JsonToObj(CollectionStr,JsonObject.class);
+        if (null != Collection) {
             currObj = Collection;
             Type = Utils.getJsonString(Collection,"CollectionType").getAsString();
             fillItems();
             setLoadMore();
+        }else{
+            ShowToask("加载失败！");
         }
     }
 
@@ -108,8 +120,7 @@ public class CollectionActivity extends BaseActivity {
         String ItemsUrl = "/Users/" + Utils.UserId + "/Items?ParentId=" + ItemId + "&Limit=" + limit;
         ItemsUrl += "&Recursive=true&Fields=PrimaryImageAspectRatio,BasicSyncInfo,Seasons,Episodes&ImageTypeLimit=1";
         ItemsUrl += "&EnableImageTypes=Primary,Backdrop,Banner,Thumb";
-        ItemsUrl += "&SortBy=DateCreated,SortName,ProductionYear";
-        Log.d(TAG, "categoryContent: 类型：" + Type);
+        ItemsUrl += "&SortBy="+Utils.SortBy+"%2CSortName%2CProductionYear&SortOrder=" + Utils.SortOrder;
         if (Type.equals("tvshows")) {
             ItemsUrl += "&IncludeItemTypes=Series";
         } else if (Type.equals("movies")) {
@@ -119,10 +130,9 @@ public class CollectionActivity extends BaseActivity {
         }
         int startIndex = currentPage * limit - limit;
         ItemsUrl += "&StartIndex=" + startIndex;
-
         String ItemsStr = Utils.okhttpSend(ItemsUrl);
-        if (ItemsStr != "") {
-            JsonObject ItemsObj = new Gson().fromJson(ItemsStr, JsonObject.class);
+        JsonObject ItemsObj = Utils.JsonToObj(ItemsStr,JsonObject.class);
+        if (null != ItemsStr) {
             totalCount = Utils.getJsonString(ItemsObj,"TotalRecordCount").getAsInt();
             countPage = (int) Math.ceil((double) totalCount / limit);
 
@@ -139,6 +149,8 @@ public class CollectionActivity extends BaseActivity {
                     mGridContiner.finishLoadMore();
                 }
             });
+        }else{
+            ShowToask("加载明细失败！");
         }
     }
 
@@ -184,24 +196,24 @@ public class CollectionActivity extends BaseActivity {
         tvTitleTip.setText(tip);
     }
 
-    private void showSortMenu(View view){
-        PopupMenu popupMenu = new PopupMenu(this,view);
-        popupMenu.inflate(R.menu.activebar_sort_menu);
-
-        Menu menu = popupMenu.getMenu();
-        Utils.SortType[] Ss = Utils.SortType.values();
-        for (int i=0;i<Ss.length;i++) {
-            menu.add(0,i,i,Ss.toString());
-            Log.d(TAG, "showSortMenu: 添加了：" + Ss.toString());
-            Log.d(TAG, "showSortMenu: 值：" + Utils.SortType.valueOf(Ss.toString()));
+    private void initSortByMenu(View view){
+        SortByMenu = new PopupMenu(this,view);
+        Menu menu = SortByMenu.getMenu();
+        Utils.SortByType[] Ss = Utils.SortByType.values();
+        for (Utils.SortByType sortby:Ss) {
+            menu.add(0,sortby.ordinal(),sortby.ordinal(),sortby.name());
         }
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        SortByMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.sort_byName:
-
-                }
+                Utils.SortBy = Utils.SortByType.valueOf(menuItem.getTitle().toString()).value;
+                currItems = new JsonArray();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initData();
+                    }
+                }).start();
                 return false;
             }
         });

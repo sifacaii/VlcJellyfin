@@ -216,6 +216,7 @@ public class MainActivity extends BaseActivity {
         Utils.JellyfinUrl = sp.getString("url", "");
         Utils.UserName = sp.getString("username", "");
         Utils.PassWord = sp.getString("password", "");
+        Utils.SortBy = sp.getString("sortby","");
     }
 
     /**
