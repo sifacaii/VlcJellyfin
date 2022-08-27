@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="jellyfin" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="jellyfin" parent="Theme.Material3.Dark">
         <!-- hide title bar -->
 <!--        <item name="windowNoTitle">true</item>-->
 <!--        <item name="android:background">@null</item>-->
@@ -16,7 +16,7 @@
         <!-- 应用的主要文字颜色,actionBar的标题文字默认使用该颜色 -->
         <item name="android:textColorPrimary">@android:color/white</item>
         <!-- 辅助的文字颜色，一般比textColorPrimary的颜色弱一点，用于一些弱化的表示 -->
-        <item name="android:textColorSecondary">#C1C1C1</item>
+        <item name="android:textColorSecondary">#ffffff</item>
 
     </style>
 </resources>

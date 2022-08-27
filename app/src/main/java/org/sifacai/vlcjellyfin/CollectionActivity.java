@@ -6,7 +6,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +33,8 @@ public class CollectionActivity extends BaseActivity {
     private JsonObject currObj = null;
     private JsonArray currItems = null;
     private JAdapter currAdapter = null;
+
+    private TextView sortMenuBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,16 @@ public class CollectionActivity extends BaseActivity {
                 }
             }).start();
         }
+
+        sortMenuBtn = findViewById(R.id.activeBar_sortBtn);
+        sortMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //new Men
+                showSortMenu(view);
+            }
+        });
+
     }
 
     public void initData() {
@@ -167,5 +182,28 @@ public class CollectionActivity extends BaseActivity {
     private void setTitleTip(){
         String tip = "共 "+ totalCount +" ，" + countPage + " 页，已加载" + currentPage + "页";
         tvTitleTip.setText(tip);
+    }
+
+    private void showSortMenu(View view){
+        PopupMenu popupMenu = new PopupMenu(this,view);
+        popupMenu.inflate(R.menu.activebar_sort_menu);
+
+        Menu menu = popupMenu.getMenu();
+        Utils.SortType[] Ss = Utils.SortType.values();
+        for (int i=0;i<Ss.length;i++) {
+            menu.add(0,i,i,Ss.toString());
+            Log.d(TAG, "showSortMenu: 添加了：" + Ss.toString());
+            Log.d(TAG, "showSortMenu: 值：" + Utils.SortType.valueOf(Ss.toString()));
+        }
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.sort_byName:
+
+                }
+                return false;
+            }
+        });
     }
 }

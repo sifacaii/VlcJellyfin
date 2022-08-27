@@ -37,6 +37,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.jellyfin_home);
 
+        disableActiveBarBack();
+
         mActivity = this;
         tvLoginOut = findViewById(R.id.tvLoginOut);
         tvContiner = findViewById(R.id.tvItems);

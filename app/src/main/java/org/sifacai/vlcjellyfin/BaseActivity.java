@@ -1,33 +1,66 @@
 package org.sifacai.vlcjellyfin;
 
-import android.app.Activity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Looper;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Method;
-
+import androidx.annotation.Nullable;
 import me.jessyan.autosize.internal.CustomAdapt;
 
 public class BaseActivity extends AppCompatActivity implements CustomAdapt {
     public AlertDialog alertDialogLoading;
-    public Activity mAA = this;
+    public AppCompatActivity mAA = this;
+    private TextView activeBarBack;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        if(null != actionBar){
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.activebar_custom);
+        }
+
+        activeBarBack = findViewById(R.id.activeBar_back);
+        activeBarBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAA.finish();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.activebar_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.activeBar_option_logout){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 禁用标题栏返回按钮
+     */
+    public void disableActiveBarBack(){
+        activeBarBack.setVisibility(View.GONE);
+    }
 
     /**
      * 是否按照宽度进行等比例适配 (为了保证在高宽比不同的屏幕上也能正常适配, 所以只能在宽度和高度之中选择一个作为基准进行适配)

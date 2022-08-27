@@ -217,4 +217,17 @@ public class Utils {
         return "";
     }
 
+    public enum SortType{
+        评分("CommunityRating"),
+        加入日期("DateCreated"),
+        播放日期("DatePlayed"),
+        家长分级("OfficialRating"),
+        播放次数("PlayCount"),
+        发行日期("PremiereDate"),
+        放时长("Runtime");
+
+        SortType(String sortname) {
+
+        }
+    }
 }
