@@ -313,9 +313,8 @@ public class MainActivity extends BaseActivity {
         if (valid) {
             String publicUrl = url + "/system/info/public";
             String publicInfo = Utils.okhttpSend(publicUrl);
-            if (publicInfo != null && publicInfo.length() > 0) {
-                JsonObject serverInfo = null;
-                serverInfo = new Gson().fromJson(publicInfo, JsonObject.class);
+            JsonObject serverInfo = Utils.JsonToObj(publicInfo,JsonObject.class);
+            if (serverInfo != null) {
                 String ServerId = serverInfo.get("Id").getAsString();
                 if (ServerId == null || ServerId.length() == 0) {
                     return false;
@@ -339,9 +338,10 @@ public class MainActivity extends BaseActivity {
         String url = "/Users/authenticatebyname";
         String reqjson = "{\"Username\":\"" + username + "\",\"Pw\":\"" + password + "\"}";
         String userinfo = Utils.okhttpSend(url, reqjson);
-        if (userinfo.length() > 0) {
-            JsonObject userObj = new Gson().fromJson(userinfo, JsonObject.class);
-            String userId = userObj.getAsJsonObject("User").get("Id").getAsString();
+        Log.d(TAG, "authenticateByName: userinf:" + userinfo);
+        JsonObject userObj = Utils.JsonToObj(userinfo,JsonObject.class);
+        if (userObj != null) {
+            String userId = Utils.getJsonString(userObj,"User").getAsJsonObject().get("Id").getAsString();
             String Token = userObj.get("AccessToken").getAsString();
             if (Token != null) {
                 Utils.UserId = userId;

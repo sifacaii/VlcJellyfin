@@ -116,6 +116,17 @@ public class Utils {
         return url;
     }
 
+    public static <T> T JsonToObj(String jsonStr,Class<T> tClass){
+        if(jsonStr != null && jsonStr.length() > 0){
+            try {
+                return new Gson().fromJson(jsonStr,tClass);
+            }catch (Exception e){
+                return null;
+            }
+        }
+        return null;
+    }
+
     /**
      * 获取Json项
      * @param jo
