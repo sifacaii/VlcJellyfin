@@ -10,9 +10,9 @@
         <!-- 默认 Button,TextView的文字颜色 -->
         <item name="android:textColor">@android:color/white</item>
         <!-- 默认 EditView 输入框字体的颜色 -->
-        <item name="android:editTextColor">#E6E6FA</item>
+<!--        <item name="android:editTextColor">#E6E6FA</item>-->
         <!-- RadioButton checkbox等控件的文字 -->
-        <item name="android:textColorPrimaryDisableOnly">#1C71A9</item>
+<!--        <item name="android:textColorPrimaryDisableOnly">#1C71A9</item>-->
         <!-- 应用的主要文字颜色,actionBar的标题文字默认使用该颜色 -->
         <item name="android:textColorPrimary">@android:color/white</item>
         <!-- 辅助的文字颜色，一般比textColorPrimary的颜色弱一点，用于一些弱化的表示 -->

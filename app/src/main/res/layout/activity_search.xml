@@ -6,10 +6,15 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="1200dp"
         android:layout_height="32dp"
         android:padding="@dimen/padding_border"
         android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TTTTT" />
 
         <EditText
             android:id="@+id/searchTermEdit"
@@ -27,6 +32,11 @@
             android:src="@drawable/ic_outline_search_48"
             android:background="@drawable/shape_user_focus"
             android:layout_marginLeft="@dimen/button_margin_left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TTTTT" />
     </LinearLayout>
 
     <org.sifacai.vlcjellyfin.JRecyclerView

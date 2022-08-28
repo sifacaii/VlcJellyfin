@@ -1,25 +1,22 @@
 package org.sifacai.vlcjellyfin;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -112,22 +109,22 @@ public class MainActivity extends BaseActivity {
     private void addRowTvRecyclerView(String title, JsonArray data, boolean horizon) {
         Log.d(TAG, "addRowTvRecyclerView: " + data.toString());
         JRecyclerView tvRecyclerView = (JRecyclerView) LayoutInflater.from(this)
-                                                        .inflate(R.layout.home_horizon_tvrecycler,null);
-        ((V7LinearLayoutManager)tvRecyclerView.getLayoutManager()).setOrientation(V7LinearLayoutManager.HORIZONTAL);
+                .inflate(R.layout.home_horizon_tvrecycler, null);
+        ((V7LinearLayoutManager) tvRecyclerView.getLayoutManager()).setOrientation(V7LinearLayoutManager.HORIZONTAL);
 
         JAdapter jAdapter = new JAdapter(data, horizon);
         jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
             @Override
             public void onClick(JsonObject jo) {
-                String type = Utils.getJsonString(jo,"Type").getAsString();
+                String type = Utils.getJsonString(jo, "Type").getAsString();
                 String itemId = jo.get("Id").getAsString();
                 Intent intent = null;
-                if(type.equals("Folder") || type.equals("CollectionFolder")){
-                    intent = new Intent(mActivity,CollectionActivity.class);
-                }else{
-                    intent = new Intent(mActivity,DetailActivity.class);
+                if (type.equals("Folder") || type.equals("CollectionFolder")) {
+                    intent = new Intent(mActivity, CollectionActivity.class);
+                } else {
+                    intent = new Intent(mActivity, DetailActivity.class);
                 }
-                intent.putExtra("itemId",itemId);
+                intent.putExtra("itemId", itemId);
                 mActivity.startActivity(intent);
             }
         });
@@ -186,8 +183,8 @@ public class MainActivity extends BaseActivity {
 
         LinearLayout ll = new LinearLayout(builder.getContext());
         ll.setOrientation(LinearLayout.VERTICAL);
-        int pd = Utils.getPixelsFromDp(mActivity,mActivity.getResources().getDimensionPixelSize(R.dimen.padding_border));
-        ll.setPadding(pd,pd,pd,pd);
+        int pd = Utils.getPixelsFromDp(mActivity, mActivity.getResources().getDimensionPixelSize(R.dimen.padding_border));
+        ll.setPadding(pd, pd, pd, pd);
         EditText urlInput = new EditText(ll.getContext());
         urlInput.setHint("服务器地址");
         urlInput.setText(Utils.config.getJellyfinUrl());
@@ -197,6 +194,9 @@ public class MainActivity extends BaseActivity {
         EditText pwInput = new EditText(ll.getContext());
         pwInput.setHint("密码");
         pwInput.setText(Utils.config.getPassWord());
+        CheckBox saveCheckBox = new CheckBox(ll.getContext());
+        saveCheckBox.setText("保存用户");
+        saveCheckBox.setBackground(this.getResources().getDrawable(R.drawable.shape_user_focus));
         Button commitBtn = new Button(ll.getContext());
         commitBtn.setText("确定");
         commitBtn.setOnClickListener(new View.OnClickListener() {
@@ -213,8 +213,10 @@ public class MainActivity extends BaseActivity {
                             showLoadingDialog("正在验证用户名密码……");
                             Utils.config.setJellyfinUrl(url);
                             if (authenticateByName(un, pw)) {
-                                Utils.config.setUserName(un);
-                                Utils.config.setPassWord(pw);
+                                if(saveCheckBox.isChecked()) {
+                                    Utils.config.setUserName(un);
+                                    Utils.config.setPassWord(pw);
+                                }
                                 dialog.dismiss();
                                 initData(); //刷新首页
                             } else {
@@ -240,6 +242,7 @@ public class MainActivity extends BaseActivity {
         ll.addView(urlInput);
         ll.addView(unInput);
         ll.addView(pwInput);
+        ll.addView(saveCheckBox);
         ll.addView(commitBtn);
         ll.addView(canelBtn);
         dialog.setView(ll);
@@ -262,7 +265,7 @@ public class MainActivity extends BaseActivity {
         if (valid) {
             String publicUrl = url + "/system/info/public";
             String publicInfo = Utils.okhttpSend(publicUrl);
-            JsonObject serverInfo = Utils.JsonToObj(publicInfo,JsonObject.class);
+            JsonObject serverInfo = Utils.JsonToObj(publicInfo, JsonObject.class);
             if (serverInfo != null) {
                 String ServerId = serverInfo.get("Id").getAsString();
                 if (ServerId == null || ServerId.length() == 0) {
@@ -287,9 +290,9 @@ public class MainActivity extends BaseActivity {
         String reqjson = "{\"Username\":\"" + username + "\",\"Pw\":\"" + password + "\"}";
         String userinfo = Utils.okhttpSend(url, reqjson);
         Log.d(TAG, "authenticateByName: userinf:" + userinfo);
-        JsonObject userObj = Utils.JsonToObj(userinfo,JsonObject.class);
+        JsonObject userObj = Utils.JsonToObj(userinfo, JsonObject.class);
         if (userObj != null) {
-            String userId = Utils.getJsonString(userObj,"User").getAsJsonObject().get("Id").getAsString();
+            String userId = Utils.getJsonString(userObj, "User").getAsJsonObject().get("Id").getAsString();
             String Token = userObj.get("AccessToken").getAsString();
             if (Token != null) {
                 Utils.UserId = userId;
@@ -310,6 +313,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private long exitTime = 0;
+
     public void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
             Toast.makeText(getApplicationContext(), "再按一次退出程序",
