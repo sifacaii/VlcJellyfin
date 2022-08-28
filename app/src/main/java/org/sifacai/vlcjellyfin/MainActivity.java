@@ -29,7 +29,6 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 public class MainActivity extends BaseActivity {
     private String TAG = "JMainActivity:";
     private Activity mActivity = null;
-    private TextView tvLoginOut;
     private LinearLayout tvContiner;
 
     @Override
@@ -40,7 +39,6 @@ public class MainActivity extends BaseActivity {
         disableActiveBarBack();
 
         mActivity = this;
-        tvLoginOut = findViewById(R.id.tvLoginOut);
         tvContiner = findViewById(R.id.tvItems);
     }
 

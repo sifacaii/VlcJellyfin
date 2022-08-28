@@ -35,6 +35,9 @@
             android:name=".CollectionActivity"
             android:exported="false" />
         <activity
+            android:name=".SearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".VlcPlayerActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>

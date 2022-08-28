@@ -8,11 +8,11 @@
 
     <ImageView
         android:id="@+id/activeBar_back"
-        android:focusable="true"
-        android:background="@drawable/shape_user_focus"
-        android:src="@drawable/ic_outline_arrow_back_ios_48"
         android:layout_width="20dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@drawable/shape_user_focus"
+        android:focusable="true"
+        android:src="@drawable/ic_outline_arrow_back_ios_48" />
 
     <ImageView
         android:id="@+id/activeBar_banner"
@@ -25,34 +25,42 @@
         android:id="@+id/activeBar_title"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_marginLeft="@dimen/button_margin_left"
+        android:layout_weight="1"
         android:gravity="center"
-        android:textSize="18dp"
-        android:text="" />
+        android:text=""
+        android:textSize="18dp" />
 
     <TextView
         android:id="@+id/activeBar_titleTip"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_marginLeft="@dimen/button_margin_left"
+        android:layout_weight="1"
         android:gravity="center"
-        android:textSize="18dp"
-        android:text="" />
+        android:text=""
+        android:textSize="18dp" />
+
+    <ImageView
+        android:id="@+id/activeBar_searchBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:background="@drawable/shape_user_focus"
+        android:src="@drawable/ic_outline_search_48" />
 
     <TextView
         android:id="@+id/activeBar_sortBtn"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:minWidth="100dp"
-        android:gravity="center"
-        android:focusable="true"
-        android:textSize="18dp"
         android:layout_marginLeft="@dimen/button_margin_left"
         android:layout_marginRight="@dimen/button_margin_left"
         android:background="@drawable/shape_user_focus"
+        android:focusable="true"
+        android:gravity="center"
+        android:minWidth="100dp"
         android:text="排序"
-        android:visibility="gone"/>
+        android:textSize="18dp"
+        android:visibility="gone" />
 
 </LinearLayout>

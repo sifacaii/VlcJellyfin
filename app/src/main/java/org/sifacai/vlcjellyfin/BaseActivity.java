@@ -4,10 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -43,6 +42,15 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
                     mAA.finish();
                 }
             });
+
+            ImageView activeBarSearch = findViewById(R.id.activeBar_searchBtn);
+            activeBarSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mAA,SearchActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
@@ -64,7 +72,8 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
      * 禁用标题栏返回按钮
      */
     public void disableActiveBarBack() {
-        activeBarBack.setVisibility(View.GONE);
+        if(null != activeBarBack)
+            activeBarBack.setVisibility(View.GONE);
     }
 
     /**
