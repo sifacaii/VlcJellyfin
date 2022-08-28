@@ -29,6 +29,8 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Utils.config = new Config(this);
+
         ActionBar actionBar = getSupportActionBar();
         if (null != actionBar) {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -100,6 +102,12 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         mAA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if(null != progressDialog){
+                    if(progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
+                    progressDialog = null;
+                }
                 progressDialog = new ProgressDialog(mAA);
                 progressDialog.setMessage(title);
                 progressDialog.show();
@@ -160,53 +168,13 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         });
     }
 
-    /**
-     * 读取配置
-     */
-    public void getConfigFromSP() {
-        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
-        Utils.JellyfinUrl = sp.getString("url", "");
-        Utils.UserName = sp.getString("username", "");
-        Utils.PassWord = sp.getString("password", "");
-        Utils.SortBy = sp.getString("sortby","");
-        Utils.SortOrder = sp.getString("sortorder","");
-    }
 
-    /**
-     * 保存配置
-     *
-     * @param url
-     * @param username
-     * @param password
-     */
-    public void saveConfigToSP(String url, String username, String password) {
-        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("url", url);
-        editor.putString("username", username);
-        editor.putString("password", password);
-        editor.commit();
-    }
-
-    /**
-     * 保存单项配置
-     */
-    public void saveConfigToSP(String key, String value) {
-        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(key, value);
-        editor.putString(key, value);
-        editor.commit();
-    }
 
     /**
      * 登 出
      */
     private void logout() {
-        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.clear();
-        editor.commit();
+        Utils.config.clear();
         Utils.UserId = "";
         Utils.AccessToken = "";
         System.exit(0);

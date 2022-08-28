@@ -75,6 +75,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    showLoadingDialog("加载中……");
                     initData(ItemId);
                 }
             }).start();
@@ -82,13 +83,6 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     }
 
     private void initData(String itemId) {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                showLoadingDialog();
-            }
-        });
-
         String detailUrl = "/Users/" + Utils.UserId + "/Items/" + itemId;
 
         String detailStr = Utils.okhttpSend(detailUrl);
@@ -219,6 +213,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                     fillItems(AddPartStr);
                 }
             }).start();
+        }else {
+            dismissLoadingDialog();
         }
     }
 
@@ -280,7 +276,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             String imgid = ImageTags.get("Primary").getAsString();
             media.cover = Utils.getImgUrl(media.Id, imgid);
         }
-        media.Url = Utils.JellyfinUrl + "/videos/" + media.Id + "/stream.mp4?static=true&a";
+        media.Url = Utils.config.getJellyfinUrl() + "/videos/" + media.Id + "/stream.mp4?static=true&a";
         if (item.has("UserData")) {
             JsonObject userdata = item.get("UserData").getAsJsonObject();
             media.startPositionTicks = userdata.get("PlaybackPositionTicks").getAsLong();

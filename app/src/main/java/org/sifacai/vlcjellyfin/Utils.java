@@ -37,14 +37,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Utils {
-    public static final String XEmbyAuthorization = "MediaBrowser Client=\"CatTv\", Device=\"CatTv\", DeviceId=\"TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXa\", Version=\"10.8.1\"";
-    public static String JellyfinUrl = "";
-    public static String UserName = "";
-    public static String PassWord = "";
+    public static final String XEmbyAuthorization = "MediaBrowser Client=\"Vlc_J_TV\", Device=\"Vlc_J_TV\", DeviceId=\"TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXa\", Version=\"10.8.1\"";
+    public static Config config;
     public static String UserId = "";
     public static String AccessToken = "";
-    public static String SortBy = "DateCreated";
-    public static String SortOrder = "Descending";
 
     public static int playIndex = 0; //当前播放
     public static ArrayList<Video> playList = new ArrayList<>(); //播放列表
@@ -71,7 +67,7 @@ public class Utils {
         if (url.startsWith("http")) {
 
         } else {
-            url = JellyfinUrl + url;
+            url = config.getJellyfinUrl() + url;
         }
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         OkHttpClient client = builder.sslSocketFactory(RxUtils.createSSLSocketFactory())
@@ -118,7 +114,7 @@ public class Utils {
      * @return
      */
     public static String getImgUrl(String itemid, String tagid) {
-        String url = JellyfinUrl + "/Items/" + itemid + "/Images/Primary";
+        String url = config.getJellyfinUrl() + "/Items/" + itemid + "/Images/Primary";
         url += "?fillHeight=286&fillWidth=200&quality=96&tag=" + tagid;
         return url;
     }
@@ -167,7 +163,7 @@ public class Utils {
      * @param PositionTicks
      */
     public static void ReportPlaying(String Id, long PositionTicks) {
-        String url = JellyfinUrl + "/Sessions/Playing";
+        String url = config.getJellyfinUrl() + "/Sessions/Playing";
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
         String rsp = okhttpSend(url, json);
         //Log.d("VLC播放器", "ReportPlaying: " + Id + " : " + rsp);
@@ -180,15 +176,7 @@ public class Utils {
      */
     public static void ReportPlaybackProgress(String Id, long PositionTicks) {
         String json = "{\"itemId\" : \"" + Id + "\",\"positionTicks\": \"" + PositionTicks * 10000 + "\"}";
-        //JsonObject rjo = new JsonObject();
-        //rjo.addProperty("itemId",Id);
-        //rjo.addProperty("canSeek",true);
-        //rjo.addProperty("isPaused",paused);
-        //rjo.addProperty("isMuted",false);
-        //rjo.addProperty("positionTicks",PositionTicks * 10000);
-        //rjo.addProperty("PlayMethod","DirectPlay");
-        //String json = rjo.toString();
-        String url = JellyfinUrl + "/Sessions/Playing/Progress";
+        String url = config.getJellyfinUrl() + "/Sessions/Playing/Progress";
         String rsp = okhttpSend(url, json);
         //Log.d("VLC播放器", "ReportPlaybackProgress: 返回：" + Id + ":" + rsp);
     }
@@ -199,7 +187,7 @@ public class Utils {
      * @param PositionTicks
      */
     public static void ReportPlaybackStop(String Id, long PositionTicks) {
-        String url = JellyfinUrl + "/Sessions/Playing/Stopped";
+        String url = config.getJellyfinUrl() + "/Sessions/Playing/Stopped";
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
         String rsp = okhttpSend(url, json);
         //Log.d("VLC播放器", "ReportPlaybackStop: " + Id + " : " + rsp);
@@ -227,32 +215,5 @@ public class Utils {
                 return "原始";
         }
         return "";
-    }
-
-    public enum SortByType {
-        评分("CommunityRating"),
-        加入日期("DateCreated"),
-        播放日期("DatePlayed"),
-        家长分级("OfficialRating"),
-        播放次数("PlayCount"),
-        发行日期("PremiereDate"),
-        播放时长("Runtime");
-
-        public String value;
-
-        SortByType(String value) {
-            this.value = value;
-        }
-    }
-
-    public enum SotrOrderType{
-        升序("Ascending"),
-        降序("Descending");
-
-        public String value;
-
-        SotrOrderType(String value) {
-            this.value = value;
-        }
     }
 }

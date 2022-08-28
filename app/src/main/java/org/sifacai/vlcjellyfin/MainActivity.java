@@ -42,7 +42,6 @@ public class MainActivity extends BaseActivity {
         mActivity = this;
         tvLoginOut = findViewById(R.id.tvLoginOut);
         tvContiner = findViewById(R.id.tvItems);
-        getConfigFromSP();
     }
 
     @Override
@@ -158,16 +157,10 @@ public class MainActivity extends BaseActivity {
 
     private void login() {
         boolean notL = true;
-        if (ValidUrl(Utils.JellyfinUrl)) {
+        if (ValidUrl(Utils.config.getJellyfinUrl())) {
             Log.d(TAG, "initView: Url有效");
-            if (authenticateByName(Utils.UserName, Utils.PassWord)) {
+            if (authenticateByName(Utils.config.getUserName(), Utils.config.getPassWord())) {
                 Log.d(TAG, "initView: 用户名密码有效");
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //showLogoutBtn();
-                    }
-                });
                 notL = false;
             }
         }
@@ -199,11 +192,13 @@ public class MainActivity extends BaseActivity {
         ll.setPadding(pd,pd,pd,pd);
         EditText urlInput = new EditText(ll.getContext());
         urlInput.setHint("服务器地址");
-        urlInput.setText(Utils.JellyfinUrl);
+        urlInput.setText(Utils.config.getJellyfinUrl());
         EditText unInput = new EditText(ll.getContext());
         unInput.setHint("用户名");
+        unInput.setText(Utils.config.getUserName());
         EditText pwInput = new EditText(ll.getContext());
         pwInput.setHint("密码");
+        pwInput.setText(Utils.config.getPassWord());
         Button commitBtn = new Button(ll.getContext());
         commitBtn.setText("确定");
         commitBtn.setOnClickListener(new View.OnClickListener() {
@@ -215,9 +210,13 @@ public class MainActivity extends BaseActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        showLoadingDialog("正在验证服务器链接……");
                         if (ValidUrl(url)) {
+                            showLoadingDialog("正在验证用户名密码……");
+                            Utils.config.setJellyfinUrl(url);
                             if (authenticateByName(un, pw)) {
-                                saveConfigToSP(url, un, pw);
+                                Utils.config.setUserName(un);
+                                Utils.config.setPassWord(pw);
                                 dialog.dismiss();
                                 initData(); //刷新首页
                             } else {
@@ -226,6 +225,7 @@ public class MainActivity extends BaseActivity {
                         } else {
                             showMessage("服务器地址无效，请重新输入！");
                         }
+                        dismissLoadingDialog();
                     }
                 }).start();
             }
@@ -270,7 +270,6 @@ public class MainActivity extends BaseActivity {
                 if (ServerId == null || ServerId.length() == 0) {
                     return false;
                 } else {
-                    Utils.JellyfinUrl = url;
                     return true;
                 }
             }

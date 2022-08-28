@@ -107,7 +107,7 @@ public class CollectionActivity extends BaseActivity {
         String ItemsUrl = "/Users/" + Utils.UserId + "/Items?ParentId=" + ItemId + "&Limit=" + limit;
         ItemsUrl += "&Recursive=true&Fields=PrimaryImageAspectRatio,BasicSyncInfo,Seasons,Episodes&ImageTypeLimit=1";
         ItemsUrl += "&EnableImageTypes=Primary,Backdrop,Banner,Thumb";
-        ItemsUrl += "&SortBy="+Utils.SortBy+"%2CSortName%2CProductionYear&SortOrder=" + Utils.SortOrder;
+        ItemsUrl += "&SortBy="+Utils.config.getSortBy()+"%2CSortName%2CProductionYear&SortOrder=" + Utils.config.getSortOrder();
         if (Type.equals("tvshows")) {
             ItemsUrl += "&IncludeItemTypes=Series";
         } else if (Type.equals("movies")) {
@@ -186,8 +186,8 @@ public class CollectionActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 int i = 0;
-                for(Utils.SortByType sbt : Utils.SortByType.values()){
-                    if(sbt.value.equals(Utils.SortBy)){
+                for(Config.SortByType sbt : Config.SortByType.values()){
+                    if(sbt.value.equals(Utils.config.getSortBy())){
                         i = sbt.ordinal();
                     }
                 }
@@ -199,20 +199,20 @@ public class CollectionActivity extends BaseActivity {
         setSortMenuBtnText();
         SortByMenu = new PopupMenu(this,sortMenuBtn);
         Menu menu = SortByMenu.getMenu();
-        Utils.SortByType[] Ss = Utils.SortByType.values();
-        for (Utils.SortByType sortby:Ss) {
+        Config.SortByType[] Ss = Config.SortByType.values();
+        for (Config.SortByType sortby:Ss) {
             menu.add(0,sortby.ordinal(),sortby.ordinal(),sortby.name());
         }
-        for (Utils.SotrOrderType sot:Utils.SotrOrderType.values()){
+        for (Config.SotrOrderType sot:Config.SotrOrderType.values()){
             menu.add(1,sot.ordinal() + Ss.length,sot.ordinal() + Ss.length,sot.name());
         }
         SortByMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getGroupId() == 0) {
-                    Utils.SortBy = Utils.SortByType.valueOf(menuItem.getTitle().toString()).value;
+                    Utils.config.setSortBy(Config.SortByType.valueOf(menuItem.getTitle().toString()).value);
                 }else{
-                    Utils.SortOrder = Utils.SotrOrderType.valueOf(menuItem.getTitle().toString()).value;
+                    Utils.config.setSortOrder(Config.SotrOrderType.valueOf(menuItem.getTitle().toString()).value);
                 }
                 setSortMenuBtnText();
                 currAdapter.clearItems();
@@ -228,26 +228,9 @@ public class CollectionActivity extends BaseActivity {
     }
 
     private void setSortMenuBtnText(){
-        String s = "";
-        Log.d(TAG, "setSortMenuBtnText: 排序规则：" + Utils.SortBy + "-" + Utils.SortOrder);
-        for (Utils.SortByType Sb:Utils.SortByType.values()) {
-            if(Sb.value.equals(Utils.SortBy)){
-                s += Sb.name();
-            }
-        }
+        String s = Config.SortByType.findName(Utils.config.getSortBy());
         s += "-";
-        for (Utils.SotrOrderType Sot:Utils.SotrOrderType.values()) {
-            if(Sot.value.equals(Utils.SortOrder)){
-                s += Sot.name();
-            }
-        }
+        s += Config.SotrOrderType.findName(Utils.config.getSortOrder());
         sortMenuBtn.setText(s);
-    }
-
-    @Override
-    public void finish() {
-        saveConfigToSP("sortby",Utils.SortBy);
-        saveConfigToSP("sortorder",Utils.SortOrder);
-        super.finish();
     }
 }
