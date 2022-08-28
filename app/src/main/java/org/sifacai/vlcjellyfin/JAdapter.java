@@ -116,7 +116,32 @@ public class JAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         int count = items.size();
+        Log.d(TAG, "getItemCount: 数据总数：" + count);
         return count;
+    }
+
+    /**
+     * 设置数据
+     * @param items
+     */
+    public void setItems(JsonArray items){
+        this.items = items;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 添加数据
+     * @param items
+     */
+    public void addItems(JsonArray items){
+        int c = this.items.size();
+        this.items.addAll(items);
+        notifyItemRangeInserted(c,items.size());
+    }
+
+    public void clearItems(){
+        this.items = new JsonArray();
+        notifyDataSetChanged();
     }
 
     //定义OnItemClickListener接口

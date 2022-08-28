@@ -6,19 +6,18 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <TextView
+    <ImageView
         android:id="@+id/activeBar_back"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
         android:focusable="true"
-        android:gravity="center"
-        android:text="《 " />
+        android:background="@drawable/shape_user_focus"
+        android:src="@drawable/ic_outline_arrow_back_ios_48"
+        android:layout_width="20dp"
+        android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/activeBar_banner"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/button_margin_left"
         android:scaleType="fitStart"
         app:srcCompat="@drawable/banner" />
 
@@ -27,15 +26,33 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="left"
-        android:text=" 提示" />
+        android:layout_marginLeft="@dimen/button_margin_left"
+        android:gravity="center"
+        android:textSize="18dp"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/activeBar_titleTip"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/button_margin_left"
+        android:gravity="center"
+        android:textSize="18dp"
+        android:text="" />
 
     <TextView
         android:id="@+id/activeBar_sortBtn"
-        android:layout_width="60dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:minWidth="100dp"
         android:gravity="center"
         android:focusable="true"
-        android:text="排序" />
+        android:textSize="18dp"
+        android:layout_marginLeft="@dimen/button_margin_left"
+        android:layout_marginRight="@dimen/button_margin_left"
+        android:background="@drawable/shape_user_focus"
+        android:text="排序"
+        android:visibility="gone"/>
 
 </LinearLayout>

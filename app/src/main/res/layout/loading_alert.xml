@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
-    android:layout_height="160dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:gravity="center"
+    android:background="@color/color_6CFFFFFF"
     android:orientation="vertical">
 
     <ProgressBar
@@ -21,6 +22,7 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:textSize="@dimen/title_size"
-        android:text=""/>
+        android:text=""
+        android:visibility="gone"/>
 
 </LinearLayout>

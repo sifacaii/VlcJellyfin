@@ -3,54 +3,57 @@ package org.sifacai.vlcjellyfin;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
 import me.jessyan.autosize.internal.CustomAdapt;
 
 public class BaseActivity extends AppCompatActivity implements CustomAdapt {
-    public AlertDialog alertDialogLoading;
     public AppCompatActivity mAA = this;
-    private TextView activeBarBack;
+    private ProgressDialog progressDialog;
+    private ImageView activeBarBack;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ActionBar actionBar = getSupportActionBar();
-        if(null != actionBar){
+        if (null != actionBar) {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.activebar_custom);
-        }
 
-        activeBarBack = findViewById(R.id.activeBar_back);
-        activeBarBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAA.finish();
-            }
-        });
+            activeBarBack = findViewById(R.id.activeBar_back);
+            activeBarBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mAA.finish();
+                }
+            });
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        getMenuInflater().inflate(R.menu.activebar_menu,menu);
+        getMenuInflater().inflate(R.menu.activebar_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.activeBar_option_logout){
-            finish();
+        if (item.getItemId() == R.id.activeBar_option_logout) {
+            logout();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -58,7 +61,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
     /**
      * 禁用标题栏返回按钮
      */
-    public void disableActiveBarBack(){
+    public void disableActiveBarBack() {
         activeBarBack.setVisibility(View.GONE);
     }
 
@@ -86,57 +89,31 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         return 0;
     }
 
-    public void showLoadingDialog(String msg) {
-        mAA.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                showLoadingDialog(1);
-                setLoadingText(msg);
-            }
-        });
-    }
-
     public void showLoadingDialog() {
-        mAA.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                showLoadingDialog(1);
-            }
-        });
-
+        showLoadingDialog("");
     }
 
     /**
      * 显示加载动画框
      */
-    public void showLoadingDialog(int i) {
-        if (null != alertDialogLoading && alertDialogLoading.isShowing()) {
-            alertDialogLoading.dismiss();
-        }
-        alertDialogLoading = new AlertDialog.Builder(this).create();
-        alertDialogLoading.getWindow().setBackgroundDrawable(new ColorDrawable());
-        alertDialogLoading.setCancelable(false);
-        alertDialogLoading.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    alertDialogLoading.dismiss();
-                    mAA.finish();
-                    return true;
-                }
-                return false;
-            }
-        });
-        alertDialogLoading.show();
-        alertDialogLoading.setContentView(R.layout.loading_alert);
-        alertDialogLoading.setCanceledOnTouchOutside(false);
-    }
-
-    public void dismissLoadingDialog() {
+    public void showLoadingDialog(String title) {
         mAA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                dismissLoadingDialog(1);
+                progressDialog = new ProgressDialog(mAA);
+                progressDialog.setMessage(title);
+                progressDialog.show();
+                progressDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                        if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                            dismissLoadingDialog();
+                            mAA.finish();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
             }
         });
     }
@@ -144,34 +121,94 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
     /**
      * 隐藏加载框
      */
-    public void dismissLoadingDialog(int i) {
-        if (null != alertDialogLoading && alertDialogLoading.isShowing()) {
-            alertDialogLoading.dismiss();
-        }
-    }
-
-    /**
-     * 设置加载框文字
-     * @param text
-     */
-    public void setLoadingText(String text){
+    public void dismissLoadingDialog() {
         mAA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (null != alertDialogLoading && alertDialogLoading.isShowing()) {
-                    TextView tv = alertDialogLoading.getWindow().getDecorView().findViewById(R.id.progressText);
-                    tv.setText(text);
+                if (null != progressDialog && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                    progressDialog = null;
                 }
             }
         });
     }
 
-    public void ShowToask(String msg){
+    /**
+     * 设置加载框文字
+     *
+     * @param text
+     */
+    public void setLoadingText(String text) {
         mAA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mAA,msg,Toast.LENGTH_LONG).show();
+                if (null != progressDialog && progressDialog.isShowing()) {
+                    progressDialog.setMessage(text);
+                }else{
+                    showLoadingDialog(text);
+                }
             }
         });
+    }
+
+    public void ShowToask(String msg) {
+        mAA.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mAA, msg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * 读取配置
+     */
+    public void getConfigFromSP() {
+        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
+        Utils.JellyfinUrl = sp.getString("url", "");
+        Utils.UserName = sp.getString("username", "");
+        Utils.PassWord = sp.getString("password", "");
+        Utils.SortBy = sp.getString("sortby","");
+        Utils.SortOrder = sp.getString("sortorder","");
+    }
+
+    /**
+     * 保存配置
+     *
+     * @param url
+     * @param username
+     * @param password
+     */
+    public void saveConfigToSP(String url, String username, String password) {
+        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("url", url);
+        editor.putString("username", username);
+        editor.putString("password", password);
+        editor.commit();
+    }
+
+    /**
+     * 保存单项配置
+     */
+    public void saveConfigToSP(String key, String value) {
+        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(key, value);
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    /**
+     * 登 出
+     */
+    private void logout() {
+        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.commit();
+        Utils.UserId = "";
+        Utils.AccessToken = "";
+        System.exit(0);
     }
 }

@@ -8,7 +8,7 @@
     android:padding="@dimen/padding_border"
     tools:context=".MainActivity">
 
-    <include layout="@layout/item_title" />
+<!--    <include layout="@layout/item_title" />-->
 
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class DetailActivity extends BaseActivity implements JAdapter.OnItemClickListener{
+public class DetailActivity extends BaseActivity implements JAdapter.OnItemClickListener {
     private String TAG = "详情：";
     private Activity mActivity;
     private String ItemId;
@@ -44,6 +44,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        getSupportActionBar().hide();
 
         if (Utils.UserId.equals("") || Utils.AccessToken.equals("")) {
             Intent intent = new Intent(this, MainActivity.class);
@@ -164,35 +165,34 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 
             //填充列表
             String type = Utils.getJsonString(detailObj, "Type").getAsString();
-            if ( type.equals("Series") ) {
+            if (type.equals("Series")) {
                 fillSeason(ItemId);
-            }else if( type.equals("Season") ){
+            } else if (type.equals("Season")) {
                 String SeriesId = detailObj.get("SeriesId").getAsString();
-                fillEpisodes(SeriesId,ItemId);
-            }else if(type.equals("Episode")){
-                String SeriesId = Utils.getJsonString(detailObj,"SeriesId").getAsString();
-                String SeasonId = Utils.getJsonString(detailObj,"SeasonId").getAsString();
-                fillEpisodes(SeriesId,SeasonId);
-            }else if( type.equals("Movie") ) {
-                mActivity.runOnUiThread(new Runnable() {
+                fillEpisodes(SeriesId, ItemId);
+            } else if (type.equals("Episode")) {
+                String SeriesId = Utils.getJsonString(detailObj, "SeriesId").getAsString();
+                String SeasonId = Utils.getJsonString(detailObj, "SeasonId").getAsString();
+                fillEpisodes(SeriesId, SeasonId);
+            } else if (type.equals("Movie")) {
+                mAA.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         fillMovie(detailObj);
-                        dismissLoadingDialog();
                     }
                 });
             }
         }
     }
 
-    private void fillMovie(JsonObject item){
+    private void fillMovie(JsonObject item) {
         tvPlay.setVisibility(View.VISIBLE);
-        tvAudio.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if(view.hasFocus()){
+                if (view.hasFocus()) {
                     view.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-                }else{
+                } else {
                     view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
                 }
             }
@@ -207,6 +207,19 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             }
         });
         tvPlay.requestFocus();
+
+        if (item.has("PartCount")) {
+            String Id = Utils.getJsonString(item, "Id").getAsString();
+            String AddPartUrl = "/Videos/" + Id + "/AdditionalParts?userId=" + Utils.UserId;
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String AddPartStr = Utils.okhttpSend(AddPartUrl);
+                    fillItems(AddPartStr);
+                }
+            }).start();
+        }
     }
 
     /**
@@ -218,24 +231,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String SeasonsUrl = "/Shows/" + SeriesId + "/Seasons?userId=" + Utils.UserId;
         SeasonsUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,MediaSourceCount";
         String SeasonsStr = Utils.okhttpSend(SeasonsUrl);
-        ArrayList<String[]> result = new ArrayList<>();
-        if (!SeasonsStr.equals("")) {
-            JsonObject SeasonsObj = new Gson().fromJson(SeasonsStr, JsonObject.class);
-            JsonArray Seasons = SeasonsObj.get("Items").getAsJsonArray();
-            JAdapter seasonAdapter = new JAdapter(Seasons, false);
-            V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
-            layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
-            seasonAdapter.setOnItemClickListener(this);
-            mActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mGridView.setVisibility(View.VISIBLE);
-                    mGridView.setLayoutManager(layoutManager);
-                    mGridView.setAdapter(seasonAdapter);
-                    dismissLoadingDialog();
-                }
-            });
-        }
+        fillItems(SeasonsStr);
     }
 
     /**
@@ -250,37 +246,42 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         EpisodesUrl += "&userId=" + Utils.UserId;
         EpisodesUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,CanDelete,MediaSourceCount,Overview";
         String EpisodesStr = Utils.okhttpSend(EpisodesUrl);
-        if (!EpisodesStr.equals("")) {
-            JsonObject EpisodesObj = new Gson().fromJson(EpisodesStr, JsonObject.class);
-            JsonArray Episodes = EpisodesObj.get("Items").getAsJsonArray();
-            JAdapter episodeAdapter = new JAdapter(Episodes, false);
-            V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
-            layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
-            episodeAdapter.setOnItemClickListener(this);
-            mActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mGridView.setVisibility(View.VISIBLE);
-                    mGridView.setLayoutManager(layoutManager);
-                    mGridView.setAdapter(episodeAdapter);
-                    dismissLoadingDialog();
-                }
-            });
+        fillItems(EpisodesStr);
+    }
+
+    public void fillItems(String jsonStr) {
+        JsonObject item = Utils.JsonToObj(jsonStr, JsonObject.class);
+        if (item == null) {
+            return;
         }
+        JsonArray items = item.get("Items").getAsJsonArray();
+        JAdapter jAdapter = new JAdapter(items, false);
+        V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
+        layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
+        jAdapter.setOnItemClickListener(this);
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.setVisibility(View.VISIBLE);
+                mGridView.setLayoutManager(layoutManager);
+                mGridView.setAdapter(jAdapter);
+                dismissLoadingDialog();
+            }
+        });
     }
 
     public Video getMedia(JsonObject item) {
         //String playUrl = Utils.JellyfinUrl + "/videos/" + id + "/stream.mp4?static=true&a";
         Video media = new Video();
-        media.Id = Utils.getJsonString(item,"Id").getAsString();
-        media.Name = Utils.getJsonString(item,"Name").getAsString();
+        media.Id = Utils.getJsonString(item, "Id").getAsString();
+        media.Name = Utils.getJsonString(item, "Name").getAsString();
         JsonObject ImageTags = item.get("ImageTags").getAsJsonObject();
         if (ImageTags.has("Primary")) {
             String imgid = ImageTags.get("Primary").getAsString();
             media.cover = Utils.getImgUrl(media.Id, imgid);
         }
         media.Url = Utils.JellyfinUrl + "/videos/" + media.Id + "/stream.mp4?static=true&a";
-        if (item.has("UserData")){
+        if (item.has("UserData")) {
             JsonObject userdata = item.get("UserData").getAsJsonObject();
             media.startPositionTicks = userdata.get("PlaybackPositionTicks").getAsLong();
         }
@@ -293,26 +294,26 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String itemId = jo.get("Id").getAsString();
         String type = jo.get("Type").getAsString();
         Intent intent = null;
-        if(type.equals("Season")){
-            intent = new Intent(mActivity,DetailActivity.class);
-            intent.putExtra("itemId",itemId);
+        if (type.equals("Season")) {
+            intent = new Intent(mActivity, DetailActivity.class);
+            intent.putExtra("itemId", itemId);
             mActivity.startActivity(intent);
-        }else if(type.equals("Episode")){
+        } else if (type.equals("Episode")) {
             Utils.playList.clear();
-            String Id = Utils.getJsonString(jo,"Id").getAsString();
-            JAdapter JA = (JAdapter)mGridView.getAdapter();
+            String Id = Utils.getJsonString(jo, "Id").getAsString();
+            JAdapter JA = (JAdapter) mGridView.getAdapter();
             JsonArray ja = JA.getData();
-            if(ja != null){
-                for(int i=0;i<ja.size();i++){
+            if (ja != null) {
+                for (int i = 0; i < ja.size(); i++) {
                     Video media = getMedia(ja.get(i).getAsJsonObject());
                     Utils.playList.add(media);
-                    if(Id.equals(media.Id)){
+                    if (Id.equals(media.Id)) {
                         Utils.playIndex = i;
                     }
                 }
                 toVlcPlayer();
             }
-        }else if(type.equals("Movie")){
+        } else if (type.equals("Movie") || type.equals("Video")) {
             Utils.playList.clear();
             Utils.playList.add(getMedia(jo));
             Utils.playIndex = 0;
@@ -320,8 +321,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         }
     }
 
-    public void toVlcPlayer(){
-        Intent intent = new Intent(this,VlcPlayerActivity.class);
+    public void toVlcPlayer() {
+        Intent intent = new Intent(this, VlcPlayerActivity.class);
         this.startActivity(intent);
     }
 }

@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".CollectionActivity">
 
-    <include layout="@layout/item_title" />
+<!--    <include layout="@layout/item_title" />-->
 
     <org.sifacai.vlcjellyfin.JRecyclerView
         android:id="@+id/mGridView"

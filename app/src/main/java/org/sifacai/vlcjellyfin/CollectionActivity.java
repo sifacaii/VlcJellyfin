@@ -7,8 +7,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -50,7 +52,7 @@ public class CollectionActivity extends BaseActivity {
 
         mActivity = this;
         mGridContiner = findViewById(R.id.mGridView);
-        tvTitleTip = findViewById(R.id.tvTitleTip);
+        tvTitleTip = findViewById(R.id.activeBar_titleTip);
         V7GridLayoutManager v7GridLayoutManager = new V7GridLayoutManager(this,6);
         mGridContiner.setLayoutManager(v7GridLayoutManager);
         mGridContiner.setItemAnimator(null);  //防崩溃
@@ -74,22 +76,7 @@ public class CollectionActivity extends BaseActivity {
                 }
             }).start();
 
-            sortMenuBtn = findViewById(R.id.activeBar_sortBtn);
-            initSortByMenu(sortMenuBtn);
-            sortMenuBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int i = 0;
-                    for(Utils.SortByType sbt : Utils.SortByType.values()){
-                        if(sbt.value.equals(Utils.SortBy)){
-                            i = sbt.ordinal();
-                        }
-                    }
-                    SortByMenu.getMenu().getItem(i).setCheckable(true);
-                    SortByMenu.getMenu().getItem(i).setChecked(true);
-                    SortByMenu.show();
-                }
-            });
+            initSortByMenu();
         }
     }
 
@@ -137,14 +124,11 @@ public class CollectionActivity extends BaseActivity {
             countPage = (int) Math.ceil((double) totalCount / limit);
 
             JsonArray Items = ItemsObj.get("Items").getAsJsonArray();
-            int oldcount = currItems.size();
-            currItems.addAll(Items);
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     dismissLoadingDialog();
-                    //currAdapter.notifyDataSetChanged();
-                    currAdapter.notifyItemRangeInserted(oldcount,Items.size());
+                    currAdapter.addItems(Items);
                     setTitleTip();
                     mGridContiner.finishLoadMore();
                 }
@@ -196,18 +180,42 @@ public class CollectionActivity extends BaseActivity {
         tvTitleTip.setText(tip);
     }
 
-    private void initSortByMenu(View view){
-        SortByMenu = new PopupMenu(this,view);
+    private void initSortByMenu(){
+        sortMenuBtn = findViewById(R.id.activeBar_sortBtn);
+        sortMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int i = 0;
+                for(Utils.SortByType sbt : Utils.SortByType.values()){
+                    if(sbt.value.equals(Utils.SortBy)){
+                        i = sbt.ordinal();
+                    }
+                }
+                SortByMenu.show();
+            }
+        });
+
+        sortMenuBtn.setVisibility(View.VISIBLE);
+        setSortMenuBtnText();
+        SortByMenu = new PopupMenu(this,sortMenuBtn);
         Menu menu = SortByMenu.getMenu();
         Utils.SortByType[] Ss = Utils.SortByType.values();
         for (Utils.SortByType sortby:Ss) {
             menu.add(0,sortby.ordinal(),sortby.ordinal(),sortby.name());
         }
+        for (Utils.SotrOrderType sot:Utils.SotrOrderType.values()){
+            menu.add(1,sot.ordinal() + Ss.length,sot.ordinal() + Ss.length,sot.name());
+        }
         SortByMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Utils.SortBy = Utils.SortByType.valueOf(menuItem.getTitle().toString()).value;
-                currItems = new JsonArray();
+                if(menuItem.getGroupId() == 0) {
+                    Utils.SortBy = Utils.SortByType.valueOf(menuItem.getTitle().toString()).value;
+                }else{
+                    Utils.SortOrder = Utils.SotrOrderType.valueOf(menuItem.getTitle().toString()).value;
+                }
+                setSortMenuBtnText();
+                currAdapter.clearItems();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -217,5 +225,29 @@ public class CollectionActivity extends BaseActivity {
                 return false;
             }
         });
+    }
+
+    private void setSortMenuBtnText(){
+        String s = "";
+        Log.d(TAG, "setSortMenuBtnText: 排序规则：" + Utils.SortBy + "-" + Utils.SortOrder);
+        for (Utils.SortByType Sb:Utils.SortByType.values()) {
+            if(Sb.value.equals(Utils.SortBy)){
+                s += Sb.name();
+            }
+        }
+        s += "-";
+        for (Utils.SotrOrderType Sot:Utils.SotrOrderType.values()) {
+            if(Sot.value.equals(Utils.SortOrder)){
+                s += Sot.name();
+            }
+        }
+        sortMenuBtn.setText(s);
+    }
+
+    @Override
+    public void finish() {
+        saveConfigToSP("sortby",Utils.SortBy);
+        saveConfigToSP("sortorder",Utils.SortOrder);
+        super.finish();
     }
 }

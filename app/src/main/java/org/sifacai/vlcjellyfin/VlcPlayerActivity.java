@@ -116,9 +116,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 break;
             case MediaPlayer.Event.Buffering: //媒体加载public float getBuffering() 获取加载视频流的进度0-100
                 int Buffering = (int) event.getBuffering();
-                if (null == alertDialogLoading || !alertDialogLoading.isShowing()) {
-                    showLoadingDialog();
-                }
                 setLoadingText("加载进度：%" + Buffering);
                 if (Buffering >= 100) {
                     dismissLoadingDialog();

@@ -69,7 +69,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void run() {
                 showLoadingDialog("正在加载首页，请稍候…………");
-                showLogoutBtn();
                 tvContiner.removeAllViews();
             }
         });
@@ -166,7 +165,7 @@ public class MainActivity extends BaseActivity {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        showLogoutBtn();
+                        //showLogoutBtn();
                     }
                 });
                 notL = false;
@@ -182,57 +181,6 @@ public class MainActivity extends BaseActivity {
         } else {
             initData();
         }
-    }
-
-    private void showLogoutBtn() {
-        tvLoginOut.setVisibility(View.VISIBLE);
-        tvLoginOut.setText("注 销");
-        tvLoginOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout();
-            }
-        });
-    }
-
-    /**
-     * 登 出
-     */
-    private void logout() {
-        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.clear();
-        editor.commit();
-        Utils.UserId = "";
-        Utils.AccessToken = "";
-        finish();
-    }
-
-    /**
-     * 读取配置
-     */
-    private void getConfigFromSP() {
-        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
-        Utils.JellyfinUrl = sp.getString("url", "");
-        Utils.UserName = sp.getString("username", "");
-        Utils.PassWord = sp.getString("password", "");
-        Utils.SortBy = sp.getString("sortby","");
-    }
-
-    /**
-     * 保存配置
-     *
-     * @param url
-     * @param username
-     * @param password
-     */
-    private void saveConfigToSP(String url, String username, String password) {
-        SharedPreferences sp = this.getSharedPreferences("Jellyfin", this.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("url", url);
-        editor.putString("username", username);
-        editor.putString("password", password);
-        editor.commit();
     }
 
     /**
@@ -288,7 +236,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                mActivity.finish();
+                System.exit(0);
             }
         });
         ll.addView(urlInput);
