@@ -116,7 +116,6 @@ public class JAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         int count = items.size();
-        Log.d(TAG, "getItemCount: 数据总数：" + count);
         return count;
     }
 
