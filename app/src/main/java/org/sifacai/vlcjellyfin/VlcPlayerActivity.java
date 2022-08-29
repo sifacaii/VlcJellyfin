@@ -340,7 +340,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private Runnable mUpdateSeekBar = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "run: 更新进度：" + currItem.PositionTicks);
             setSeekBar(currItem.PositionTicks);
             mhandler.postDelayed(mUpdateSeekBar,1000);
         }

@@ -183,7 +183,6 @@ public class Utils {
             @Override
             public void run() {
                 String rsptxt = okhttpSend(finalUrl,json);
-                Log.d("Report", "run: " + rsptxt);
             }
         }).start();
     }
