@@ -84,7 +84,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      */
     private void initVlc() {
         List<String> vlcoptions = new ArrayList<>();
-        vlcoptions.add("-vvv");
+        vlcoptions.add("-v");
         vlcVideoLayout = findViewById(R.id.VideoView);
         libVLC = new LibVLC(this,vlcoptions);
         mediaPlayer = new MediaPlayer(libVLC);
