@@ -360,9 +360,8 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             ControllerTop.setVisibility(View.VISIBLE);
         }
         if (ControllerBottom.getVisibility() == View.GONE) {
-            setSeekBar(currItem.PositionTicks);
-            mhandler.postDelayed(mUpdateSeekBar,1000);
             ControllerBottom.setVisibility(View.VISIBLE);
+            mhandler.postDelayed(mUpdateSeekBar,0);
             playPauseBtn.requestFocus();
         }
     }
