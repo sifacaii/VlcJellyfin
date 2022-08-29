@@ -16,6 +16,8 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -81,8 +83,10 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      * 初始化播放器
      */
     private void initVlc() {
+        List<String> vlcoptions = new ArrayList<>();
+        vlcoptions.add("-vvv");
         vlcVideoLayout = findViewById(R.id.VideoView);
-        libVLC = new LibVLC(this);
+        libVLC = new LibVLC(this,vlcoptions);
         mediaPlayer = new MediaPlayer(libVLC);
         mediaPlayer.attachViews(vlcVideoLayout, null, true, false);
         mediaPlayer.setEventListener(this);
@@ -457,7 +461,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     }
 
     /**
-     * 设置播放器位置
+     * 设置播放器进度
      */
     public boolean setTimeOnSeekBar(Long p) {
         if (p < mediaPlayer.getLength() && p > 0) {
@@ -567,7 +571,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 } else if (type == Utils.ReportType.stop) {
                     Utils.ReportPlaybackStop(Id, currPlaybackTimeTrack);
                 } else if (type == Utils.ReportType.Progress) {
-                    Log.d(TAG, "run: 报告时空：" + currPlaybackTimeTrack);
                     Utils.ReportPlaybackProgress(Id, currPlaybackTimeTrack);
                 }
             }
