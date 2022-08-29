@@ -189,9 +189,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 boolean rv = false;
                 int keycode = keyEvent.getKeyCode();
                 if (keycode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                    rv = setTimeOnSeekBar(mediaPlayer.getTime() + (long) (mediaPlayer.getLength() * 0.05));
+                    rv = setTimeOnSeekBar(currPlaybackTimeTrack + (long) (mediaPlayer.getLength() * 0.05));
                 } else if (keycode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    rv = setTimeOnSeekBar(mediaPlayer.getTime() - (long) (mediaPlayer.getLength() * 0.05));
+                    rv = setTimeOnSeekBar(currPlaybackTimeTrack - (long) (mediaPlayer.getLength() * 0.05));
                 }
                 return rv;
             }
