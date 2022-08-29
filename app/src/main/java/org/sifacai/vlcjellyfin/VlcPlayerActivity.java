@@ -5,20 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.videolan.libvlc.LibVLC;
-import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
-import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
 import java.util.Timer;
@@ -275,7 +270,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 public void onClick(View view) {
                     playListMenu.dismiss();
                     if (m.id != Utils.playIndex) {
-                        ReportPlayState(Utils.ReportType.stop,Utils.playList.get(Utils.playIndex).Id);
+                        ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
                         Utils.playIndex = m.id;
                         play();
                     }
@@ -412,7 +407,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      * 播放下一集
      */
     public void playNext() {
-        if(Utils.playIndex < (Utils.playList.size() - 1)){
+        if (Utils.playIndex < (Utils.playList.size() - 1)) {
             ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
             Utils.playIndex += 1;
             play();
@@ -439,7 +434,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             progressTime.cancel();
             progressTime = null;
         }
-        if (reportProcessTime != null){
+        if (reportProcessTime != null) {
             reportProcessTime.cancel();
             progressTime = null;
         }

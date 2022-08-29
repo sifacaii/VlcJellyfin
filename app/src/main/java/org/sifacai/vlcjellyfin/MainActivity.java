@@ -107,7 +107,6 @@ public class MainActivity extends BaseActivity {
      * 添加类别行
      */
     private void addRowTvRecyclerView(String title, JsonArray data, boolean horizon) {
-        Log.d(TAG, "addRowTvRecyclerView: " + data.toString());
         JRecyclerView tvRecyclerView = (JRecyclerView) LayoutInflater.from(this)
                 .inflate(R.layout.home_horizon_tvrecycler, null);
         ((V7LinearLayoutManager) tvRecyclerView.getLayoutManager()).setOrientation(V7LinearLayoutManager.HORIZONTAL);

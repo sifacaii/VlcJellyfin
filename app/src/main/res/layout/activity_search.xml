@@ -6,37 +6,32 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="1200dp"
-        android:layout_height="32dp"
-        android:padding="@dimen/padding_border"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
         android:orientation="horizontal" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TTTTT" />
 
         <EditText
             android:id="@+id/searchTermEdit"
-            android:layout_width="600dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@drawable/shape_user_focus"
+            android:maxLength="20"
+            android:maxLines="1"
             android:focusable="true"
-            android:tooltipText="关键字"/>
+            android:tooltipText="关键字" />
 
         <ImageView
             android:id="@+id/searchBtn"
             android:layout_width="100dp"
-            android:layout_height="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/button_margin_left"
             android:focusable="true"
-            android:src="@drawable/ic_outline_search_48"
             android:background="@drawable/shape_user_focus"
-            android:layout_marginLeft="@dimen/button_margin_left" />
+            android:src="@drawable/ic_outline_search_48" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TTTTT" />
     </LinearLayout>
 
     <org.sifacai.vlcjellyfin.JRecyclerView
@@ -49,4 +44,5 @@
         app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
         app:tv_selectedItemIsCentered="true"
         app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
+
 </LinearLayout>

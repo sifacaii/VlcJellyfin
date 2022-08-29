@@ -266,24 +266,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         });
     }
 
-    public Video getMedia(JsonObject item) {
-        //String playUrl = Utils.JellyfinUrl + "/videos/" + id + "/stream.mp4?static=true&a";
-        Video media = new Video();
-        media.Id = Utils.getJsonString(item, "Id").getAsString();
-        media.Name = Utils.getJsonString(item, "Name").getAsString();
-        JsonObject ImageTags = item.get("ImageTags").getAsJsonObject();
-        if (ImageTags.has("Primary")) {
-            String imgid = ImageTags.get("Primary").getAsString();
-            media.cover = Utils.getImgUrl(media.Id, imgid);
-        }
-        media.Url = Utils.config.getJellyfinUrl() + "/videos/" + media.Id + "/stream.mp4?static=true&a";
-        if (item.has("UserData")) {
-            JsonObject userdata = item.get("UserData").getAsJsonObject();
-            media.startPositionTicks = userdata.get("PlaybackPositionTicks").getAsLong();
-        }
 
-        return media;
-    }
 
     @Override
     public void onClick(JsonObject jo) {
@@ -315,6 +298,30 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             Utils.playIndex = 0;
             toVlcPlayer();
         }
+    }
+
+    /**
+     * 组合播放媒体
+     * @param item
+     * @return
+     */
+    public Video getMedia(JsonObject item) {
+        //String playUrl = Utils.JellyfinUrl + "/videos/" + id + "/stream.mp4?static=true&a";
+        Video media = new Video();
+        media.Id = Utils.getJsonString(item, "Id").getAsString();
+        media.Name = Utils.getJsonString(item, "Name").getAsString();
+        JsonObject ImageTags = item.get("ImageTags").getAsJsonObject();
+        if (ImageTags.has("Primary")) {
+            String imgid = ImageTags.get("Primary").getAsString();
+            media.cover = Utils.getImgUrl(media.Id, imgid);
+        }
+        media.Url = Utils.config.getJellyfinUrl() + "/videos/" + media.Id + "/stream.mp4?static=true&a";
+        if (item.has("UserData")) {
+            JsonObject userdata = item.get("UserData").getAsJsonObject();
+            media.startPositionTicks = userdata.get("PlaybackPositionTicks").getAsLong();
+        }
+
+        return media;
     }
 
     public void toVlcPlayer() {
