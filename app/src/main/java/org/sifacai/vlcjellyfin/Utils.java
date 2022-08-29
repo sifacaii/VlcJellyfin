@@ -1,40 +1,22 @@
 package org.sifacai.vlcjellyfin;
 
-import static android.net.sip.SipErrorCode.TIME_OUT;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
-
-import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.model.HttpHeaders;
 
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import okhttp3.Callback;
+import okhttp3.Call;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -179,12 +161,34 @@ public class Utils {
         }
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
         String finalUrl = url;
-        new Thread(new Runnable() {
+
+        String xea = XEmbyAuthorization;
+        if (AccessToken != "") {
+            xea += ", Token=\"" + AccessToken + "\"";
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Accept", "application/json");
+        headers.put("Accept-Language", "zh-CN,zh;q=0.9");
+        headers.put("X-Emby-Authorization", xea);
+        OkGo.<String>post(finalUrl).headers(headers).upJson(json).execute(new AbsCallback<String>() {
+
             @Override
-            public void run() {
-                String rsptxt = okhttpSend(finalUrl,json);
+            public void onSuccess(com.lzy.okgo.model.Response<String> response) {
+                Log.d("Report", "onSuccess: " + response.body());
             }
-        }).start();
+
+            @Override
+            public String convertResponse(Response response) throws Throwable {
+                String result = "";
+                if (response.body() == null) {
+                    result = "";
+                } else {
+                    result = response.body().string();
+                }
+                return result;
+            }
+        });
+
     }
 
     /**

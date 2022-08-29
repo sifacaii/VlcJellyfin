@@ -135,9 +135,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 stop();
                 break;
             case MediaPlayer.Event.TimeChanged://视频时间变化
+                updateTimeCount += event.getTimeChanged() - currItem.PositionTicks;
                 currItem.PositionTicks = event.getTimeChanged();
-                updateTimeCount +=1;
-                if(updateTimeCount > ReportCount){
+                if(updateTimeCount > 20000){
                     updateTimeCount = 0;
                     ReportPlayState(Utils.ReportType.Progress);
                 }
@@ -360,6 +360,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             ControllerTop.setVisibility(View.VISIBLE);
         }
         if (ControllerBottom.getVisibility() == View.GONE) {
+            setSeekBar(currItem.PositionTicks);
             mhandler.postDelayed(mUpdateSeekBar,1000);
             ControllerBottom.setVisibility(View.VISIBLE);
             playPauseBtn.requestFocus();
