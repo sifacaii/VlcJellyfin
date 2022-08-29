@@ -96,14 +96,6 @@
                 android:paddingBottom="20dp">
 
                 <ImageView
-                    android:id="@+id/preBtn"
-                    android:layout_width="@dimen/button_width"
-                    android:layout_height="@dimen/button_height"
-                    android:background="@drawable/shape_user_focus"
-                    android:focusable="true"
-                    android:src="@drawable/ic_outline_skip_previous_48" />
-
-                <ImageView
                     android:id="@+id/playPauseBtn"
                     android:layout_width="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
@@ -120,15 +112,6 @@
                     android:background="@drawable/shape_user_focus"
                     android:focusable="true"
                     android:src="@drawable/ic_outline_stop_48" />
-
-                <ImageView
-                    android:id="@+id/nextBtn"
-                    android:layout_width="@dimen/button_width"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_marginLeft="@dimen/button_margin_left"
-                    android:background="@drawable/shape_user_focus"
-                    android:focusable="true"
-                    android:src="@drawable/ic_outline_skip_next_48" />
 
                 <TextView
                     android:id="@+id/speedBtn"
@@ -188,18 +171,16 @@
     </FrameLayout>
 
     <ImageView
-        android:id="@+id/loading"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_gravity="center"
-        android:src="@android:drawable/ic_input_get"
-        android:visibility="gone" />
-
-    <ImageView
         android:id="@+id/pauseFlag"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_baseline_pause_circle_outline_48"
         android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center" />
 </FrameLayout>

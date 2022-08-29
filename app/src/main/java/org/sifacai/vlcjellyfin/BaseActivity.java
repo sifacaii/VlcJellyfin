@@ -12,11 +12,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-
 import me.jessyan.autosize.internal.CustomAdapt;
 
 public class BaseActivity extends AppCompatActivity implements CustomAdapt {

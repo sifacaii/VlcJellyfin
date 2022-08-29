@@ -3,6 +3,9 @@ package org.sifacai.vlcjellyfin;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -47,8 +50,6 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private TextView countTime;
     private TextView speedBtn;
     private TextView scaleBtn;
-    private ImageView preBtn;
-    private ImageView nextBtn;
     private ImageView playPauseBtn;
     private ImageView stopBtn;
     private ImageView subTracksBtn;
@@ -56,9 +57,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private ImageView playListBtn;
     private ImageView pauseFlag;
     private SeekBar currPostion;
-
-    private Timer progressTime = null;  //控制器进度条更新定时
-    private Timer reportProcessTime = null; // 报告进度定时器
+    private ProgressBar loading;
 
     private PopMenu playListMenu = null; //播放列表
     private PopMenu subTrackMenu = null; //字幕菜单
@@ -68,7 +67,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
 
     private float speedRate[] = {0.5f, 1.0f, 1.5f, 2.0f}; //倍速播放列表
 
-    private long currPlaybackTimeTrack = 0;  //当前播放进度
+    private int updateTimeCount = 0;
+    private int ReportCount = 30;
+    private Video currItem; //当前播放项目
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 Hide();
                 pauseFlag.setVisibility(View.GONE);
                 Log.d(TAG, "onEvent: Playing");
-                ReportPlayState(Utils.ReportType.playing, Utils.playList.get(Utils.playIndex).Id);
+                ReportPlayState(Utils.ReportType.playing);
                 initMenu();
                 break;
             case MediaPlayer.Event.Paused: //暂停
@@ -109,7 +110,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 break;
             case MediaPlayer.Event.Stopped:
                 Log.d(TAG, "onEvent: Stopped");
-                ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
+                ReportPlayState(Utils.ReportType.stop);
                 playNext();
                 break;
             case MediaPlayer.Event.Opening:  //媒体打开
@@ -117,9 +118,12 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 break;
             case MediaPlayer.Event.Buffering: //媒体加载public float getBuffering() 获取加载视频流的进度0-100
                 int Buffering = (int) event.getBuffering();
-                setLoadingText("加载进度：%" + Buffering);
                 if (Buffering >= 100) {
-                    dismissLoadingDialog();
+                    loading.setVisibility(View.GONE);
+                }else{
+                    if(loading.getVisibility() == View.GONE){
+                        loading.setVisibility(View.VISIBLE);
+                    }
                 }
                 break;
             case MediaPlayer.Event.EndReached://媒体播放结束
@@ -131,7 +135,12 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 stop();
                 break;
             case MediaPlayer.Event.TimeChanged://视频时间变化
-                currPlaybackTimeTrack = event.getTimeChanged();
+                currItem.PositionTicks = event.getTimeChanged();
+                updateTimeCount +=1;
+                if(updateTimeCount > ReportCount){
+                    updateTimeCount = 0;
+                    ReportPlayState(Utils.ReportType.Progress);
+                }
                 break;
             case MediaPlayer.Event.PositionChanged://视频总时长的百分比
                 break;
@@ -172,14 +181,11 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         countTime = findViewById(R.id.countTime);
         speedBtn = findViewById(R.id.speedBtn);
         scaleBtn = findViewById(R.id.scaleBtn);
-        preBtn = findViewById(R.id.preBtn);
-        nextBtn = findViewById(R.id.nextBtn);
         playPauseBtn = findViewById(R.id.playPauseBtn);
         stopBtn = findViewById(R.id.stopBtn);
         pauseFlag = findViewById(R.id.pauseFlag);
         currPostion = findViewById(R.id.currPostion);
-        preBtn.setOnClickListener(this);
-        nextBtn.setOnClickListener(this);
+        loading = findViewById(R.id.loading);
         playPauseBtn.setOnClickListener(this);
         stopBtn.setOnClickListener(this);
         pauseFlag.setOnClickListener(this);
@@ -189,9 +195,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 boolean rv = false;
                 int keycode = keyEvent.getKeyCode();
                 if (keycode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                    rv = setTimeOnSeekBar(currPlaybackTimeTrack + (long) (mediaPlayer.getLength() * 0.05));
+                    rv = setTimeOnSeekBar(currItem.PositionTicks + (long) (mediaPlayer.getLength() * 0.05));
                 } else if (keycode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    rv = setTimeOnSeekBar(currPlaybackTimeTrack - (long) (mediaPlayer.getLength() * 0.05));
+                    rv = setTimeOnSeekBar(currItem.PositionTicks - (long) (mediaPlayer.getLength() * 0.05));
                 }
                 return rv;
             }
@@ -276,7 +282,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 public void onClick(View view) {
                     playListMenu.dismiss();
                     if (m.id != Utils.playIndex) {
-                        ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
+                        ReportPlayState(Utils.ReportType.stop);
                         Utils.playIndex = m.id;
                         play();
                     }
@@ -330,6 +336,16 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         audioTracksBtn.setOnClickListener(this);
     }
 
+    private Handler mhandler = new Handler(Looper.getMainLooper());
+    private Runnable mUpdateSeekBar = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "run: 更新进度：" + currItem.PositionTicks);
+            setSeekBar(currItem.PositionTicks);
+            mhandler.postDelayed(mUpdateSeekBar,1000);
+        }
+    };
+
     /**
      * 显示控制器
      */
@@ -345,36 +361,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             ControllerTop.setVisibility(View.VISIBLE);
         }
         if (ControllerBottom.getVisibility() == View.GONE) {
-            progressTime = new Timer();
-            progressTime.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    mActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setSeekBar(currPlaybackTimeTrack);
-                        }
-                    });
-                }
-            }, 0, 1000);
+            mhandler.postDelayed(mUpdateSeekBar,1000);
             ControllerBottom.setVisibility(View.VISIBLE);
             playPauseBtn.requestFocus();
-        }
-    }
-
-    /**
-     * 设置进度条时间
-     */
-    public void setSeekBar(Long p) {
-        if (ControllerBottom.getVisibility() == View.VISIBLE) {
-            double i = (double) p / 1000;
-            long duration = mediaPlayer.getLength();
-            if (duration > 0) {
-                long pos = 1000L * p / duration;
-                currPostion.setProgress((int) pos);
-            }
-            currTime.setText(TrickToTime(p));
-            countTime.setText(TrickToTime(duration));
         }
     }
 
@@ -387,9 +376,24 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         }
         if (ControllerBottom.getVisibility() == View.VISIBLE) {
             ControllerBottom.setVisibility(View.GONE);
-            if (progressTime != null) {
-                progressTime.cancel();
-                progressTime = null;
+            mhandler.removeCallbacks(mUpdateSeekBar);
+        }
+    }
+
+    /**
+     * 设置进度条时间
+     */
+    public void setSeekBar(Long p) {
+        if (ControllerBottom.getVisibility() == View.VISIBLE) {
+            if(null != mediaPlayer && mediaPlayer.getLength() > 0){
+                double i = (double) p / 1000;
+                long duration = mediaPlayer.getLength();
+                if (duration > 0) {
+                    long pos = 1000L * p / duration;
+                    currPostion.setProgress((int) pos);
+                }
+                currTime.setText(TrickToTime(p));
+                countTime.setText(TrickToTime(duration));
             }
         }
     }
@@ -400,9 +404,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     public void play() {
         if (Utils.playList.size() > 0) {
             if (Utils.playIndex < Utils.playList.size()) {
-                Video v = Utils.playList.get(Utils.playIndex);
-                videoTitle.setText(v.Name);
-                mediaPlayer.play(Uri.parse(v.Url));
+                currItem = Utils.playList.get(Utils.playIndex);
+                videoTitle.setText(currItem.Name);
+                mediaPlayer.play(Uri.parse(currItem.Url));
             }
         } else {
             stop();
@@ -414,19 +418,8 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      */
     public void playNext() {
         if (Utils.playIndex < (Utils.playList.size() - 1)) {
-            ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
+            ReportPlayState(Utils.ReportType.stop);
             Utils.playIndex += 1;
-            play();
-        }
-    }
-
-    /**
-     * 上一集
-     */
-    public void playPre() {
-        if (Utils.playIndex > 0) {
-            ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
-            Utils.playIndex -= 1;
             play();
         }
     }
@@ -435,15 +428,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      * 停止播放并结束Activity
      */
     public void stop() {
-        ReportPlayState(Utils.ReportType.stop, Utils.playList.get(Utils.playIndex).Id);
-        if (progressTime != null) {
-            progressTime.cancel();
-            progressTime = null;
-        }
-        if (reportProcessTime != null) {
-            reportProcessTime.cancel();
-            progressTime = null;
-        }
+        ReportPlayState(Utils.ReportType.stop);
         mediaPlayer.stop();
         mediaPlayer.release();
         libVLC.release();
@@ -528,11 +513,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.nextBtn) {
-            playNext();
-        } else if (id == R.id.preBtn) {
-            playPre();
-        } else if (id == R.id.playPauseBtn) {
+        if (id == R.id.playPauseBtn) {
             playOrpause();
         } else if (id == R.id.stopBtn) {
             stop();
@@ -549,33 +530,13 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         }
     }
 
-    private void ReportPlayState(Utils.ReportType type, String Id) {
-        if (type == Utils.ReportType.playing) {
-            reportProcessTime = new Timer();
-            reportProcessTime.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    ReportPlayState(Utils.ReportType.Progress, Utils.playList.get(Utils.playIndex).Id);
-                }
-            }, 1000, 10000);
-        } else if (type == Utils.ReportType.stop) {
-            if (reportProcessTime != null) {
-                reportProcessTime.cancel();
-                reportProcessTime = null;
-            }
-        }
+    private void ReportPlayState(Utils.ReportType type) {
+        Utils.ReportPlayState(type,currItem.Id,currItem.PositionTicks);
+    }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (type == Utils.ReportType.playing) {
-                    Utils.ReportPlaying(Id, currPlaybackTimeTrack);
-                } else if (type == Utils.ReportType.stop) {
-                    Utils.ReportPlaybackStop(Id, currPlaybackTimeTrack);
-                } else if (type == Utils.ReportType.Progress) {
-                    Utils.ReportPlaybackProgress(Id, currPlaybackTimeTrack);
-                }
-            }
-        }).start();
+    @Override
+    public void finish() {
+        mhandler.removeCallbacksAndMessages(null);
+        super.finish();
     }
 }

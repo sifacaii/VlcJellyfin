@@ -5,9 +5,14 @@ import static android.net.sip.SipErrorCode.TIME_OUT;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -29,6 +34,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Callback;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -44,7 +50,6 @@ public class Utils {
 
     public static int playIndex = 0; //当前播放
     public static ArrayList<Video> playList = new ArrayList<>(); //播放列表
-
 
     /**
      * GET请求
@@ -158,39 +163,29 @@ public class Utils {
     }
 
     /**
-     * 报告播放开始
-     *
+     * 报告播放状态
+     * @param type
+     * @param Id
      * @param PositionTicks
      */
-    public static void ReportPlaying(String Id, long PositionTicks) {
-        String url = config.getJellyfinUrl() + "/Sessions/Playing";
+    public static void ReportPlayState(ReportType type,String Id,long PositionTicks){
+        String url = config.getJellyfinUrl();
+        if(type == ReportType.playing){
+            url += "/Sessions/Playing";
+        }else if(type == ReportType.Progress){
+            url += "/Sessions/Playing/Progress";
+        }else if(type == ReportType.stop){
+            url += "/Sessions/Playing/Stopped";
+        }
         String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
-        String rsp = okhttpSend(url, json);
-        //Log.d("VLC播放器", "ReportPlaying: " + Id + " : " + rsp);
-    }
-
-    /**
-     * 报告播放进度
-     *
-     * @param PositionTicks
-     */
-    public static void ReportPlaybackProgress(String Id, long PositionTicks) {
-        String json = "{\"itemId\" : \"" + Id + "\",\"positionTicks\": \"" + PositionTicks * 10000 + "\"}";
-        String url = config.getJellyfinUrl() + "/Sessions/Playing/Progress";
-        String rsp = okhttpSend(url, json);
-        //Log.d("VLC播放器", "ReportPlaybackProgress: 返回：" + Id + ":" + rsp);
-    }
-
-    /**
-     * 播放停止
-     *
-     * @param PositionTicks
-     */
-    public static void ReportPlaybackStop(String Id, long PositionTicks) {
-        String url = config.getJellyfinUrl() + "/Sessions/Playing/Stopped";
-        String json = "{\"itemId\":\"" + Id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
-        String rsp = okhttpSend(url, json);
-        //Log.d("VLC播放器", "ReportPlaybackStop: " + Id + " : " + rsp);
+        String finalUrl = url;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String rsptxt = okhttpSend(finalUrl,json);
+                Log.d("Report", "run: " + rsptxt);
+            }
+        }).start();
     }
 
     /**
