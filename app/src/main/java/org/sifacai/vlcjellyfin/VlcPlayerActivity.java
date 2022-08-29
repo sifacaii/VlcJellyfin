@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -35,7 +37,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private LibVLC libVLC;
     private VLCVideoLayout vlcVideoLayout;
 
-    private RelativeLayout Controller; //总控
+    private FrameLayout Controller; //总控
     private LinearLayout ControllerTop;
     private LinearLayout ControllerBottom;
     private LinearLayout ControllerBottomTop;

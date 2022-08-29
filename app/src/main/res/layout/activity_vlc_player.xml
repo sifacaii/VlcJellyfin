@@ -11,45 +11,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/Controller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/ControllerTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:visibility="gone"
+            android:layout_gravity="top"
             android:background="@color/color_99000000"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="30dp"
+            android:paddingTop="10dp"
+            android:paddingRight="30dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/videoTitle"
-                android:text="标题"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="标题"
                 android:textColor="#99FFFFFF"
-                android:textSize="36dp"/>
+                android:textSize="36dp" />
         </LinearLayout>
-
 
 
         <LinearLayout
             android:id="@+id/ControllerBottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="bottom"
-            android:visibility="gone"
+            android:layout_gravity="bottom"
             android:background="@color/color_99000000"
-            android:orientation="vertical">
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/ControllerBottomTop"
@@ -62,29 +61,29 @@
                     android:id="@+id/currTime"
                     android:layout_width="160dp"
                     android:layout_height="60dp"
-                    android:textSize="26dp"
                     android:gravity="center"
-                    android:text="00:00:00" />
+                    android:text="00:00:00"
+                    android:textSize="26dp" />
 
                 <SeekBar
                     android:id="@+id/currPostion"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_user_focus"
+                    android:focusable="true"
+                    android:max="1000"
                     android:maxHeight="26dp"
                     android:minHeight="26dp"
-                    android:max="1000"
-                    android:progress="0"
-                    android:focusable="true"
-                    android:background="@drawable/shape_user_focus"/>
+                    android:progress="0" />
 
                 <TextView
                     android:id="@+id/countTime"
                     android:layout_width="160dp"
                     android:layout_height="60dp"
-                    android:textSize="26dp"
                     android:gravity="center"
-                    android:text="00:00:00" />
+                    android:text="00:00:00"
+                    android:textSize="26dp" />
 
             </LinearLayout>
 
@@ -93,25 +92,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:gravity="center"
-                android:paddingBottom="20dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingBottom="20dp">
 
                 <ImageView
                     android:id="@+id/preBtn"
                     android:layout_width="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
                     android:background="@drawable/shape_user_focus"
-                    android:src="@drawable/ic_outline_skip_previous_48"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:src="@drawable/ic_outline_skip_previous_48" />
 
                 <ImageView
                     android:id="@+id/playPauseBtn"
                     android:layout_width="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
-                    android:src="@drawable/ic_outline_play_arrow_48"
                     android:background="@drawable/shape_user_focus"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:src="@drawable/ic_outline_play_arrow_48" />
 
                 <ImageView
                     android:id="@+id/stopBtn"
@@ -119,8 +118,8 @@
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
-                    android:src="@drawable/ic_outline_stop_48"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:src="@drawable/ic_outline_stop_48" />
 
                 <ImageView
                     android:id="@+id/nextBtn"
@@ -128,34 +127,34 @@
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
-                    android:src="@drawable/ic_outline_skip_next_48"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:src="@drawable/ic_outline_skip_next_48" />
 
                 <TextView
                     android:id="@+id/speedBtn"
                     android:layout_width="wrap_content"
-                    android:minWidth="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minWidth="@dimen/button_width"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/title_size"
-                    android:focusable="true" />
+                    android:textSize="@dimen/title_size" />
 
                 <TextView
                     android:id="@+id/scaleBtn"
                     android:layout_width="wrap_content"
-                    android:minWidth="@dimen/button_width"
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minWidth="@dimen/button_width"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/title_size"
-                    android:focusable="true" />
+                    android:textSize="@dimen/title_size" />
 
                 <ImageView
                     android:id="@+id/subTracksBtn"
@@ -163,8 +162,8 @@
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
-                    android:src="@drawable/ic_outline_subtitles_48"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:src="@drawable/ic_outline_subtitles_48" />
 
                 <ImageView
                     android:id="@+id/audioTracksBtn"
@@ -172,8 +171,8 @@
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
-                    android:src="@drawable/ic_outline_audiotrack_48"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:src="@drawable/ic_outline_audiotrack_48" />
 
                 <ImageView
                     android:id="@+id/playListBtn"
@@ -181,12 +180,12 @@
                     android:layout_height="@dimen/button_height"
                     android:layout_marginLeft="@dimen/button_margin_left"
                     android:background="@drawable/shape_user_focus"
-                    android:src="@drawable/ic_outline_playlist_play_48"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:src="@drawable/ic_outline_playlist_play_48" />
             </LinearLayout>
 
         </LinearLayout>
-    </RelativeLayout>
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/loading"
@@ -194,7 +193,7 @@
         android:layout_height="160dp"
         android:layout_gravity="center"
         android:src="@android:drawable/ic_input_get"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/pauseFlag"
@@ -202,5 +201,5 @@
         android:layout_height="160dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_baseline_pause_circle_outline_48"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </FrameLayout>
