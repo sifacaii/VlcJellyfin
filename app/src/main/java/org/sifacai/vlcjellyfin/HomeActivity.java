@@ -118,16 +118,35 @@ public class HomeActivity extends BaseActivity{
         });
     }
 
+
     private void initView(){
+        showLoadingDialog("正在加载首页…………");
         JfClient.GetViews(new JfClient.JJCallBack(){
             @Override
             public void onSuccess(JsonArray views) {
-                showLoadingDialog("正在加载首页…………");
                 addRowTvRecyclerView("我的媒体", views, true);
+                for(int i=0;i<views.size();i++){
+                    JsonObject colls = views.get(i).getAsJsonObject();
+                    String name = JfClient.strFromGson(colls,"Name");
+                    String Id = JfClient.strFromGson(colls,"Id");
+                    JfClient.GetLatest(Id,new JfClient.JJCallBack(){
+                        @Override
+                        public void onSuccess(JsonArray latests) {
+                            addRowTvRecyclerView("新的 " + name,latests,false);
+                        }
+                    });
+                }
                 dismissLoadingDialog();
             }
         });
+        JfClient.GetResume(new JfClient.JJCallBack(){
+            @Override
+            public void onSuccess(JsonArray resumes) {
+                addRowTvRecyclerView("最近播放",resumes,false);
+            }
+        });
     }
+
 
     /**
      * 添加类别行

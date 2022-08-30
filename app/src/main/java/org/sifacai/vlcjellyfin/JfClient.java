@@ -39,7 +39,7 @@ public class JfClient {
 
     /**
      * 初始化配置
-     * @param context
+     * @param application
      */
     public static void init(Application application) {
         config = new Config(application);
@@ -448,6 +448,15 @@ public class JfClient {
             }
         }
         return null;
+    }
+
+    public static String strFromGson(JsonObject obj,String key){
+        JsonElement jo = jeFromGson(obj,key);
+        if(jo == null){
+            return "";
+        }else{
+            return jo.getAsString();
+        }
     }
 
     /**
