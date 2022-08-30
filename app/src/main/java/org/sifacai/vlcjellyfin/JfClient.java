@@ -1,20 +1,34 @@
 package org.sifacai.vlcjellyfin;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.cache.CacheEntity;
+import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+
 public class JfClient {
-    public final String XEmbyAuthorization = "MediaBrowser Client=\"Vlc_J_TV\", Device=\"Vlc_J_TV\", DeviceId=\"TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXa\", Version=\"10.8.1\"";
-    public HttpHeaders headers;
-    public String UserId="";
-    public String AccessToken="";
-    public String serverUrl;
+    public static final String TAG = "JellyfinClient";
+    public static final String XEmbyAuthorization = "MediaBrowser Client=\"Vlc_J_TV\", Device=\"Vlc_J_TV\", DeviceId=\"TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXa\", Version=\"10.8.1\"";
+    public static HttpHeaders headers;
+    public static Config config;
+    public static String UserId = "";
+    public static String AccessToken = "";
 
     public enum ReportType {
         playing,
@@ -23,22 +37,32 @@ public class JfClient {
     }
 
     /**
+     * 初始化配置
+     * @param context
+     */
+    public static void init(Context context) {
+        config = new Config(context);
+        SetHeaders();
+    }
+
+    /**
      * 回放报告
+     *
      * @param type
      * @param id
      * @param PositionTicks
      */
-    public void ReportPlayBackState(ReportType type,String id,long PositionTicks){
-        String url = serverUrl;
-        if(type == ReportType.playing){
+    public static void ReportPlayBackState(ReportType type, String id, long PositionTicks) {
+        String url = config.getJellyfinUrl();
+        if (type == ReportType.playing) {
             url += "/Sessions/Playing";
-        }else if(type == ReportType.Progress){
+        } else if (type == ReportType.Progress) {
             url += "/Sessions/Playing/Progress";
-        }else if(type == ReportType.stop){
+        } else if (type == ReportType.stop) {
             url += "/Sessions/Playing/Stopped";
         }
         String reqstr = "{\"itemId\":\"" + id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
-        SendPost(url,reqstr,new JJCallBack(){
+        SendPost(url, reqstr, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
                 //回放报告
@@ -48,49 +72,52 @@ public class JfClient {
 
     /**
      * 获取封面图url
+     *
      * @param itemid
      * @param tagid
      * @return
      */
-    public String GetImgUrl(String itemid, String tagid) {
-        String url = serverUrl + "/Items/" + itemid + "/Images/Primary";
+    public static String GetImgUrl(String itemid, String tagid) {
+        String url = config.getJellyfinUrl() + "/Items/" + itemid + "/Images/Primary";
         url += "?fillHeight=286&fillWidth=200&quality=96&tag=" + tagid;
         return url;
     }
 
-    public String GetImgUrl(JsonObject item) {
-        String id = jeFromGson(item,"Id").getAsString();
-        String imgid = jeFromGson(jeFromGson(item,"ImageTags").getAsJsonObject(),"Primary").getAsString();
-        return GetImgUrl(id,imgid);
+    public static String GetImgUrl(JsonObject item) {
+        String id = jeFromGson(item, "Id").getAsString();
+        String imgid = jeFromGson(jeFromGson(item, "ImageTags").getAsJsonObject(), "Primary").getAsString();
+        return GetImgUrl(id, imgid);
     }
 
     /**
      * 获取播放url
+     *
      * @param itemid
      * @return
      */
-    public String GetPlayUrl(String itemid){
-        String playurl = serverUrl + "/videos/" + itemid + "/stream.mp4?static=true&a";
+    public static String GetPlayUrl(String itemid) {
+        String playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&a";
         return playurl;
     }
 
     /**
      * 获取剧集
+     *
      * @param seriesId 剧ID
      * @param seasonId 季ID
      * @param cb
      */
-    public void GetEpisodes(String seriesId,String seasonId,JJCallBack cb){
-        String EpisodesUrl = serverUrl + "/Shows/" + seriesId + "/Episodes?seasonId=" + seasonId;
+    public static void GetEpisodes(String seriesId, String seasonId, JJCallBack cb) {
+        String EpisodesUrl = config.getJellyfinUrl() + "/Shows/" + seriesId + "/Episodes?seasonId=" + seasonId;
         EpisodesUrl += "&userId=" + UserId;
         EpisodesUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,CanDelete,MediaSourceCount,Overview";
 
-        SendGet(EpisodesUrl,new JJCallBack(){
+        SendGet(EpisodesUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject item = strToGson(str,JsonObject.class);
+                JsonObject item = strToGson(str, JsonObject.class);
                 if (null != item) {
-                    JsonArray items = jeFromGson(item,"Items").getAsJsonArray();
+                    JsonArray items = jeFromGson(item, "Items").getAsJsonArray();
                     cb.onSuccess(items);
                 }
             }
@@ -100,19 +127,20 @@ public class JfClient {
 
     /**
      * 获取季(Seasons)数据
+     *
      * @param seriesId 剧ID
      * @param cb
      */
-    public void GetSeasons(String seriesId,JJCallBack cb){
-        String SeasonsUrl = serverUrl + "/Shows/" + seriesId + "/Seasons?userId=" + UserId;
+    public static void GetSeasons(String seriesId, JJCallBack cb) {
+        String SeasonsUrl = config.getJellyfinUrl() + "/Shows/" + seriesId + "/Seasons?userId=" + UserId;
         SeasonsUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,MediaSourceCount";
 
-        SendGet(SeasonsUrl,new JJCallBack(){
+        SendGet(SeasonsUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject item = strToGson(str,JsonObject.class);
-                if(null != item){
-                    JsonArray items = jeFromGson(item,"Items").getAsJsonArray();
+                JsonObject item = strToGson(str, JsonObject.class);
+                if (null != item) {
+                    JsonArray items = jeFromGson(item, "Items").getAsJsonArray();
                     cb.onSuccess(items);
                 }
             }
@@ -121,19 +149,20 @@ public class JfClient {
 
     /**
      * 获取合集条目
+     *
      * @param parentId
-     * @param type   类型 movie、tvshows……
-     * @param sortBy  排序条件  评分、加入时间……
+     * @param type      类型 movie、tvshows……
+     * @param sortBy    排序条件  评分、加入时间……
      * @param sortOrder 排序规则 升序、降序
-     * @param limit 每页条数
-     * @param page  页
+     * @param limit     每页条数
+     * @param page      页
      * @param cb
      */
-    public void GetCollection(String parentId,String type,String sortBy,String sortOrder,int limit,int page,JJCallBack cb){
-        String itemsUrl = serverUrl + "/Users/" + UserId + "/Items?ParentId=" + parentId + "&Limit=" + limit;
+    public static void GetCollection(String parentId, String type, String sortBy, String sortOrder, int limit, int page, JJCallBack cb) {
+        String itemsUrl = config.getJellyfinUrl() + "/Users/" + UserId + "/Items?ParentId=" + parentId + "&Limit=" + limit;
         itemsUrl += "&Recursive=true&Fields=PrimaryImageAspectRatio,BasicSyncInfo,Seasons,Episodes&ImageTypeLimit=1";
         itemsUrl += "&EnableImageTypes=Primary,Backdrop,Banner,Thumb";
-        itemsUrl += "&SortBy="+sortBy+",SortName,ProductionYear&SortOrder=" + sortOrder;
+        itemsUrl += "&SortBy=" + sortBy + ",SortName,ProductionYear&SortOrder=" + sortOrder;
 
         if (type.equals("tvshows")) {
             itemsUrl += "&IncludeItemTypes=Series";
@@ -145,10 +174,10 @@ public class JfClient {
         int startIndex = page * limit - limit;
         itemsUrl += "&StartIndex=" + startIndex;
 
-        SendGet(itemsUrl,new JJCallBack(){
+        SendGet(itemsUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject items = strToGson(str,JsonObject.class);
+                JsonObject items = strToGson(str, JsonObject.class);
                 cb.onSuccess(items);
             }
         });
@@ -156,20 +185,21 @@ public class JfClient {
 
     /**
      * 获取最新项目
+     *
      * @param parentId
      * @param cb
      */
-    public void GetLatest(String parentId,JJCallBack cb){
-        String lastestUrl = serverUrl + "/Users/" + UserId + "/Items/Latest?";
+    public static void GetLatest(String parentId, JJCallBack cb) {
+        String lastestUrl = config.getJellyfinUrl() + "/Users/" + UserId + "/Items/Latest?";
         lastestUrl += "Limit=16&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo%2CPath";
         lastestUrl += "&ImageTypeLimit=1&EnableImageTypes=Primary,Backdrop,Thumb";
         lastestUrl += "&ParentId=" + parentId;
 
-        SendGet(lastestUrl,new JJCallBack(){
+        SendGet(lastestUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonArray latestObj = strToGson(str,JsonArray.class);
-                if(null != latestObj) {
+                JsonArray latestObj = strToGson(str, JsonArray.class);
+                if (null != latestObj) {
                     cb.onSuccess(latestObj);
                 }
             }
@@ -178,19 +208,20 @@ public class JfClient {
 
     /**
      * 获取最近播放
+     *
      * @param cb
      */
-    public void GetResume(JJCallBack cb){
-        String resumeUrl = serverUrl + "/Users/" + UserId + "/Items/Resume?";
+    public static void GetResume(JJCallBack cb) {
+        String resumeUrl = config.getJellyfinUrl() + "/Users/" + UserId + "/Items/Resume?";
         resumeUrl += "Limit=12&Recursive=true&Fields=PrimaryImageAspectRatio,BasicSyncInfo";
         resumeUrl += "&ImageTypeLimit=1&EnableImageTypes=Primary,Backdrop,Thumb";
         resumeUrl += "&EnableTotalRecordCount=false&MediaTypes=Video";
 
-        SendGet(resumeUrl,new JJCallBack(){
+        SendGet(resumeUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject resumeObj = strToGson(str,JsonObject.class);
-                if(null != resumeObj) {
+                JsonObject resumeObj = strToGson(str, JsonObject.class);
+                if (null != resumeObj) {
                     JsonArray resumes = jeFromGson(resumeObj, "Items").getAsJsonArray();
                     cb.onSuccess(resumes);
                 }
@@ -200,16 +231,17 @@ public class JfClient {
 
     /**
      * 获取首页
+     *
      * @param cb
      */
-    public void GetViews(JJCallBack cb){
-        String viewsUrl = serverUrl + "/Users/" + UserId + "/Views";
-        SendGet(viewsUrl,new JJCallBack(){
+    public static void GetViews(JJCallBack cb) {
+        String viewsUrl = config.getJellyfinUrl() + "/Users/" + UserId + "/Views";
+        SendGet(viewsUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject viewsObj = strToGson(str,JsonObject.class);
-                if(null!=viewsObj){
-                    JsonArray views = jeFromGson(viewsObj,"Items").getAsJsonArray();
+                JsonObject viewsObj = strToGson(str, JsonObject.class);
+                if (null != viewsObj) {
+                    JsonArray views = jeFromGson(viewsObj, "Items").getAsJsonArray();
                     cb.onSuccess(views);
                 }
             }
@@ -218,16 +250,17 @@ public class JfClient {
 
     /**
      * 获取项目详情
+     *
      * @param itemid
      * @param cb
      */
-    public void GetItemInfo(String itemid,JJCallBack cb){
-        String url = serverUrl + "/Users/" + UserId + "/Items/" + itemid;
-        SendGet(url,new JJCallBack(){
+    public static void GetItemInfo(String itemid, JJCallBack cb) {
+        String url = config.getJellyfinUrl() + "/Users/" + UserId + "/Items/" + itemid;
+        SendGet(url, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject item = strToGson(str,JsonObject.class);
-                if(null != item){
+                JsonObject item = strToGson(str, JsonObject.class);
+                if (null != item) {
                     cb.onSuccess(item);
                 }
             }
@@ -236,29 +269,34 @@ public class JfClient {
 
     /**
      * 验证用户名密码
+     *
      * @param username
      * @param password
      * @param cb
      */
-    public void authenticateByName(String username,String password,JJCallBack cb){
-        String url = serverUrl + "/Users/authenticatebyname";
+    public static void AuthenticateByName(String username, String password, JJCallBack cb, boolean saveUser) {
+        String url = config.getJellyfinUrl() + "/Users/authenticatebyname";
         String reqjson = "{\"Username\":\"" + username + "\",\"Pw\":\"" + password + "\"}";
-        SendPost(url,reqjson,new JJCallBack(){
+        SendPost(url, reqjson, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
                 JsonObject userObj = strToGson(str, JsonObject.class);
                 if (userObj != null) {
-                    String userId = jeFromGson(jeFromGson(userObj, "User").getAsJsonObject(),"Id").getAsString();
-                    String Token = jeFromGson(userObj,"AccessToken").getAsString();
+                    String userId = jeFromGson(jeFromGson(userObj, "User").getAsJsonObject(), "Id").getAsString();
+                    String Token = jeFromGson(userObj, "AccessToken").getAsString();
                     if (!Token.equals("")) {
                         UserId = userId;
                         AccessToken = Token;
+                        if (saveUser) {
+                            config.setUserName(username);
+                            config.setPassWord(password);
+                        }
                         SetHeaders();
                         cb.onSuccess(true);
-                    }else {
+                    } else {
                         cb.onSuccess(false);
                     }
-                }else {
+                } else {
                     cb.onSuccess(false);
                 }
             }
@@ -267,14 +305,15 @@ public class JfClient {
 
     /**
      * 获取用户列表
-     *  @param cb
+     *
+     * @param cb
      */
-    public void GetUsers(JJCallBack cb){
-        String url = serverUrl + "/users/public";
-        SendGet(url,new JJCallBack(){
+    public static void GetUsers(JJCallBack cb) {
+        String url = config.getJellyfinUrl() + "/users/public";
+        SendGet(url, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonArray users = strToGson(str,JsonArray.class);
+                JsonArray users = strToGson(str, JsonArray.class);
                 cb.onSuccess(users);
             }
         });
@@ -282,34 +321,41 @@ public class JfClient {
 
     /**
      * 验证服务器地址
+     *
      * @param url
      * @param cb
      */
-    public void VerityServerUrl(String url,JJCallBack cb){
-        SendGet(url + "/system/info/public",new JJCallBack(){
-            @Override
-            public void onSuccess(String str) {
-                JsonObject serverInfo = strToGson(str,JsonObject.class);
-                if (serverInfo != null) {
-                    String ServerId = jeFromGson(serverInfo,"Id").getAsString();
-                    if (ServerId == null || ServerId.length() == 0) {
-                        cb.onSuccess(false);
-                    } else {
-                        serverUrl = url;
-                        cb.onSuccess(true);
+    public static void VerityServerUrl(String url, JJCallBack cb) {
+        if (url.length() > 0) {
+            if (url.startsWith("http://") || url.startsWith("https://")) {
+
+                SendGet(url + "/system/info/public", new JJCallBack() {
+                    @Override
+                    public void onSuccess(String str) {
+                        JsonObject serverInfo = strToGson(str, JsonObject.class);
+                        String ServerId = jeFromGson(serverInfo, "Id") == null ? null : jeFromGson(serverInfo, "Id").getAsString();
+                        if (ServerId == null || ServerId.length() == 0) {
+                            cb.onSuccess(false);
+                        } else {
+                            config.setJellyfinUrl(url);
+                            cb.onSuccess(true);
+                        }
                     }
-                }
+                });
+
             }
-        });
+        }else{
+            cb.onSuccess(false);
+        }
     }
 
     /**
      * 设置请求头
      */
-    public void SetHeaders(){
+    public static void SetHeaders() {
         headers = new HttpHeaders();
         String xea = XEmbyAuthorization;
-        if(null != AccessToken && AccessToken.length() > 0){
+        if (null != AccessToken && AccessToken.length() > 0) {
             xea += ", Token=\"" + AccessToken + "\"";
         }
         headers.put("Accept", "application/json");
@@ -319,39 +365,46 @@ public class JfClient {
 
     /**
      * Get
+     *
      * @param url
      * @param cb
      */
-    public void SendGet(String url, JJCallBack cb){
-        OkGo.<String>get(url).headers(headers).execute(new AbsCallback<String>() {
-            @Override
-            public String convertResponse(okhttp3.Response response) throws Throwable {
-                String result = "";
-                if(null != response.body()){
-                    result = response.body().string();
+    public static void SendGet(String url, JJCallBack cb) {
+            OkGo.<String>get(url).headers(headers).execute(new AbsCallback<String>() {
+                @Override
+                public String convertResponse(okhttp3.Response response) throws IOException {
+                    String result = "";
+                    if (null != response.body()) {
+                        result = response.body().string();
+                    }
+                    return result;
                 }
-                return result;
-            }
 
-            @Override
-            public void onSuccess(Response<String> response) {
-                cb.onSuccess(response.body());
-            }
-        });
+                @Override
+                public void onSuccess(Response<String> response) {
+                    cb.onSuccess(response.body());
+                }
+
+                @Override
+                public void onError(Response<String> response) {
+                    cb.onSuccess("");
+                }
+            });
     }
 
     /**
      * Post
+     *
      * @param url
      * @param jsonStr
      * @param cb
      */
-    public void SendPost(String url, String jsonStr, JJCallBack cb){
+    public static void SendPost(String url, String jsonStr, JJCallBack cb) {
         OkGo.<String>post(url).headers(headers).upJson(jsonStr).execute(new AbsCallback<String>() {
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
                 String result = "";
-                if(null != response.body()){
+                if (null != response.body()) {
                     result = response.body().string();
                 }
                 return result;
@@ -360,12 +413,18 @@ public class JfClient {
             @Override
             public void onSuccess(Response<String> response) {
                 cb.onSuccess(response.body());
+            }
+
+            @Override
+            public void onError(Response<String> response) {
+                cb.onSuccess("");
             }
         });
     }
 
     /**
      * Json字符串转Gson对象
+     *
      * @param jsonStr
      * @param tClass
      * @param <T>
@@ -384,19 +443,20 @@ public class JfClient {
 
     /**
      * 按key获取JsonElement
+     *
      * @param obj
      * @param key
      * @return
      */
-    public static JsonElement jeFromGson(JsonObject obj,String key){
-        JsonElement je = new Gson().fromJson("",JsonElement.class);
-        if(obj.has(key)){
-            je = obj.get(key);
+    public static JsonElement jeFromGson(JsonObject obj, String key) {
+        JsonElement jo = null;
+        if (obj != null && obj.has(key)) {
+            jo = obj.get(key).getAsJsonObject();
         }
-        return je;
+        return jo;
     }
 
-    public class JJCallBack implements JCallBack{
+    public static class JJCallBack implements JCallBack {
 
         @Override
         public void onSuccess(String str) {
@@ -419,10 +479,13 @@ public class JfClient {
         }
     }
 
-    public interface JCallBack{
+    public interface JCallBack {
         void onSuccess(String str);
+
         void onSuccess(Boolean bool);
+
         void onSuccess(JsonObject jsonObject);
+
         void onSuccess(JsonArray jsonArray);
     }
 }

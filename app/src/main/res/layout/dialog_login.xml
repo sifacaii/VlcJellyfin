@@ -3,43 +3,48 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding_border" >
+    android:padding="@dimen/padding_border"
+    android:paddingTop="0dp">
 
     <EditText
         android:id="@+id/dialog_login_url"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/dialog_text_height"
         android:inputType="text"
         android:lines="1"
+        android:nextFocusDown="@id/dialog_login_un"
         android:hint="服务器地址"/>
 
     <EditText
         android:id="@+id/dialog_login_un"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/dialog_text_height"
         android:inputType="text"
         android:lines="1"
+        android:nextFocusDown="@id/dialog_login_pw"
         android:hint="用户名"/>
 
     <EditText
         android:id="@+id/dialog_login_pw"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/dialog_text_height"
         android:inputType="text"
         android:lines="1"
+        android:nextFocusDown="@id/dialog_login_save"
         android:hint="密码"/>
 
     <CheckBox
         android:id="@+id/dialog_login_save"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dialog_text_height"
         android:focusable="true"
         android:background="@drawable/shape_user_focus"
+        android:nextFocusDown="@id/dialog_login_submit"
         android:text="保存用户" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/dialog_text_height"
         android:orientation="horizontal">
 
         <TextView

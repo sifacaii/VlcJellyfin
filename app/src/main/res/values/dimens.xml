@@ -24,6 +24,8 @@
     <dimen name="drawable_padding_s">6dp</dimen>
     <dimen name="drawable_padding_b">12dp</dimen>
 
+    <!-- 登录框 -->
+    <dimen name="dialog_text_height">48dp</dimen>
 
     <!-- 播放控制器   -->
     <dimen name="time_text_size">26dp</dimen>
