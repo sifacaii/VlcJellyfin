@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 
@@ -17,6 +16,35 @@ public class JfClient {
     public String AccessToken="";
     public String serverUrl;
 
+    public enum ReportType {
+        playing,
+        Progress,
+        stop
+    }
+
+    /**
+     * 回放报告
+     * @param type
+     * @param id
+     * @param PositionTicks
+     */
+    public void ReportPlayBackState(ReportType type,String id,long PositionTicks){
+        String url = serverUrl;
+        if(type == ReportType.playing){
+            url += "/Sessions/Playing";
+        }else if(type == ReportType.Progress){
+            url += "/Sessions/Playing/Progress";
+        }else if(type == ReportType.stop){
+            url += "/Sessions/Playing/Stopped";
+        }
+        String reqstr = "{\"itemId\":\"" + id + "\",\"PositionTicks\":\"" + PositionTicks * 10000 + "\"}";
+        SendPost(url,reqstr,new JJCallBack(){
+            @Override
+            public void onSuccess(String str) {
+                //回放报告
+            }
+        });
+    }
 
     /**
      * 获取封面图url
