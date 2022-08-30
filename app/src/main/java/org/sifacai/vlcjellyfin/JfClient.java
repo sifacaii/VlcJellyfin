@@ -18,6 +18,7 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 
 import java.io.IOException;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -40,9 +41,16 @@ public class JfClient {
      * 初始化配置
      * @param context
      */
-    public static void init(Context context) {
-        config = new Config(context);
+    public static void init(Application application) {
+        config = new Config(application);
         SetHeaders();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(5,TimeUnit.SECONDS);
+        builder.readTimeout(3, TimeUnit.SECONDS);
+        builder.writeTimeout(5,TimeUnit.SECONDS);
+        OkGo.getInstance().init(application)
+                .setOkHttpClient(builder.build())
+                .setRetryCount(3);
     }
 
     /**
@@ -333,6 +341,7 @@ public class JfClient {
                     @Override
                     public void onSuccess(String str) {
                         JsonObject serverInfo = strToGson(str, JsonObject.class);
+                        Log.d(TAG, "onSuccess: " + str);
                         String ServerId = jeFromGson(serverInfo, "Id") == null ? null : jeFromGson(serverInfo, "Id").getAsString();
                         if (ServerId == null || ServerId.length() == 0) {
                             cb.onSuccess(false);
@@ -451,7 +460,7 @@ public class JfClient {
     public static JsonElement jeFromGson(JsonObject obj, String key) {
         JsonElement jo = null;
         if (obj != null && obj.has(key)) {
-            jo = obj.get(key).getAsJsonObject();
+            jo = obj.get(key);
         }
         return jo;
     }

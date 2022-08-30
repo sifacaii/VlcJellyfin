@@ -32,7 +32,7 @@ public class HomeActivity extends BaseActivity{
 
         tvContiner = findViewById(R.id.tvItems);
 
-        JfClient.init(this);
+        JfClient.init(getApplication());
 
         Log.d(TAG, "onCreate: " + JfClient.config.getJellyfinUrl());
         if(JfClient.AccessToken.equals("") ||JfClient.UserId.equals("")){
