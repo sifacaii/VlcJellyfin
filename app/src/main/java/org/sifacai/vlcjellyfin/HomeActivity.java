@@ -160,11 +160,11 @@ public class HomeActivity extends BaseActivity{
         jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
             @Override
             public void onClick(JsonObject jo) {
-                String type = Utils.getJsonString(jo, "Type").getAsString();
+                String type = JfClient.strFromGson(jo, "Type");
                 String itemId = jo.get("Id").getAsString();
                 Intent intent = null;
                 if (type.equals("Folder") || type.equals("CollectionFolder")) {
-                    intent = new Intent(mAA, CollectionActivity.class);
+                    intent = new Intent(mAA, CollectionActivity2.class);
                 } else {
                     intent = new Intent(mAA, DetailActivity.class);
                 }
