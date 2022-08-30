@@ -19,7 +19,8 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:maxLength="20"
-            android:maxLines="1"
+            android:inputType="text"
+            android:lines="1"
             android:focusable="true"
             android:tooltipText="关键字" />
 
