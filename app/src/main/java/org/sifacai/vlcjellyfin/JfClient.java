@@ -266,6 +266,21 @@ public class JfClient {
     }
 
     /**
+     * 获取用户列表
+     *  @param cb
+     */
+    public void GetUsers(JJCallBack cb){
+        String url = serverUrl + "/users/public";
+        SendGet(url,new JJCallBack(){
+            @Override
+            public void onSuccess(String str) {
+                JsonArray users = strToGson(str,JsonArray.class);
+                cb.onSuccess(users);
+            }
+        });
+    }
+
+    /**
      * 验证服务器地址
      * @param url
      * @param cb
