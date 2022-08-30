@@ -253,6 +253,7 @@ public class JfClient {
                     if (!Token.equals("")) {
                         UserId = userId;
                         AccessToken = Token;
+                        SetHeaders();
                         cb.onSuccess(true);
                     }else {
                         cb.onSuccess(false);
@@ -279,11 +280,26 @@ public class JfClient {
                     if (ServerId == null || ServerId.length() == 0) {
                         cb.onSuccess(false);
                     } else {
+                        serverUrl = url;
                         cb.onSuccess(true);
                     }
                 }
             }
         });
+    }
+
+    /**
+     * 设置请求头
+     */
+    public void SetHeaders(){
+        headers = new HttpHeaders();
+        String xea = XEmbyAuthorization;
+        if(null != AccessToken && AccessToken.length() > 0){
+            xea += ", Token=\"" + AccessToken + "\"";
+        }
+        headers.put("Accept", "application/json");
+        headers.put("Accept-Language", "zh-CN,zh;q=0.9");
+        headers.put("X-Emby-Authorization", xea);
     }
 
     /**
