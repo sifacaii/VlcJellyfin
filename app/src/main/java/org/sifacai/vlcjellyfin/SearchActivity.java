@@ -31,7 +31,7 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        if (Utils.UserId.equals("") || Utils.AccessToken.equals("")) {
+        if (JfClient.UserId.equals("") || JfClient.AccessToken.equals("")) {
             finish();
         }
 
@@ -52,11 +52,7 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
         adapter.setOnItemClickListener(this);
         mGridView.setAdapter(adapter);
 
-        BaseUrl = "/Users/" + Utils.UserId + "/Items?";
-        BaseUrl += "Fields=PrimaryImageAspectRatio,CanDelete,BasicSyncInfo,MediaSourceCount";
-        BaseUrl += "&Recursive=true&EnableTotalRecordCount=false&ImageTypeLimit=1&IncludePeople=false";
-        BaseUrl += "&IncludeMedia=true&IncludeGenres=false&IncludeStudios=false&IncludeArtists=false";
-        BaseUrl += "&Limit=" + limit;
+
 
         searchTermEdit = findViewById(R.id.searchTermEdit);
         searchBtn = findViewById(R.id.searchBtn);
@@ -75,25 +71,13 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
     }
 
     private void Search(String searchTerm) {
-        String movieUrl = BaseUrl + "&searchTerm=" + searchTerm + "&IncludeItemTypes=Movie";
-        String seriesUrl = BaseUrl + "&searchTerm=" + searchTerm + "&IncludeItemTypes=Series";
-        String episodeUrl = BaseUrl + "&searchTerm=" + searchTerm + "&IncludeItemTypes=Episode";
-
-        new Thread(new Runnable() {
+        showLoadingDialog("搜索中………………");
+        JfClient.SearchByTerm(searchTerm,16,new JfClient.JJCallBack(){
             @Override
-            public void run() {
-                showLoadingDialog("搜索中………………");
-                String movieStr = Utils.okhttpSend(movieUrl);
-                String seriesStr = Utils.okhttpSend(seriesUrl);
-                JsonObject moviejob = Utils.JsonToObj(movieStr, JsonObject.class);
-                JsonObject seriesjob = Utils.JsonToObj(seriesStr, JsonObject.class);
-                JsonArray movieItems = moviejob.get("Items").getAsJsonArray();
-                JsonArray seriesItems = seriesjob.get("Items").getAsJsonArray();
-                movieItems.addAll(seriesItems);
-                fillItems(movieItems);
-                dismissLoadingDialog();
+            public void onSuccess(JsonArray items) {
+                adapter.addItems(items);
             }
-        }).start();
+        },null);
     }
 
     private void fillItems(JsonArray items) {
