@@ -133,17 +133,17 @@ public class JfClient {
                         String jsonstr = SendGet(movieUrl);
                         JsonObject moviejob = strToGson(jsonstr, JsonObject.class);
                         JsonElement je = jeFromGson(moviejob, "Items");
-                        if (je != null) items.add(je.getAsJsonArray());
+                        if (moviejob != null) items.addAll(je.getAsJsonArray());
 
                         jsonstr = SendGet(seriesUrl);
                         JsonObject seriesobj = strToGson(jsonstr, JsonObject.class);
                         je = jeFromGson(seriesobj, "Items");
-                        if (je != null) items.add(je.getAsJsonArray());
+                        if (seriesobj != null) items.addAll(je.getAsJsonArray());
 
                         jsonstr = SendGet(personUrl);
                         JsonObject personobj = strToGson(jsonstr,JsonObject.class);
                         je = jeFromGson(personobj,"Items");
-                        if (je != null) items.add(je.getAsJsonArray());
+                        if (personobj != null) items.addAll(je.getAsJsonArray());
 
                         scb.onSuccess(items);
                     }

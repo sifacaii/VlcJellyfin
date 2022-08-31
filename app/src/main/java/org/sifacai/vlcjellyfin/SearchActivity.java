@@ -76,6 +76,7 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
             @Override
             public void onSuccess(JsonArray items) {
                 adapter.addItems(items);
+                dismissLoadingDialog();
             }
         },null);
     }
