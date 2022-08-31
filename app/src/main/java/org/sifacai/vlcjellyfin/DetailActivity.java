@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 
 public class DetailActivity extends BaseActivity implements JAdapter.OnItemClickListener {
     private String TAG = "详情：";
-    private Activity mActivity;
     private String ItemId;
     private ImageView tvCover;
     private TextView tvTitle;
@@ -46,11 +46,10 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         setContentView(R.layout.activity_detail);
         getSupportActionBar().hide();
 
-        if (Utils.UserId.equals("") || Utils.AccessToken.equals("")) {
+        if (JfClient.UserId.equals("") || JfClient.AccessToken.equals("")) {
             finish();
         }
 
-        mActivity = this;
         init();
     }
 
@@ -71,110 +70,88 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         if (ItemId.equals("")) {
             finish();
         } else {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    showLoadingDialog("加载中……");
-                    initData(ItemId);
-                }
-            }).start();
+            showLoadingDialog("加载中……");
+            initData(ItemId);
         }
     }
 
     private void initData(String itemId) {
-        String detailUrl = "/Users/" + Utils.UserId + "/Items/" + itemId;
+        JfClient.GetItemInfo(itemId, new JfClient.JJCallBack() {
+            @Override
+            public void onSuccess(JsonObject detailObj) {
+                fillDetails(detailObj);
+            }
+        }, new JfClient.JJCallBack() {
+            @Override
+            public void onError(String str) {
+                Log.d(TAG, "onError: " + str);
+                finish();
+            }
+        });
+    }
 
-        String detailStr = Utils.okhttpSend(detailUrl);
-        if (detailStr != "") {
-            JsonObject detailObj = new Gson().fromJson(detailStr, JsonObject.class);
-            String Id = detailObj.get("Id").getAsString();
-            String Name = Utils.getJsonString(detailObj, "Name").getAsString();
+    private void fillDetails(JsonObject detailObj) {
+        String Id = detailObj.get("Id").getAsString();
+        String Name = JfClient.strFromGson(detailObj, "Name");
+        String imgurl = JfClient.GetImgUrl(detailObj);
+        Picasso.get()
+                .load(imgurl)
+                .placeholder(R.drawable.img_loading_placeholder)
+                .error(R.drawable.img_loading_placeholder)
+                .into(tvCover);
 
-            if (detailObj.has("ImageTags")) {
-                JsonObject ImageTags = detailObj.get("ImageTags").getAsJsonObject();
-                if (ImageTags.has("Primary")) {
-                    String imgid = ImageTags.get("Primary").getAsString();
-                    String finalPicUrl = Utils.getImgUrl(itemId, imgid);
-                    mActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Picasso.get()
-                                    .load(finalPicUrl)
-                                    .placeholder(R.drawable.img_loading_placeholder)
-                                    .error(R.drawable.img_loading_placeholder)
-                                    .into(tvCover);
-                        }
-                    });
+        JsonElement genres = JfClient.jeFromGson(detailObj, "Genres");
+        String Genres = genres == null ? "" : genres.getAsJsonArray().toString();
+        String OfficialRating = JfClient.strFromGson(detailObj, "OfficialRating");
+        String CommunityRating = JfClient.strFromGson(detailObj, "CommunityRating");
+        String ProductionYear = JfClient.strFromGson(detailObj, "ProductionYear");
+        String Overview = JfClient.strFromGson(detailObj, "Overview");
+
+        tvTitle.setText(Name);
+        tvGenres.setText("年份：" + ProductionYear + "  风格：" + Genres);
+        tvRating.setText("评分：" + CommunityRating + "  评级：" + OfficialRating);
+        tvOverview.setText("简介：    " + Overview);
+
+        JsonArray MediaStreams = null;
+        if (detailObj.has("MediaStreams")) {
+            String video = "";
+            String audio = "";
+            String subtitle = "";
+            MediaStreams = detailObj.get("MediaStreams").getAsJsonArray();
+            for (int i = 0; i < MediaStreams.size(); i++) {
+                JsonObject ms = MediaStreams.get(i).getAsJsonObject();
+                String mstype = ms.get("Type").getAsString();
+                if (mstype.equals("Video")) {
+                    video += Utils.getJsonString(ms, "DisplayTitle").getAsString();
+                } else if (mstype.equals("Audio")) {
+                    if (ms.has("Language")) audio += ms.get("Language").getAsString() + "、";
+                    else audio += Utils.getJsonString(ms, "Codec").getAsString() + "；";
+                } else if (mstype.equals("Subtitle")) {
+                    if (ms.has("Language")) subtitle += ms.get("Language").getAsString() + "、";
+                    else subtitle += Utils.getJsonString(ms, "Codec").getAsString() + "；";
                 }
             }
-            String Genres = Utils.getJsonString(detailObj, "Genres").toString();
-            String OfficialRating = Utils.getJsonString(detailObj, "OfficialRating").getAsString();
-            String CommunityRating = Utils.getJsonString(detailObj, "CommunityRating").getAsString();
-            String ProductionYear = Utils.getJsonString(detailObj, "ProductionYear").getAsString();
-            String Overview = Utils.getJsonString(detailObj, "Overview").getAsString();
+            String finalVideo = video;
+            String finalAudio = audio;
+            String finalSubtitle = subtitle;
+            tvVideo.setText("视频：" + finalVideo);
+            tvAudio.setText("音频：" + finalAudio);
+            tvSubtitle.setText("字幕：" + finalSubtitle);
+        }
 
-            String finalGenres = Genres;
-            mActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    tvTitle.setText(Name);
-                    tvGenres.setText("年份：" + ProductionYear + "  风格：" + finalGenres);
-                    tvRating.setText("评分：" + CommunityRating + "  评级：" + OfficialRating);
-                    tvOverview.setText("简介：    " + Overview);
-                }
-            });
-
-            JsonArray MediaStreams = null;
-            if (detailObj.has("MediaStreams")) {
-                String video = "";
-                String audio = "";
-                String subtitle = "";
-                MediaStreams = detailObj.get("MediaStreams").getAsJsonArray();
-                for (int i = 0; i < MediaStreams.size(); i++) {
-                    JsonObject ms = MediaStreams.get(i).getAsJsonObject();
-                    String mstype = ms.get("Type").getAsString();
-                    if (mstype.equals("Video")) {
-                        video += Utils.getJsonString(ms, "DisplayTitle").getAsString();
-                    } else if (mstype.equals("Audio")) {
-                        if (ms.has("Language")) audio += ms.get("Language").getAsString() + "、";
-                        else audio += Utils.getJsonString(ms, "Codec").getAsString() + "；";
-                    } else if (mstype.equals("Subtitle")) {
-                        if (ms.has("Language")) subtitle += ms.get("Language").getAsString() + "、";
-                        else subtitle += Utils.getJsonString(ms, "Codec").getAsString() + "；";
-                    }
-                }
-                String finalVideo = video;
-                String finalAudio = audio;
-                String finalSubtitle = subtitle;
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tvVideo.setText("视频：" + finalVideo);
-                        tvAudio.setText("音频：" + finalAudio);
-                        tvSubtitle.setText("字幕：" + finalSubtitle);
-                    }
-                });
-            }
-
-            //填充列表
-            String type = Utils.getJsonString(detailObj, "Type").getAsString();
-            if (type.equals("Series")) {
-                fillSeason(ItemId);
-            } else if (type.equals("Season")) {
-                String SeriesId = detailObj.get("SeriesId").getAsString();
-                fillEpisodes(SeriesId, ItemId);
-            } else if (type.equals("Episode")) {
-                String SeriesId = Utils.getJsonString(detailObj, "SeriesId").getAsString();
-                String SeasonId = Utils.getJsonString(detailObj, "SeasonId").getAsString();
-                fillEpisodes(SeriesId, SeasonId);
-            } else if (type.equals("Movie")) {
-                mAA.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fillMovie(detailObj);
-                    }
-                });
-            }
+        //填充列表
+        String type = JfClient.strFromGson(detailObj, "Type");
+        if (type.equals("Series")) {
+            fillSeason(ItemId);
+        } else if (type.equals("Season")) {
+            String SeriesId = detailObj.get("SeriesId").getAsString();
+            fillEpisodes(SeriesId, ItemId);
+        } else if (type.equals("Episode")) {
+            String SeriesId = JfClient.strFromGson(detailObj, "SeriesId");
+            String SeasonId = JfClient.strFromGson(detailObj, "SeasonId");
+            fillEpisodes(SeriesId, SeasonId);
+        } else if (type.equals("Movie")) {
+            fillMovie(detailObj);
         }
     }
 
@@ -203,16 +180,13 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 
         if (item.has("PartCount")) {
             String Id = Utils.getJsonString(item, "Id").getAsString();
-            String AddPartUrl = "/Videos/" + Id + "/AdditionalParts?userId=" + Utils.UserId;
-
-            new Thread(new Runnable() {
+            JfClient.GetAddPart(Id, new JfClient.JJCallBack() {
                 @Override
-                public void run() {
-                    String AddPartStr = Utils.okhttpSend(AddPartUrl);
-                    fillItems(AddPartStr);
+                public void onSuccess(JsonArray parts) {
+                    fillItems(parts);
                 }
-            }).start();
-        }else {
+            }, null);
+        } else {
             dismissLoadingDialog();
         }
     }
@@ -223,48 +197,40 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
      * @param SeriesId
      */
     private void fillSeason(String SeriesId) {
-        String SeasonsUrl = "/Shows/" + SeriesId + "/Seasons?userId=" + Utils.UserId;
-        SeasonsUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,MediaSourceCount";
-        String SeasonsStr = Utils.okhttpSend(SeasonsUrl);
-        fillItems(SeasonsStr);
+        JfClient.GetSeasons(SeriesId, new JfClient.JJCallBack() {
+            @Override
+            public void onSuccess(JsonArray seasons) {
+                fillItems(seasons);
+            }
+        }, null);
     }
 
     /**
      * 填充集
      *
      * @param SeriesId
-     * @param seasonId
+     * @param SeasonId
      * @return
      */
-    private void fillEpisodes(String SeriesId, String seasonId) {
-        String EpisodesUrl = "/Shows/" + SeriesId + "/Episodes?seasonId=" + seasonId;
-        EpisodesUrl += "&userId=" + Utils.UserId;
-        EpisodesUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,CanDelete,MediaSourceCount,Overview";
-        String EpisodesStr = Utils.okhttpSend(EpisodesUrl);
-        fillItems(EpisodesStr);
+    private void fillEpisodes(String SeriesId, String SeasonId) {
+        JfClient.GetEpisodes(SeriesId, SeasonId, new JfClient.JJCallBack() {
+            @Override
+            public void onSuccess(JsonArray episodes) {
+                fillItems(episodes);
+            }
+        }, null);
     }
 
-    public void fillItems(String jsonStr) {
-        JsonObject item = Utils.JsonToObj(jsonStr, JsonObject.class);
-        if (item == null) {
-            return;
-        }
-        JsonArray items = item.get("Items").getAsJsonArray();
+    public void fillItems(JsonArray items) {
         JAdapter jAdapter = new JAdapter(items, false);
         V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
         layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
         jAdapter.setOnItemClickListener(this);
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mGridView.setVisibility(View.VISIBLE);
-                mGridView.setLayoutManager(layoutManager);
-                mGridView.setAdapter(jAdapter);
-                dismissLoadingDialog();
-            }
-        });
+        mGridView.setVisibility(View.VISIBLE);
+        mGridView.setLayoutManager(layoutManager);
+        mGridView.setAdapter(jAdapter);
+        dismissLoadingDialog();
     }
-
 
 
     @Override
@@ -273,12 +239,12 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String type = jo.get("Type").getAsString();
         Intent intent = null;
         if (type.equals("Season")) {
-            intent = new Intent(mActivity, DetailActivity.class);
+            intent = new Intent(this, DetailActivity.class);
             intent.putExtra("itemId", itemId);
-            mActivity.startActivity(intent);
+            startActivity(intent);
         } else if (type.equals("Episode")) {
             Utils.playList.clear();
-            String Id = Utils.getJsonString(jo, "Id").getAsString();
+            String Id = JfClient.strFromGson(jo, "Id");
             JAdapter JA = (JAdapter) mGridView.getAdapter();
             JsonArray ja = JA.getData();
             if (ja != null) {
@@ -301,25 +267,21 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 
     /**
      * 组合播放媒体
+     *
      * @param item
      * @return
      */
     public Video getMedia(JsonObject item) {
         //String playUrl = Utils.JellyfinUrl + "/videos/" + id + "/stream.mp4?static=true&a";
         Video media = new Video();
-        media.Id = Utils.getJsonString(item, "Id").getAsString();
-        media.Name = Utils.getJsonString(item, "Name").getAsString();
-        JsonObject ImageTags = item.get("ImageTags").getAsJsonObject();
-        if (ImageTags.has("Primary")) {
-            String imgid = ImageTags.get("Primary").getAsString();
-            media.cover = Utils.getImgUrl(media.Id, imgid);
-        }
-        media.Url = Utils.config.getJellyfinUrl() + "/videos/" + media.Id + "/stream.mp4?static=true&a";
+        media.Id = JfClient.strFromGson(item, "Id");
+        media.Name = JfClient.strFromGson(item, "Name");
+        media.cover = JfClient.GetImgUrl(item);
+        media.Url = JfClient.GetPlayUrl(media.Id);
         if (item.has("UserData")) {
             JsonObject userdata = item.get("UserData").getAsJsonObject();
             media.startPositionTicks = userdata.get("PlaybackPositionTicks").getAsLong();
         }
-
         return media;
     }
 

@@ -114,7 +114,7 @@ public class JfClient {
      * @param cb
      */
     public static void GetAddPart(String itemid,JJCallBack cb,JJCallBack errcb){
-        String AddPartUrl = "/Videos/" + itemid + "/AdditionalParts?userId=" + UserId;
+        String AddPartUrl = config.getJellyfinUrl() + "/Videos/" + itemid + "/AdditionalParts?userId=" + UserId;
         SendGet(AddPartUrl,new JJCallBack(){
             @Override
             public void onSuccess(String str) {
@@ -288,6 +288,8 @@ public class JfClient {
                 JsonObject item = strToGson(str, JsonObject.class);
                 if (null != item) {
                     cb.onSuccess(item);
+                }else{
+                    err.onError(str);
                 }
             }
         },err);
