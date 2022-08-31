@@ -28,8 +28,6 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Utils.config = new Config(this);
-
         ActionBar actionBar = getSupportActionBar();
         if (null != actionBar) {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -183,9 +181,9 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
      * 登 出
      */
     private void logout() {
-        Utils.config.clear();
-        Utils.UserId = "";
-        Utils.AccessToken = "";
+        JfClient.config.clear();
+        JfClient.UserId = "";
+        JfClient.AccessToken = "";
         System.exit(0);
     }
 }

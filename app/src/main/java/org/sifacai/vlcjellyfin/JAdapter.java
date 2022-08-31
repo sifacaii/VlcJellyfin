@@ -65,10 +65,10 @@ public class JAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         VH v = (VH)holder;
         JsonObject jo = items.get(position).getAsJsonObject();
-        String SeriesName = Utils.getJsonString(jo,"SeriesName").getAsString();
-        String SeasonName = Utils.getJsonString(jo,"SeasonName").getAsString();
-        String Name = Utils.getJsonString(jo,"Name").getAsString();
-        String itemid = jo.get("Id").getAsString();
+        String SeriesName = JfClient.strFromGson(jo,"SeriesName");
+        String SeasonName = JfClient.strFromGson(jo,"SeasonName");
+        String Name = JfClient.strFromGson(jo,"Name");
+        String itemid = JfClient.strFromGson(jo,"Id");
         v.id = itemid;
         v.tvName.setText(" " + SeriesName + " " + SeasonName + " " + Name);
 
@@ -80,18 +80,8 @@ public class JAdapter extends RecyclerView.Adapter {
                 v.tvPlayedPercentage.setVisibility(View.VISIBLE);
             }
         }
-
-        if(jo.has("CollectionType")){
-            v.type = jo.get("CollectionType").getAsString();
-        }
-        String imgUrl = "";
-        if(jo.has("ImageTags")){
-            JsonObject imageTags = jo.getAsJsonObject("ImageTags");
-            if(imageTags.has("Primary")){
-                String picId = imageTags.get("Primary").getAsString();
-                imgUrl = Utils.getImgUrl(itemid,picId);
-            }
-        }
+        v.type = JfClient.strFromGson(jo,"CollectionType");
+        String imgUrl = JfClient.GetImgUrl(jo);
         if (!TextUtils.isEmpty(imgUrl)) {
             Picasso.get()
                     .load(imgUrl)

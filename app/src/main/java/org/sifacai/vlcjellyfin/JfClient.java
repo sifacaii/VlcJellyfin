@@ -18,6 +18,7 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,9 @@ public class JfClient {
     public static Config config;
     public static String UserId = "";
     public static String AccessToken = "";
+
+    public static int playIndex = 0; //当前播放
+    public static ArrayList<Video> playList = new ArrayList<>(); //播放列表
 
     public enum ReportType {
         playing,
@@ -94,7 +98,12 @@ public class JfClient {
 
     public static String GetImgUrl(JsonObject item) {
         String id = jeFromGson(item, "Id").getAsString();
-        String imgid = jeFromGson(jeFromGson(item, "ImageTags").getAsJsonObject(), "Primary").getAsString();
+        JsonElement imgTags = jeFromGson(item, "ImageTags");
+        if(imgTags == null) return "";
+
+        String imgid = strFromGson(imgTags.getAsJsonObject(), "Primary");
+        if(imgid.equals("")) return "";
+
         return GetImgUrl(id, imgid);
     }
 

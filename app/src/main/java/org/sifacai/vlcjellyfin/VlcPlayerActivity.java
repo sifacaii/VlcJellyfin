@@ -102,7 +102,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 Hide();
                 pauseFlag.setVisibility(View.GONE);
                 Log.d(TAG, "onEvent: Playing");
-                ReportPlayState(Utils.ReportType.playing);
+                ReportPlayState(JfClient.ReportType.playing);
                 initMenu();
                 break;
             case MediaPlayer.Event.Paused: //暂停
@@ -110,7 +110,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 break;
             case MediaPlayer.Event.Stopped:
                 Log.d(TAG, "onEvent: Stopped");
-                ReportPlayState(Utils.ReportType.stop);
+                ReportPlayState(JfClient.ReportType.stop);
                 playNext();
                 break;
             case MediaPlayer.Event.Opening:  //媒体打开
@@ -139,7 +139,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                 currItem.PositionTicks = event.getTimeChanged();
                 if(updateTimeCount > 20000){
                     updateTimeCount = 0;
-                    ReportPlayState(Utils.ReportType.Progress);
+                    ReportPlayState(JfClient.ReportType.Progress);
                 }
                 break;
             case MediaPlayer.Event.PositionChanged://视频总时长的百分比
@@ -214,7 +214,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         playListBtn = findViewById(R.id.playListBtn);
         subTracksBtn = findViewById(R.id.subTracksBtn);
         audioTracksBtn = findViewById(R.id.audioTracksBtn);
-        if (Utils.playList.size() > 1) {
+        if (JfClient.playList.size() > 1) {
             initPlayListMenu();
         } else {
             playListBtn.setVisibility(View.GONE);
@@ -234,11 +234,11 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
 
         //初始化缩放键
         scaleBtn.setOnClickListener(this);
-        scaleBtn.setText(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
+        scaleBtn.setText(getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
         scaleTypeMenu = new PopMenu(this, scaleBtn);
         MediaPlayer.ScaleType[] scaleTypes = MediaPlayer.ScaleType.values();
         for (int i = 0; i < scaleTypes.length; i++) {
-            PopMenu.menu menu = scaleTypeMenu.add(Type_Scale, i, i, Utils.getVlcScaleTypeName(scaleTypes[i].name()));
+            PopMenu.menu menu = scaleTypeMenu.add(Type_Scale, i, i, getVlcScaleTypeName(scaleTypes[i].name()));
             final int Si = i;
             menu.v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -246,7 +246,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
                     scaleTypeMenu.dismiss();
                     if (mediaPlayer.getVideoScale() != scaleTypes[Si]) {
                         mediaPlayer.setVideoScale(scaleTypes[Si]);
-                        scaleBtn.setText(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
+                        scaleBtn.setText(getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
                     }
                 }
             });
@@ -275,15 +275,15 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
 
     private void initPlayListMenu() {
         playListMenu = new PopMenu(this, playListBtn); //new PopupMenu(this,playListBtn);
-        for (int i = 0; i < Utils.playList.size(); i++) {
-            PopMenu.menu m = playListMenu.add(Type_Playlist, i, i, Utils.playList.get(i).Name);
+        for (int i = 0; i < JfClient.playList.size(); i++) {
+            PopMenu.menu m = playListMenu.add(Type_Playlist, i, i, JfClient.playList.get(i).Name);
             m.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     playListMenu.dismiss();
-                    if (m.id != Utils.playIndex) {
-                        ReportPlayState(Utils.ReportType.stop);
-                        Utils.playIndex = m.id;
+                    if (m.id != JfClient.playIndex) {
+                        ReportPlayState(JfClient.ReportType.stop);
+                        JfClient.playIndex = m.id;
                         play();
                     }
                 }
@@ -401,9 +401,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      * 开始播放
      */
     public void play() {
-        if (Utils.playList.size() > 0) {
-            if (Utils.playIndex < Utils.playList.size()) {
-                currItem = Utils.playList.get(Utils.playIndex);
+        if (JfClient.playList.size() > 0) {
+            if (JfClient.playIndex < JfClient.playList.size()) {
+                currItem = JfClient.playList.get(JfClient.playIndex);
                 videoTitle.setText(currItem.Name);
                 mediaPlayer.play(Uri.parse(currItem.Url));
             }
@@ -416,9 +416,9 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      * 播放下一集
      */
     public void playNext() {
-        if (Utils.playIndex < (Utils.playList.size() - 1)) {
-            ReportPlayState(Utils.ReportType.stop);
-            Utils.playIndex += 1;
+        if (JfClient.playIndex < (JfClient.playList.size() - 1)) {
+            ReportPlayState(JfClient.ReportType.stop);
+            JfClient.playIndex += 1;
             play();
         }
     }
@@ -427,7 +427,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      * 停止播放并结束Activity
      */
     public void stop() {
-        ReportPlayState(Utils.ReportType.stop);
+        ReportPlayState(JfClient.ReportType.stop);
         mediaPlayer.stop();
         mediaPlayer.release();
         libVLC.release();
@@ -521,21 +521,45 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         } else if (id == R.id.audioTracksBtn) {
             audioTrackMenu.show(mediaPlayer.getAudioTrack());
         } else if (id == R.id.playListBtn) {
-            playListMenu.show(Utils.playIndex);
+            playListMenu.show(JfClient.playIndex);
         } else if (id == R.id.scaleBtn) {
-            scaleTypeMenu.show(Utils.getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
+            scaleTypeMenu.show(getVlcScaleTypeName(mediaPlayer.getVideoScale().name()));
         } else if (id == R.id.speedBtn) {
             speedMenu.show(String.valueOf(mediaPlayer.getRate()));
         }
     }
 
-    private void ReportPlayState(Utils.ReportType type) {
-        Utils.ReportPlayState(type,currItem.Id,currItem.PositionTicks);
+    private void ReportPlayState(JfClient.ReportType type) {
+        JfClient.ReportPlayBackState(type,currItem.Id,currItem.PositionTicks);
     }
 
     @Override
     public void finish() {
         mhandler.removeCallbacksAndMessages(null);
         super.finish();
+    }
+
+    /**
+     * 根据缩放类型取名称
+     *
+     * @param scaleName
+     * @return
+     */
+    public String getVlcScaleTypeName(String scaleName) {
+        switch (scaleName) {
+            case "SURFACE_BEST_FIT":
+                return "自动";
+            case "SURFACE_FIT_SCREEN":
+                return "适应屏幕";
+            case "SURFACE_FILL":
+                return "满屏";
+            case "SURFACE_16_9":
+                return "16:9";
+            case "SURFACE_4_3":
+                return "4:3";
+            case "SURFACE_ORIGINAL":
+                return "原始";
+        }
+        return "";
     }
 }

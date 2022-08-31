@@ -122,13 +122,13 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 JsonObject ms = MediaStreams.get(i).getAsJsonObject();
                 String mstype = ms.get("Type").getAsString();
                 if (mstype.equals("Video")) {
-                    video += Utils.getJsonString(ms, "DisplayTitle").getAsString();
+                    video += JfClient.strFromGson(ms, "DisplayTitle");
                 } else if (mstype.equals("Audio")) {
                     if (ms.has("Language")) audio += ms.get("Language").getAsString() + "、";
-                    else audio += Utils.getJsonString(ms, "Codec").getAsString() + "；";
+                    else audio += JfClient.strFromGson(ms, "Codec") + "；";
                 } else if (mstype.equals("Subtitle")) {
                     if (ms.has("Language")) subtitle += ms.get("Language").getAsString() + "、";
-                    else subtitle += Utils.getJsonString(ms, "Codec").getAsString() + "；";
+                    else subtitle += JfClient.strFromGson(ms, "Codec") + "；";
                 }
             }
             String finalVideo = video;
@@ -170,16 +170,16 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         tvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utils.playList.clear();
-                Utils.playList.add(getMedia(item));
-                Utils.playIndex = 0;
+                JfClient.playList.clear();
+                JfClient.playList.add(getMedia(item));
+                JfClient.playIndex = 0;
                 toVlcPlayer();
             }
         });
         tvPlay.requestFocus();
 
         if (item.has("PartCount")) {
-            String Id = Utils.getJsonString(item, "Id").getAsString();
+            String Id = JfClient.strFromGson(item, "Id");
             JfClient.GetAddPart(Id, new JfClient.JJCallBack() {
                 @Override
                 public void onSuccess(JsonArray parts) {
@@ -243,24 +243,24 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             intent.putExtra("itemId", itemId);
             startActivity(intent);
         } else if (type.equals("Episode")) {
-            Utils.playList.clear();
+            JfClient.playList.clear();
             String Id = JfClient.strFromGson(jo, "Id");
             JAdapter JA = (JAdapter) mGridView.getAdapter();
             JsonArray ja = JA.getData();
             if (ja != null) {
                 for (int i = 0; i < ja.size(); i++) {
                     Video media = getMedia(ja.get(i).getAsJsonObject());
-                    Utils.playList.add(media);
+                    JfClient.playList.add(media);
                     if (Id.equals(media.Id)) {
-                        Utils.playIndex = i;
+                        JfClient.playIndex = i;
                     }
                 }
                 toVlcPlayer();
             }
         } else if (type.equals("Movie") || type.equals("Video")) {
-            Utils.playList.clear();
-            Utils.playList.add(getMedia(jo));
-            Utils.playIndex = 0;
+            JfClient.playList.clear();
+            JfClient.playList.add(getMedia(jo));
+            JfClient.playIndex = 0;
             toVlcPlayer();
         }
     }

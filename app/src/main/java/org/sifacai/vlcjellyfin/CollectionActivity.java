@@ -109,7 +109,7 @@ public class CollectionActivity extends BaseActivity {
         jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
             @Override
             public void onClick(JsonObject jo) {
-                String type = Utils.getJsonString(jo,"Type").getAsString();
+                String type = JfClient.strFromGson(jo,"Type");
                 String itemId = jo.get("Id").getAsString();
                 Intent intent = null;
                 if(type.equals("Folder") || type.equals("CollectionFolder")){
@@ -153,7 +153,7 @@ public class CollectionActivity extends BaseActivity {
             public void onClick(View view) {
                 int i = 0;
                 for(Config.SortByType sbt : Config.SortByType.values()){
-                    if(sbt.value.equals(Utils.config.getSortBy())){
+                    if(sbt.value.equals(JfClient.config.getSortBy())){
                         i = sbt.ordinal();
                     }
                 }
@@ -176,9 +176,9 @@ public class CollectionActivity extends BaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getGroupId() == 0) {
-                    Utils.config.setSortBy(Config.SortByType.valueOf(menuItem.getTitle().toString()).value);
+                    JfClient.config.setSortBy(Config.SortByType.valueOf(menuItem.getTitle().toString()).value);
                 }else{
-                    Utils.config.setSortOrder(Config.SotrOrderType.valueOf(menuItem.getTitle().toString()).value);
+                    JfClient.config.setSortOrder(Config.SotrOrderType.valueOf(menuItem.getTitle().toString()).value);
                 }
                 setSortMenuBtnText();
                 currAdapter.clearItems();
@@ -194,9 +194,9 @@ public class CollectionActivity extends BaseActivity {
     }
 
     private void setSortMenuBtnText(){
-        String s = Config.SortByType.findName(Utils.config.getSortBy());
+        String s = Config.SortByType.findName(JfClient.config.getSortBy());
         s += "-";
-        s += Config.SotrOrderType.findName(Utils.config.getSortOrder());
+        s += Config.SotrOrderType.findName(JfClient.config.getSortOrder());
         sortMenuBtn.setText(s);
     }
 }
