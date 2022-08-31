@@ -26,16 +26,16 @@ import okhttp3.Response;
 
 public class Utils {
 
-//    public static <T> T JsonToObj(String jsonStr, Class<T> tClass) {
-//        if (jsonStr != null && jsonStr.length() > 0) {
-//            try {
-//                return new Gson().fromJson(jsonStr, tClass);
-//            } catch (Exception e) {
-//                return null;
-//            }
-//        }
-//        return null;
-//    }
+    public static <T> T JsonToObj(String jsonStr, Class<T> tClass) {
+        if (jsonStr != null && jsonStr.length() > 0) {
+            try {
+                return new Gson().fromJson(jsonStr, tClass);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
 
     /**
      * 获取Json项
@@ -44,19 +44,18 @@ public class Utils {
      * @param key
      * @return
      */
-//    public static JsonElement getJsonString(JsonObject jo, String key) {
-//        JsonElement je = new Gson().toJsonTree("", String.class);
-//        if (jo.has(key)) {
-//            je = jo.get(key);
-//        }
-//        return je;
-//    }
+    public static JsonElement getJsonString(JsonObject jo, String key) {
+        JsonElement je = new Gson().toJsonTree("", String.class);
+        if (jo.has(key)) {
+            je = jo.get(key);
+        }
+        return je;
+    }
 
-//    public static int getPixelsFromDp(Activity context, int i) {
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        return (i * metrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT;
-//    }
-
+    public static int getPixelsFromDp(Activity context, int i) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return (i * metrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT;
+    }
 
 }
