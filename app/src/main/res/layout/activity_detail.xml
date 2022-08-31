@@ -15,114 +15,147 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <ImageView
-                android:id="@+id/tvCover"
-                android:layout_width="420dp"
-                android:layout_height="620dp"
-                android:scaleType="fitXY"
-                app:srcCompat="@drawable/icon_img_placeholder" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/padding_border"
-                android:paddingTop="6dp"
-                android:paddingRight="@dimen/padding_border"
-                android:paddingBottom="6dp">
-
-                <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="38dp"
-                    android:text="标题："
-                    android:textColor="@android:color/white"
-                    android:textSize="30dp" />
-
-                <TextView
-                    android:id="@+id/tvGenres"
-                    android:layout_width="match_parent"
-                    android:layout_height="28dp"
-                    android:layout_marginTop="2dp"
-                    android:text="风格："
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/tvRating"
-                    android:layout_width="match_parent"
-                    android:layout_height="28dp"
-                    android:text="评分："
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/tvVideo"
-                    android:layout_width="match_parent"
-                    android:layout_height="28dp"
-                    android:text="视频："
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/tvAudio"
-                    android:layout_width="match_parent"
-                    android:layout_height="28dp"
-                    android:text="音频："
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/tvSubtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="28dp"
-                    android:text="字幕："
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/tvOverview"
-                    android:layout_width="match_parent"
-                    android:layout_height="110dp"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:maxLines="4"
-                    android:text="简介："
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp" />
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/tvPlay"
-                    android:layout_width="160dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginLeft="50dp"
-                    android:padding="10dp"
-                    android:focusable="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_outline_play_circle_outline_128"
-                    android:background="@drawable/shape_user_focus_vholder"
-                    android:visibility="gone"/>
+                    android:id="@+id/tvCover"
+                    android:layout_width="420dp"
+                    android:layout_height="620dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/icon_img_placeholder" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/padding_border"
+                    android:paddingTop="6dp"
+                    android:paddingRight="@dimen/padding_border"
+                    android:paddingBottom="6dp">
+
+                    <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:text="标题："
+                        android:textColor="@android:color/white"
+                        android:textSize="30dp" />
+
+                    <TextView
+                        android:id="@+id/tvGenres"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:layout_marginTop="2dp"
+                        android:text="风格："
+                        android:textColor="@android:color/white"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/tvRating"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:text="评分："
+                        android:textColor="@android:color/white"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/tvVideo"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:text="视频："
+                        android:textColor="@android:color/white"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/tvAudio"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:text="音频："
+                        android:textColor="@android:color/white"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/tvSubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:text="字幕："
+                        android:textColor="@android:color/white"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/tvOverview"
+                        android:layout_width="match_parent"
+                        android:layout_height="110dp"
+                        android:layout_marginTop="6dp"
+                        android:ellipsize="end"
+                        android:maxLines="4"
+                        android:text="简介："
+                        android:textColor="@android:color/white"
+                        android:textSize="20dp" />
+
+                    <ImageView
+                        android:id="@+id/tvPlay"
+                        android:layout_width="160dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="50dp"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/shape_user_focus_vholder"
+                        android:focusable="true"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_outline_play_circle_outline_128"
+                        android:visibility="gone" />
+
+                    <org.sifacai.vlcjellyfin.JRecyclerView
+                        android:id="@+id/mGridView"
+                        android:layout_width="match_parent"
+                        android:layout_height="312dp"
+                        android:layout_marginTop="20dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:padding="@dimen/padding_border"
+                        android:visibility="gone"
+                        app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
+                        app:tv_selectedItemIsCentered="true"
+                        app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tvPersonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <TextView
+                    android:text="演员表："
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
                 <org.sifacai.vlcjellyfin.JRecyclerView
-                    android:id="@+id/mGridView"
+                    android:id="@+id/mPersonGridView"
                     android:layout_width="match_parent"
                     android:layout_height="312dp"
+                    android:layout_marginTop="20dp"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    android:padding="@dimen/padding_border"
-                    android:layout_marginTop="20dp"
-                    android:visibility="gone"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    android:padding="@dimen/padding_border"
                     app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
                     app:tv_selectedItemIsCentered="true"
                     app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
 
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 

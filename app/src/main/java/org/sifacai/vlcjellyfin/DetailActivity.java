@@ -39,6 +39,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     private TextView tvOverview;
     private ImageView tvPlay;
     private JRecyclerView mGridView;
+    private JRecyclerView mPeopleGridView;
+    private LinearLayout tvPeopleLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         tvOverview = findViewById(R.id.tvOverview);
         tvPlay = findViewById(R.id.tvPlay);
         mGridView = findViewById(R.id.mGridView);
+        tvPeopleLayout = findViewById(R.id.tvPersonLayout);
+        mPeopleGridView = findViewById(R.id.mPersonGridView);
 
         Intent intent = getIntent();
         ItemId = intent.getStringExtra("itemId");
@@ -153,6 +157,11 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         } else if (type.equals("Movie")) {
             fillMovie(detailObj);
         }
+
+        JsonElement People = JfClient.jeFromGson(detailObj,"People");
+        if(People != null){
+            fillPeople(People.getAsJsonArray());
+        }
     }
 
     private void fillMovie(JsonObject item) {
@@ -221,7 +230,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         }, null);
     }
 
-    public void fillItems(JsonArray items) {
+    private void fillItems(JsonArray items) {
         JAdapter jAdapter = new JAdapter(items, false);
         V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
         layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
@@ -232,6 +241,15 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         dismissLoadingDialog();
     }
 
+    private void fillPeople(JsonArray items) {
+        tvPeopleLayout.setVisibility(View.VISIBLE);
+        JAdapter jAdapter = new JAdapter(items, false);
+        V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mPeopleGridView.getContext());
+        layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
+        jAdapter.setOnItemClickListener(this);
+        mPeopleGridView.setLayoutManager(layoutManager);
+        mPeopleGridView.setAdapter(jAdapter);
+    }
 
     @Override
     public void onClick(JsonObject jo) {
@@ -262,6 +280,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             JfClient.playList.add(getMedia(jo));
             JfClient.playIndex = 0;
             toVlcPlayer();
+        }else if(type.equals("Actor")){
+
         }
     }
 
@@ -272,7 +292,6 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
      * @return
      */
     public Video getMedia(JsonObject item) {
-        //String playUrl = Utils.JellyfinUrl + "/videos/" + id + "/stream.mp4?static=true&a";
         Video media = new Video();
         media.Id = JfClient.strFromGson(item, "Id");
         media.Name = JfClient.strFromGson(item, "Name");

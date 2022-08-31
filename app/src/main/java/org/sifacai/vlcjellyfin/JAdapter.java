@@ -80,8 +80,18 @@ public class JAdapter extends RecyclerView.Adapter {
                 v.tvPlayedPercentage.setVisibility(View.VISIBLE);
             }
         }
-        v.type = JfClient.strFromGson(jo,"CollectionType");
-        String imgUrl = JfClient.GetImgUrl(jo);
+        v.type = JfClient.strFromGson(jo,"Type");
+        String imgUrl = "";
+        if(v.type.equals("Actor")){
+            String PrimaryImageTag = JfClient.strFromGson(jo,"PrimaryImageTag");
+            if(!PrimaryImageTag.equals("")){
+                imgUrl = JfClient.GetImgUrl(v.id,PrimaryImageTag);
+            }
+            Log.d(TAG, "onBindViewHolder: 图像URL" + imgUrl);
+        }else{
+            imgUrl = JfClient.GetImgUrl(jo);
+        }
+
         if (!TextUtils.isEmpty(imgUrl)) {
             Picasso.get()
                     .load(imgUrl)
