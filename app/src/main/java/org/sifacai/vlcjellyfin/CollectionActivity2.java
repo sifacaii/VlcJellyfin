@@ -74,7 +74,7 @@ public class CollectionActivity2 extends BaseActivity{
                 fillItems();
                 setLoadMore();
             }
-        });
+        },null);
     }
 
     /**
@@ -93,7 +93,7 @@ public class CollectionActivity2 extends BaseActivity{
                 setTitleTip();
                 mGridContiner.finishLoadMore();
             }
-        });
+        },null);
     }
 
     private void setLoadMore(){

@@ -66,7 +66,7 @@ public class Config {
      */
     public void getConfigFromSP() {
         SharedPreferences sp = context.getSharedPreferences("Jellyfin", context.MODE_PRIVATE);
-        this.JellyfinUrl = sp.getString("url", "");
+        this.JellyfinUrl = sp.getString("url", "http://");
         this.UserName = sp.getString("username", "");
         this.PassWord = sp.getString("password", "");
         this.SortBy = sp.getString("sortby","DateCreated");

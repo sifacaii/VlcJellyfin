@@ -53,11 +53,18 @@ public class HomeActivity extends BaseActivity{
                                     showLoginDialog();
                                 }
                             }
-                        },false);
+                        },null,false);
                     }else{
                         ShowToask("服务器地址不正确！");
                         showLoginDialog();
                     }
+                }
+            },new JfClient.JJCallBack(){
+                @Override
+                public void onError(String str) {
+                    dismissLoadingDialog();
+                    ShowToask("服务器连接失败！");
+                    showLoginDialog();
                 }
             });
         }else{
@@ -108,10 +115,16 @@ public class HomeActivity extends BaseActivity{
                                         ShowToask("用户名密码不正确！");
                                     }
                                 }
-                            },saveBox.isChecked());
+                            },null,saveBox.isChecked());
                         }else{
                             ShowToask("服务器地址不正确！");
                         }
+                    }
+                },new JfClient.JJCallBack(){
+                    @Override
+                    public void onError(String str) {
+                        dismissLoadingDialog();
+                        ShowToask("服务器地址不正确！");
                     }
                 });
             }
@@ -134,17 +147,17 @@ public class HomeActivity extends BaseActivity{
                         public void onSuccess(JsonArray latests) {
                             addRowTvRecyclerView("新的 " + name,latests,false);
                         }
-                    });
+                    },null);
                 }
                 dismissLoadingDialog();
             }
-        });
+        },null);
         JfClient.GetResume(new JfClient.JJCallBack(){
             @Override
             public void onSuccess(JsonArray resumes) {
                 addRowTvRecyclerView("最近播放",resumes,false);
             }
-        });
+        },null);
     }
 
 
