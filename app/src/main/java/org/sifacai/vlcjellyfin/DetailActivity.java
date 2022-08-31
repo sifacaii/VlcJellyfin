@@ -47,8 +47,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         getSupportActionBar().hide();
 
         if (Utils.UserId.equals("") || Utils.AccessToken.equals("")) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish();
         }
 
         mActivity = this;

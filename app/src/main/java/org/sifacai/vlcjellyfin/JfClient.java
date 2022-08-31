@@ -109,8 +109,26 @@ public class JfClient {
     }
 
     /**
+     * 获取项目附加部分
+     * @param itemid
+     * @param cb
+     */
+    public static void GetAddPart(String itemid,JJCallBack cb){
+        String AddPartUrl = "/Videos/" + itemid + "/AdditionalParts?userId=" + UserId;
+        SendGet(AddPartUrl,new JJCallBack(){
+            @Override
+            public void onSuccess(String str) {
+                JsonObject item = strToGson(str, JsonObject.class);
+                if (null != item) {
+                    JsonArray items = jeFromGson(item, "Items").getAsJsonArray();
+                    cb.onSuccess(items);
+                }
+            }
+        });
+    }
+
+    /**
      * 获取剧集
-     *
      * @param seriesId 剧ID
      * @param seasonId 季ID
      * @param cb
