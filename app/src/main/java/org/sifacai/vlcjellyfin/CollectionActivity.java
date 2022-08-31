@@ -24,7 +24,6 @@ import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 
 public class CollectionActivity extends BaseActivity {
     private String TAG = "CollectionActivity";
-    private Activity mActivity = null;
     private TvRecyclerView mGridContiner = null;
     private TextView tvTitleTip = null;
     private String ItemId = "";
@@ -46,11 +45,10 @@ public class CollectionActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
 
-        if (Utils.UserId.equals("") || Utils.AccessToken.equals("")) {
+        if (JfClient.UserId.equals("") || JfClient.AccessToken.equals("")) {
             finish();
         }
 
-        mActivity = this;
         mGridContiner = findViewById(R.id.mGridView);
         tvTitleTip = findViewById(R.id.activeBar_titleTip);
         V7GridLayoutManager v7GridLayoutManager = new V7GridLayoutManager(this,6);
@@ -69,73 +67,41 @@ public class CollectionActivity extends BaseActivity {
             currAdapter = getJAdapter(currItems);
             mGridContiner.setAdapter(currAdapter);
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    initData();
-                }
-            }).start();
+            initData();
 
             initSortByMenu();
         }
     }
 
     public void initData() {
-        String url = "/Users/" + Utils.UserId + "/Items/" + ItemId;
-        String CollectionStr = Utils.okhttpSend(url);
-        JsonObject Collection = Utils.JsonToObj(CollectionStr,JsonObject.class);
-        if (null != Collection) {
-            currObj = Collection;
-            Type = Utils.getJsonString(Collection,"CollectionType").getAsString();
-            fillItems();
-            setLoadMore();
-        }else{
-            ShowToask("加载失败！");
-        }
+        showLoadingDialog("加载中…………");
+        JfClient.GetItemInfo(ItemId,new JfClient.JJCallBack(){
+            @Override
+            public void onSuccess(JsonObject Collection) {
+                currObj = Collection;
+                Type = JfClient.strFromGson(Collection,"CollectionType");
+                fillItems();
+                setLoadMore();
+            }
+        },null);
     }
 
     /**
      * 加载条目数据
      */
     private void fillItems(){
-        mActivity.runOnUiThread(new Runnable() {
+        JfClient.GetCollection(ItemId,Type,JfClient.config.getSortBy(),JfClient.config.getSortOrder(),limit,currentPage,new JfClient.JJCallBack(){
             @Override
-            public void run() {
-                showLoadingDialog();
+            public void onSuccess(JsonObject items) {
+                totalCount = JfClient.jeFromGson(items,"TotalRecordCount").getAsInt();
+                countPage = (int) Math.ceil((double) totalCount / limit);
+                JsonArray Items = items.get("Items").getAsJsonArray();
+                dismissLoadingDialog();
+                currAdapter.addItems(Items);
+                setTitleTip();
+                mGridContiner.finishLoadMore();
             }
-        });
-        String ItemsUrl = "/Users/" + Utils.UserId + "/Items?ParentId=" + ItemId + "&Limit=" + limit;
-        ItemsUrl += "&Recursive=true&Fields=PrimaryImageAspectRatio,BasicSyncInfo,Seasons,Episodes&ImageTypeLimit=1";
-        ItemsUrl += "&EnableImageTypes=Primary,Backdrop,Banner,Thumb";
-        ItemsUrl += "&SortBy="+Utils.config.getSortBy()+"%2CSortName%2CProductionYear&SortOrder=" + Utils.config.getSortOrder();
-        if (Type.equals("tvshows")) {
-            ItemsUrl += "&IncludeItemTypes=Series";
-        } else if (Type.equals("movies")) {
-            ItemsUrl += "&IncludeItemTypes=Movie";
-        } else {
-            ItemsUrl += "&IncludeItemTypes=Movie,Series";
-        }
-        int startIndex = currentPage * limit - limit;
-        ItemsUrl += "&StartIndex=" + startIndex;
-        String ItemsStr = Utils.okhttpSend(ItemsUrl);
-        JsonObject ItemsObj = Utils.JsonToObj(ItemsStr,JsonObject.class);
-        if (null != ItemsStr) {
-            totalCount = Utils.getJsonString(ItemsObj,"TotalRecordCount").getAsInt();
-            countPage = (int) Math.ceil((double) totalCount / limit);
-
-            JsonArray Items = ItemsObj.get("Items").getAsJsonArray();
-            mActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    dismissLoadingDialog();
-                    currAdapter.addItems(Items);
-                    setTitleTip();
-                    mGridContiner.finishLoadMore();
-                }
-            });
-        }else{
-            ShowToask("加载明细失败！");
-        }
+        },null);
     }
 
     private JAdapter getJAdapter(JsonArray items){
@@ -147,12 +113,12 @@ public class CollectionActivity extends BaseActivity {
                 String itemId = jo.get("Id").getAsString();
                 Intent intent = null;
                 if(type.equals("Folder") || type.equals("CollectionFolder")){
-                    intent = new Intent(mActivity,CollectionActivity.class);
+                    intent = new Intent(mAA,CollectionActivity.class);
                 }else{
-                    intent = new Intent(mActivity,DetailActivity.class);
+                    intent = new Intent(mAA,DetailActivity.class);
                 }
                 intent.putExtra("itemId",itemId);
-                mActivity.startActivity(intent);
+                mAA.startActivity(intent);
             }
         });
         return jAdapter;

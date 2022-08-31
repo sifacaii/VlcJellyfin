@@ -177,7 +177,7 @@ public class HomeActivity extends BaseActivity{
                 String itemId = jo.get("Id").getAsString();
                 Intent intent = null;
                 if (type.equals("Folder") || type.equals("CollectionFolder")) {
-                    intent = new Intent(mAA, CollectionActivity2.class);
+                    intent = new Intent(mAA, CollectionActivity.class);
                 } else {
                     intent = new Intent(mAA, DetailActivity.class);
                 }
