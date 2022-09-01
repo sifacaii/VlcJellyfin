@@ -36,7 +36,7 @@ public class MediaSources {
     private boolean SupportsProbing;
     private String VideoType;
     private List<MediaStreams> MediaStreams;
-    private List<String> MediaAttachments;
+    private List<MediaAttachments> MediaAttachments;
     private List<String> Formats;
     private long Bitrate;
     private RequiredHttpHeaders RequiredHttpHeaders;
@@ -210,10 +210,10 @@ public class MediaSources {
          return MediaStreams;
      }
 
-    public void setMediaAttachments(List<String> MediaAttachments) {
+    public void setMediaAttachments(List<MediaAttachments> MediaAttachments) {
          this.MediaAttachments = MediaAttachments;
      }
-     public List<String> getMediaAttachments() {
+     public List<MediaAttachments> getMediaAttachments() {
          return MediaAttachments;
      }
 
