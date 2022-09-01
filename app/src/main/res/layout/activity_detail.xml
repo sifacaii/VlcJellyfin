@@ -55,12 +55,18 @@
                         android:layout_marginTop="20dp"
                         android:textSize="20dp" />
 
+                    <TextView
+                        android:id="@+id/tvListTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:text="播放列表：" />
+
                     <ImageView
                         android:id="@+id/tvPlay"
                         android:layout_width="160dp"
                         android:layout_height="60dp"
                         android:layout_marginLeft="50dp"
-                        android:layout_marginTop="30dp"
                         android:background="@drawable/shape_user_focus_vholder"
                         android:focusable="true"
                         android:padding="10dp"

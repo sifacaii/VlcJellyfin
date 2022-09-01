@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -132,7 +133,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             tvDetails.append(audio.equals("") ? "" : "音频：" + audio + "\n");
             tvDetails.append(subtitle.equals("") ? "" : "字幕：" + subtitle + "\n");
         }
-        tvDetails.append("简介：  " + Overview );
+
+        tvDetails.append("简介：  " + Html.fromHtml(Overview) );
 
         //填充列表
         String type = JfClient.strFromGson(detailObj, "Type");
@@ -272,13 +274,17 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         JfClient.GetItemsByTerm(Term,new JfClient.JJCallBack(){
             @Override
             public void onSuccess(JsonObject jsonObject) {
+                ((TextView)findViewById(R.id.tvListTitle)).setText("演员作品：");
                 JsonArray items = jsonObject.get("Items").getAsJsonArray();
                 JAdapter jAdapter = new JAdapter(items, false);
                 V7GridLayoutManager layoutManager = new V7GridLayoutManager(mGridView.getContext(),4);
                 jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
                     @Override
                     public void onClick(JsonObject jo) {
-                        //点击
+                        String itemId = JfClient.strFromGson(jo,"Id");
+                        Intent intent = new Intent(DetailActivity.this, DetailActivity.class);
+                        intent.putExtra("itemId", itemId);
+                        startActivity(intent);
                     }
                 });
                 mGridView.setVisibility(View.VISIBLE);
@@ -289,6 +295,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         },new JfClient.JJCallBack(){
             @Override
             public void onError(String str) {
+                ShowToask("加载演员作品失败！");
                 dismissLoadingDialog();
             }
         });
