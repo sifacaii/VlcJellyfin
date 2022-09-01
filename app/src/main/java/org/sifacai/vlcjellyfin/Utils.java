@@ -14,7 +14,11 @@ import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.HttpHeaders;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -25,6 +29,23 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Utils {
+
+    /**
+     * 标准时间转换
+     * @param utcTime
+     * @return
+     */
+    public static String UtcToLocal(String utcTime){
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String dt = "";
+        try {
+            dt = df.parse(utcTime).toLocaleString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dt;
+    }
 
     public static <T> T JsonToObj(String jsonStr, Class<T> tClass) {
         if (jsonStr != null && jsonStr.length() > 0) {
