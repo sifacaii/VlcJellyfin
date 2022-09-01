@@ -24,7 +24,7 @@ import org.sifacai.vlcjellyfin.Bean.Items;
 
 import java.util.List;
 
-public class HomeActivity extends BaseActivity{
+public class HomeActivity extends BaseActivity {
     private final String TAG = "HomeActivity";
     private LinearLayout tvContiner;
 
@@ -39,45 +39,40 @@ public class HomeActivity extends BaseActivity{
 
         JfClient.init(getApplication());
 
-        Log.d(TAG, "onCreate: " + JfClient.config.getJellyfinUrl());
-        if(JfClient.AccessToken.equals("") ||JfClient.UserId.equals("")){
+        if (JfClient.AccessToken.equals("") || JfClient.UserId.equals("")) {
             showLoadingDialog("正在验证服务器地址！");
-            JfClient.VerityServerUrl(JfClient.config.getJellyfinUrl(),new JfClient.JJCallBack(){
+            JfClient.VerityServerUrl(JfClient.config.getJellyfinUrl(), new JfClient.JJCallBack() {
                 @Override
                 public void onSuccess(Boolean bool) {
-                    dismissLoadingDialog();
-                    if(bool){
-                        showLoadingDialog("正在验证用户名和密码！");
-                        JfClient.AuthenticateByName(JfClient.config.getUserName(),JfClient.config.getPassWord(),new JfClient.JJCallBack(){
-                            @Override
-                            public void onSuccess(Boolean bool) {
-                                dismissLoadingDialog();
-                                if(bool){
-                                    initView(); //加载首页
-                                }else{
-                                    showLoginDialog();
-                                }
-                            }
-                        },null,false);
-                    }else{
-                        ShowToask("服务器地址不正确！");
-                        showLoginDialog();
-                    }
+                    setLoadingText("正在验证用户名和密码！");
+                    JfClient.AuthenticateByName(JfClient.config.getUserName(), JfClient.config.getPassWord(), new JfClient.JJCallBack() {
+                        @Override
+                        public void onSuccess(Boolean bool) {
+                            dismissLoadingDialog();
+                            initView();
+                        }
+                    }, connErr, false);
                 }
-            },new JfClient.JJCallBack(){
-                @Override
-                public void onError(String str) {
-                    dismissLoadingDialog();
-                    ShowToask("服务器连接失败！");
-                    showLoginDialog();
-                }
-            });
-        }else{
-            initView();
+            }, connErr);
         }
     }
 
-    private void showLoginDialog(){
+    private JfClient.JJCallBack connErr = new JfClient.JJCallBack() {
+        @Override
+        public void onError(String str) {
+            dismissLoadingDialog();
+            ShowToask(str);
+            showLoginDialog();
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initView();
+    }
+
+    private void showLoginDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         AlertDialog alert = builder.setTitle("登录")
                 .setMessage("请输入登录信息")
@@ -103,29 +98,27 @@ public class HomeActivity extends BaseActivity{
             @Override
             public void onClick(View view) {
                 showLoadingDialog("正在验证服务器地址！");
-                JfClient.VerityServerUrl(urlbox.getText().toString(),new JfClient.JJCallBack(){
+                JfClient.VerityServerUrl(urlbox.getText().toString(), new JfClient.JJCallBack() {
                     @Override
                     public void onSuccess(Boolean bool) {
-                        dismissLoadingDialog();
-                        if(bool){
-                            showLoadingDialog("正在验证用户名和密码！");
-                            JfClient.AuthenticateByName(unbox.getText().toString(),pwbox.getText().toString(),new JfClient.JJCallBack(){
-                                @Override
-                                public void onSuccess(Boolean bool) {
-                                    dismissLoadingDialog();
-                                    if(bool){
-                                        alert.dismiss();
-                                        initView(); //加载首页
-                                    }else{
-                                        ShowToask("用户名密码不正确！");
-                                    }
-                                }
-                            },null,saveBox.isChecked());
-                        }else{
-                            ShowToask("服务器地址不正确！");
-                        }
+                        setLoadingText("正在验证用户名和密码！");
+                        JfClient.AuthenticateByName(unbox.getText().toString(), pwbox.getText().toString(), new JfClient.JJCallBack() {
+                            @Override
+                            public void onSuccess(Boolean bool) {
+                                dismissLoadingDialog();
+                                alert.dismiss();
+                                initView(); //加载首页
+                            }
+                        }, new JfClient.JJCallBack(){
+                            @Override
+                            public void onError(String str) {
+                                dismissLoadingDialog();
+                                ShowToask("用户名密码验证失败！");
+                            }
+                        }, saveBox.isChecked());
+
                     }
-                },new JfClient.JJCallBack(){
+                }, new JfClient.JJCallBack() {
                     @Override
                     public void onError(String str) {
                         dismissLoadingDialog();
@@ -137,31 +130,31 @@ public class HomeActivity extends BaseActivity{
     }
 
 
-    private void initView(){
+    private void initView() {
         showLoadingDialog("正在加载首页…………");
-        JfClient.GetViews(new JfClient.JJCallBack(){
+        JfClient.GetViews(new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items views) {
                 List<Item> items = views.getItems();
                 addRowTvRecyclerView("我的媒体", items, true);
-                for(int i=0;i<items.size();i++){
+                for (int i = 0; i < items.size(); i++) {
                     Item item = items.get(i);
-                    JfClient.GetLatest(item.getId(),new JfClient.JJCallBack(){
+                    JfClient.GetLatest(item.getId(), new JfClient.JJCallBack() {
                         @Override
                         public void onSuccess(Items latests) {
-                            addRowTvRecyclerView("新的 " + item.getName(),latests.getItems(),false);
+                            addRowTvRecyclerView("新的 " + item.getName(), latests.getItems(), false);
                         }
-                    },null);
+                    }, null);
                 }
                 dismissLoadingDialog();
             }
-        },null);
-        JfClient.GetResume(new JfClient.JJCallBack(){
+        }, null);
+        JfClient.GetResume(new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items resumes) {
-                addRowTvRecyclerView("最近播放",resumes.getItems(),false);
+                addRowTvRecyclerView("最近播放", resumes.getItems(), false);
             }
-        },null);
+        }, null);
     }
 
 
@@ -207,6 +200,7 @@ public class HomeActivity extends BaseActivity{
     }
 
     private long exitTime = 0;
+
     public void exit() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
             Toast.makeText(getApplicationContext(), "再按一次退出程序",

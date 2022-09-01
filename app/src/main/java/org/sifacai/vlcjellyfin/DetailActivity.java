@@ -107,7 +107,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String Genres = String.join(",", details.getGenres());
 
         tvTitle.setText(Name);
-        tvDetails.append(details.getProductionYear().equals("") ? "" : "年份：" + details.getProductionYear() + "  ");
+        tvDetails.append(details.getProductionYear() == null ? "" : "年份：" + details.getProductionYear() + "  ");
         tvDetails.append(Genres.equals("") ? "" : "风格：" + Genres + "\n");
         tvDetails.append(details.getCommunityRating() == null ? "" : "评分：" + details.getCommunityRating() + "  ");
         tvDetails.append(details.getOfficialRating() == null ? "" : "评级：" + details.getOfficialRating() + "\n");
@@ -133,8 +133,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             tvDetails.append(audio.equals("") ? "" : "音频：" + audio + "\n");
             tvDetails.append(subtitle.equals("") ? "" : "字幕：" + subtitle + "\n");
         }
-
-        tvDetails.append("简介：  " + Html.fromHtml(details.getOverview()));
+        String overview = details.getOverview() == null ? "" : details.getOverview();
+        tvDetails.append("简介：  " + Html.fromHtml(overview));
 
         //填充列表
         String type = details.getType();
@@ -150,10 +150,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         } else if (type.equals("Movie")) {
             fillMovie(details);
         } else if (type.equals("Person")) {
-            String ProductionLocations = details.getProductionLocations().toString();
-            String PremiereDate = String.join(",", details.getPremiereDate());
-            tvDetails.append("\n出生日期：" + Utils.UtcToLocal(PremiereDate) + "\n");
-            tvDetails.append("出生地：" + (ProductionLocations == null ? "" : ProductionLocations));
+            tvDetails.append("\n出生日期：" + Utils.UtcToLocal(details.getPremiereDate()) + "\n");
+            tvDetails.append("出生地：" + String.join(",",details.getProductionLocations()));
             fillItemsByPerson(Id);
         }
 
@@ -346,7 +344,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         this.startActivity(intent);
     }
 
-    private JfClient.JJCallBack errcb = new JfClient.JJCallBack(){
+    private JfClient.JJCallBack errcb = new JfClient.JJCallBack() {
         @Override
         public void onError(String str) {
             ShowToask(str);

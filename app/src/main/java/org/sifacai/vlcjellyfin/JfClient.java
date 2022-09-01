@@ -411,8 +411,8 @@ public class JfClient {
         SendPost(url, reqjson, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject userObj = new Gson().fromJson(str, JsonObject.class);
-                if (userObj != null) {
+                try {
+                    JsonObject userObj = new Gson().fromJson(str, JsonObject.class);
                     if (userObj.has("User") && userObj.has("AccessToken")) {
                         String userId = userObj.get("User").getAsJsonObject().get("Id").getAsString();
                         String Token = userObj.get("AccessToken").getAsString();
@@ -426,13 +426,13 @@ public class JfClient {
                             SetHeaders();
                             cb.onSuccess(true);
                         } else {
-                            cb.onSuccess(false);
+                            err.onError("验证失败：" + str);
                         }
                     } else {
                         err.onError("验证失败：" + str);
                     }
-                } else {
-                    cb.onSuccess(false);
+                } catch (Exception e) {
+                    err.onError("验证失败：" + e.getMessage());
                 }
             }
         }, err);
@@ -466,25 +466,24 @@ public class JfClient {
                 SendGet(url + "/system/info/public", new JJCallBack() {
                     @Override
                     public void onSuccess(String str) {
-                        JsonObject serverInfo = new Gson().fromJson(str, JsonObject.class);
-                        Log.d(TAG, "onSuccess: " + str);
-                        String ServerId = "";
-                        if (serverInfo.has("Id")) {
+                        try {
+                            JsonObject serverInfo = new Gson().fromJson(str, JsonObject.class);
+                            String ServerId = "";
                             ServerId = serverInfo.get("Id").getAsString();
                             if (ServerId == null || ServerId.length() == 0) {
-                                cb.onSuccess(false);
+                                err.onError("服务器连接失败！");
                             } else {
                                 config.setJellyfinUrl(url);
                                 cb.onSuccess(true);
                             }
-                        } else {
-                            err.onError("联系服务器失败！");
+                        } catch (Exception e) {
+                            err.onError(e.getMessage());
                         }
                     }
                 }, err);
             }
         } else {
-            cb.onSuccess(false);
+            err.onError("服务器地址不能为空！");
         }
     }
 

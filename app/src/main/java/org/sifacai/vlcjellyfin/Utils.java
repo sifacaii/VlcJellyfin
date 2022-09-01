@@ -45,6 +45,7 @@ public class Utils {
      * @return
      */
     public static String UtcToLocal(String utcTime) {
+        if(utcTime == null || utcTime.length() == 0) return "";
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         String dt = "";
