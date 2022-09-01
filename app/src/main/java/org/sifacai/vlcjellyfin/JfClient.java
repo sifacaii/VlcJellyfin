@@ -19,6 +19,7 @@ import com.lzy.okgo.model.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
@@ -571,6 +572,10 @@ public class JfClient {
         if (jo == null) {
             return "";
         } else {
+            if(jo.getClass() == JsonArray.class){
+                List<String> list = new Gson().fromJson(jo,List.class);
+                return String.join(",",list);
+            }
             return jo.getAsString();
         }
     }

@@ -51,7 +51,7 @@
                         android:id="@+id/tvDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="260dp"
+                        android:minHeight="200dp"
                         android:layout_marginTop="20dp"
                         android:textSize="20dp" />
 
@@ -78,7 +78,6 @@
                         android:id="@+id/mGridView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
                         android:clipChildren="false"
                         android:clipToPadding="false"
                         android:focusable="false"
@@ -97,6 +96,7 @@
                 android:id="@+id/tvPersonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:visibility="gone" >
 
                 <TextView
@@ -109,7 +109,6 @@
                     android:id="@+id/mPersonGridView"
                     android:layout_width="match_parent"
                     android:layout_height="312dp"
-                    android:layout_marginTop="30dp"
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:focusable="false"

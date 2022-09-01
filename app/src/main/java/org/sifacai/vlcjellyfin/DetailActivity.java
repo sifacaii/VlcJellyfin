@@ -97,10 +97,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 .error(R.drawable.img_loading_placeholder)
                 .into(tvCover);
 
-        Log.d(TAG, "fillDetails: " + detailObj.toString());
-        JsonElement genres = JfClient.jeFromGson(detailObj, "Genres");
-        List<String> fg = new Gson().fromJson(genres,List.class);
-        String Genres = (genres == null ? "" : String.join(",",fg));
+        String Genres = JfClient.strFromGson(detailObj, "Genres");
         String OfficialRating = JfClient.strFromGson(detailObj, "OfficialRating");
         String CommunityRating = JfClient.strFromGson(detailObj, "CommunityRating");
         String ProductionYear = JfClient.strFromGson(detailObj, "ProductionYear");
@@ -153,10 +150,10 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         } else if (type.equals("Movie")) {
             fillMovie(detailObj);
         } else if (type.equals("Person")){
-            JsonElement ProductionLocations = JfClient.jeFromGson(detailObj,"ProductionLocations");
+            String ProductionLocations = JfClient.strFromGson(detailObj,"ProductionLocations");
             String PremiereDate = JfClient.strFromGson(detailObj,"PremiereDate");
             tvDetails.append("\n出生日期：" + Utils.UtcToLocal(PremiereDate)+"\n");
-            tvDetails.append("出生地：" + (ProductionLocations == null ? "" : ProductionLocations.getAsString()));
+            tvDetails.append("出生地：" + (ProductionLocations == null ? "" : ProductionLocations));
             fillItemsByPerson(Id);
         }
 
@@ -306,6 +303,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 
     @Override
     public void onClick(JsonObject jo) {
+        Log.d(TAG, "onClick: " + jo);
         String itemId = jo.get("Id").getAsString();
         String type = jo.get("Type").getAsString();
         Intent intent = null;
