@@ -19,6 +19,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
+import org.sifacai.vlcjellyfin.Bean.Item;
+import org.sifacai.vlcjellyfin.Bean.Items;
+
+import java.util.List;
+
 public class HomeActivity extends BaseActivity{
     private final String TAG = "HomeActivity";
     private LinearLayout tvContiner;
@@ -136,16 +141,15 @@ public class HomeActivity extends BaseActivity{
         showLoadingDialog("正在加载首页…………");
         JfClient.GetViews(new JfClient.JJCallBack(){
             @Override
-            public void onSuccess(JsonArray views) {
-                addRowTvRecyclerView("我的媒体", views, true);
-                for(int i=0;i<views.size();i++){
-                    JsonObject colls = views.get(i).getAsJsonObject();
-                    String name = JfClient.strFromGson(colls,"Name");
-                    String Id = JfClient.strFromGson(colls,"Id");
-                    JfClient.GetLatest(Id,new JfClient.JJCallBack(){
+            public void onSuccess(Items views) {
+                List<Item> items = views.getItems();
+                addRowTvRecyclerView("我的媒体", items, true);
+                for(int i=0;i<items.size();i++){
+                    Item item = items.get(i);
+                    JfClient.GetLatest(item.getId(),new JfClient.JJCallBack(){
                         @Override
-                        public void onSuccess(JsonArray latests) {
-                            addRowTvRecyclerView("新的 " + name,latests,false);
+                        public void onSuccess(Items latests) {
+                            addRowTvRecyclerView("新的 " + item.getName(),latests.getItems(),false);
                         }
                     },null);
                 }
@@ -154,8 +158,8 @@ public class HomeActivity extends BaseActivity{
         },null);
         JfClient.GetResume(new JfClient.JJCallBack(){
             @Override
-            public void onSuccess(JsonArray resumes) {
-                addRowTvRecyclerView("最近播放",resumes,false);
+            public void onSuccess(Items resumes) {
+                addRowTvRecyclerView("最近播放",resumes.getItems(),false);
             }
         },null);
     }
@@ -164,17 +168,17 @@ public class HomeActivity extends BaseActivity{
     /**
      * 添加类别行
      */
-    private void addRowTvRecyclerView(String title, JsonArray data, boolean horizon) {
+    private void addRowTvRecyclerView(String title, List<Item> items, boolean horizon) {
         JRecyclerView tvRecyclerView = (JRecyclerView) LayoutInflater.from(this)
                 .inflate(R.layout.home_horizon_tvrecycler, null);
         ((V7LinearLayoutManager) tvRecyclerView.getLayoutManager()).setOrientation(V7LinearLayoutManager.HORIZONTAL);
 
-        JAdapter jAdapter = new JAdapter(data, horizon);
+        JAdapter jAdapter = new JAdapter(items, horizon);
         jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
             @Override
-            public void onClick(JsonObject jo) {
-                String type = JfClient.strFromGson(jo, "Type");
-                String itemId = jo.get("Id").getAsString();
+            public void onClick(Item item) {
+                String type = item.getType();
+                String itemId = item.getId();
                 Intent intent = null;
                 if (type.equals("Folder") || type.equals("CollectionFolder")) {
                     intent = new Intent(mAA, CollectionActivity.class);

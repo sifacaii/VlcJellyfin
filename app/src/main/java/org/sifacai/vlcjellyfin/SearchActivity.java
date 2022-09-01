@@ -16,6 +16,12 @@ import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 
+import org.sifacai.vlcjellyfin.Bean.Item;
+import org.sifacai.vlcjellyfin.Bean.Items;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchActivity extends BaseActivity implements JAdapter.OnItemClickListener {
     private TvRecyclerView mGridView;
     private JAdapter adapter;
@@ -48,11 +54,9 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
         mGridView.setLayoutManager(v7GridLayoutManager);
         mGridView.setItemAnimator(null);  //防崩溃
 
-        adapter = new JAdapter(new JsonArray());
+        adapter = new JAdapter(new ArrayList<>());
         adapter.setOnItemClickListener(this);
         mGridView.setAdapter(adapter);
-
-
 
         searchTermEdit = findViewById(R.id.searchTermEdit);
         searchBtn = findViewById(R.id.searchBtn);
@@ -74,14 +78,25 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
         showLoadingDialog("搜索中………………");
         JfClient.SearchByTerm(searchTerm,16,new JfClient.JJCallBack(){
             @Override
-            public void onSuccess(JsonArray items) {
-                adapter.addItems(items);
+            public void onSuccess(Items items) {
+                mAA.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.addItems(items.getItems());
+                    }
+                });
                 dismissLoadingDialog();
             }
-        },null);
+        },new JfClient.JJCallBack(){
+            @Override
+            public void onError(String str) {
+                ShowToask("搜索时发生错误：" + str);
+                dismissLoadingDialog();
+            }
+        });
     }
 
-    private void fillItems(JsonArray items) {
+    private void fillItems(List<Item> items) {
         mAA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -91,9 +106,9 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
     }
 
     @Override
-    public void onClick(JsonObject jo) {
-        String itemId = jo.get("Id").getAsString();
-        String type = jo.get("Type").getAsString();
+    public void onClick(Item item) {
+        String itemId = item.getId();
+        String type = item.getType();
         Intent intent = null;
         switch (type) {
             case "Series":

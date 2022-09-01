@@ -22,6 +22,12 @@ import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 
+import org.sifacai.vlcjellyfin.Bean.Item;
+import org.sifacai.vlcjellyfin.Bean.Items;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class CollectionActivity extends BaseActivity {
     private String TAG = "CollectionActivity";
     private TvRecyclerView mGridContiner = null;
@@ -32,8 +38,8 @@ public class CollectionActivity extends BaseActivity {
     private int limit = 60;      //每页条目
     private int totalCount = 0;  //总条目数
     private String Type = "";
-    private JsonObject currObj = null;
-    private JsonArray currItems = null;
+    private Item currObj = null;
+    private List<Item> currItems = null;
     private JAdapter currAdapter = null;
 
     private TextView sortMenuBtn;
@@ -63,7 +69,7 @@ public class CollectionActivity extends BaseActivity {
         if(ItemId.equals("")){
             finish();
         }else{
-            currItems = new JsonArray();
+            currItems = new ArrayList<>();
             currAdapter = getJAdapter(currItems);
             mGridContiner.setAdapter(currAdapter);
 
@@ -77,9 +83,9 @@ public class CollectionActivity extends BaseActivity {
         showLoadingDialog("加载中…………");
         JfClient.GetItemInfo(ItemId,new JfClient.JJCallBack(){
             @Override
-            public void onSuccess(JsonObject Collection) {
+            public void onSuccess(Item Collection) {
                 currObj = Collection;
-                Type = JfClient.strFromGson(Collection,"CollectionType");
+                Type = Collection.getType();
                 fillItems();
                 setLoadMore();
             }
@@ -90,12 +96,16 @@ public class CollectionActivity extends BaseActivity {
      * 加载条目数据
      */
     private void fillItems(){
-        JfClient.GetCollection(ItemId,Type,JfClient.config.getSortBy(),JfClient.config.getSortOrder(),limit,currentPage,new JfClient.JJCallBack(){
+        JfClient.GetCollection(ItemId,Type,
+                                JfClient.config.getSortBy(),
+                                JfClient.config.getSortOrder(),
+                                limit,currentPage,
+                                new JfClient.JJCallBack(){
             @Override
-            public void onSuccess(JsonObject items) {
-                totalCount = JfClient.jeFromGson(items,"TotalRecordCount").getAsInt();
+            public void onSuccess(Items items) {
+                totalCount = items.getTotalRecordCount();
                 countPage = (int) Math.ceil((double) totalCount / limit);
-                JsonArray Items = items.get("Items").getAsJsonArray();
+                List<Item> Items = items.getItems();
                 dismissLoadingDialog();
                 currAdapter.addItems(Items);
                 setTitleTip();
@@ -104,13 +114,13 @@ public class CollectionActivity extends BaseActivity {
         },null);
     }
 
-    private JAdapter getJAdapter(JsonArray items){
+    private JAdapter getJAdapter(List<Item> items){
         JAdapter jAdapter = new JAdapter(items,false);
         jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
             @Override
-            public void onClick(JsonObject jo) {
-                String type = JfClient.strFromGson(jo,"Type");
-                String itemId = jo.get("Id").getAsString();
+            public void onClick(Item item) {
+                String type = item.getType();
+                String itemId = item.getId();
                 Intent intent = null;
                 if(type.equals("Folder") || type.equals("CollectionFolder")){
                     intent = new Intent(mAA,CollectionActivity.class);

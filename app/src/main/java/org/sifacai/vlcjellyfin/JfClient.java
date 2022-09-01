@@ -1,26 +1,25 @@
 package org.sifacai.vlcjellyfin;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.cache.CacheEntity;
-import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 
+import org.sifacai.vlcjellyfin.Bean.Item;
+import org.sifacai.vlcjellyfin.Bean.Items;
+
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -97,15 +96,11 @@ public class JfClient {
         return url;
     }
 
-    public static String GetImgUrl(JsonObject item) {
-        String id = jeFromGson(item, "Id").getAsString();
-        JsonElement imgTags = jeFromGson(item, "ImageTags");
-        if(imgTags == null) return "";
-
-        String imgid = strFromGson(imgTags.getAsJsonObject(), "Primary");
-        if(imgid.equals("")) return "";
-
-        return GetImgUrl(id, imgid);
+    public static String GetImgUrl(Item item) {
+        if (item.getImageTags() == null) return "";
+        if (item.getImageTags().getPrimary() == null || item.getImageTags().getPrimary().equals(""))
+            return "";
+        return GetImgUrl(item.getId(), item.getImageTags().getPrimary());
     }
 
     /**
@@ -140,22 +135,33 @@ public class JfClient {
                 new Runnable() {
                     @Override
                     public void run() {
-                        String jsonstr = SendGet(movieUrl);
-                        JsonObject moviejob = strToGson(jsonstr, JsonObject.class);
-                        JsonElement je = jeFromGson(moviejob, "Items");
-                        if (moviejob != null) items.addAll(je.getAsJsonArray());
+                        try {
+                            Items items = new Items();
+                            items.setItems(new ArrayList<>());
+                            String jsonstr = SendGet(movieUrl);
+                            Items moviejob = Utils.jsonToClass(jsonstr, Items.class);
+                            if (moviejob != null) {
+                                items.AddItems(moviejob.getItems());
+                                items.setTotalRecordCount(items.getTotalRecordCount() + moviejob.getTotalRecordCount());
+                            }
 
-                        jsonstr = SendGet(seriesUrl);
-                        JsonObject seriesobj = strToGson(jsonstr, JsonObject.class);
-                        je = jeFromGson(seriesobj, "Items");
-                        if (seriesobj != null) items.addAll(je.getAsJsonArray());
+                            jsonstr = SendGet(seriesUrl);
+                            Items seriesobj = Utils.jsonToClass(jsonstr, Items.class);
+                            if (seriesobj != null) {
+                                items.AddItems(seriesobj.getItems());
+                                items.setTotalRecordCount(items.getTotalRecordCount() + seriesobj.getTotalRecordCount());
+                            }
 
-                        jsonstr = SendGet(personUrl);
-                        JsonObject personobj = strToGson(jsonstr,JsonObject.class);
-                        je = jeFromGson(personobj,"Items");
-                        if (personobj != null) items.addAll(je.getAsJsonArray());
-
-                        scb.onSuccess(items);
+                            jsonstr = SendGet(personUrl);
+                            Items personobj = Utils.jsonToClass(jsonstr, Items.class);
+                            if (personobj != null) {
+                                items.AddItems(personobj.getItems());
+                                items.setTotalRecordCount(items.getTotalRecordCount() + personobj.getTotalRecordCount());
+                            }
+                            scb.onSuccess(items);
+                        } catch (Exception e) {
+                            errcb.onError(e.toString());
+                        }
                     }
                 }
         ).start();
@@ -172,10 +178,11 @@ public class JfClient {
         SendGet(AddPartUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject item = strToGson(str, JsonObject.class);
-                if (null != item) {
-                    JsonArray items = jeFromGson(item, "Items").getAsJsonArray();
+                try {
+                    Items items = Utils.jsonToClass(str, Items.class);
                     cb.onSuccess(items);
+                } catch (Exception e) {
+                    errcb.onError(e.getMessage());
                 }
             }
         }, errcb);
@@ -196,10 +203,11 @@ public class JfClient {
         SendGet(EpisodesUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject item = strToGson(str, JsonObject.class);
-                if (null != item) {
-                    JsonArray items = jeFromGson(item, "Items").getAsJsonArray();
+                try {
+                    Items items = Utils.jsonToClass(str, Items.class);
                     cb.onSuccess(items);
+                } catch (Exception e) {
+                    errcb.onError(e.getMessage());
                 }
             }
         }, errcb);
@@ -219,36 +227,39 @@ public class JfClient {
         SendGet(SeasonsUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject item = strToGson(str, JsonObject.class);
-                if (null != item) {
-                    JsonArray items = jeFromGson(item, "Items").getAsJsonArray();
+                try {
+                    Items items = Utils.jsonToClass(str, Items.class);
                     cb.onSuccess(items);
+                } catch (Exception e) {
+                    errcb.onError(e.getMessage());
                 }
+
             }
         }, errcb);
     }
 
     /**
      * 根据条件获取条目列表
-     * @param term 可以是 &Limit、&SortBy、&IncludeItemTypes、&PersonIds 等
+     *
+     * @param term  可以是 &Limit、&SortBy、&IncludeItemTypes、&PersonIds 等
      * @param scb
      * @param errcb
      */
-    public static void GetItemsByTerm(String term,JJCallBack scb,JJCallBack errcb){
-        String BaseUrl = config.getJellyfinUrl() + "/Users/"+UserId+"/Items?Recursive=true&StartIndex=0&CollapseBoxSetItems=false";
+    public static void GetItemsByTerm(String term, JJCallBack scb, JJCallBack errcb) {
+        String BaseUrl = config.getJellyfinUrl() + "/Users/" + UserId + "/Items?Recursive=true&StartIndex=0&CollapseBoxSetItems=false";
         BaseUrl += term;
 
-        SendGet(BaseUrl,new JJCallBack(){
+        SendGet(BaseUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject items = strToGson(str,JsonObject.class);
-                if(items == null){
-                    errcb.onError("内容空!");
-                }else{
+                try {
+                    Items items = Utils.jsonToClass(str, Items.class);
                     scb.onSuccess(items);
+                } catch (Exception e) {
+                    errcb.onError(e.getMessage());
                 }
             }
-        },errcb);
+        }, errcb);
     }
 
     /**
@@ -281,8 +292,13 @@ public class JfClient {
         SendGet(itemsUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject items = strToGson(str, JsonObject.class);
-                cb.onSuccess(items);
+                try {
+                    Items items = Utils.jsonToClass(str, Items.class);
+                    cb.onSuccess(items);
+                } catch (Exception e) {
+                    errcb.onError(e.getMessage());
+                }
+
             }
         }, errcb);
     }
@@ -302,9 +318,14 @@ public class JfClient {
         SendGet(lastestUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonArray latestObj = strToGson(str, JsonArray.class);
-                if (null != latestObj) {
-                    cb.onSuccess(latestObj);
+                Type type = new TypeToken<List<Item>>() {
+                }.getType();
+                List<Item> rets = Utils.jsonToClass(str, type);
+                if (null != rets) {
+                    Items items = new Items();
+                    items.setItems(rets);
+                    items.setTotalRecordCount(rets.size());
+                    cb.onSuccess(items);
                 }
             }
         }, errcb);
@@ -324,11 +345,14 @@ public class JfClient {
         SendGet(resumeUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject resumeObj = strToGson(str, JsonObject.class);
-                if (null != resumeObj) {
-                    JsonArray resumes = jeFromGson(resumeObj, "Items").getAsJsonArray();
-                    cb.onSuccess(resumes);
+                try {
+                    Items items = Utils.jsonToClass(str, Items.class);
+                    cb.onSuccess(items);
+                } catch (Exception e) {
+                    err.onError(e.getMessage());
                 }
+
+
             }
         }, err);
     }
@@ -343,10 +367,11 @@ public class JfClient {
         SendGet(viewsUrl, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject viewsObj = strToGson(str, JsonObject.class);
-                if (null != viewsObj) {
-                    JsonArray views = jeFromGson(viewsObj, "Items").getAsJsonArray();
+                try {
+                    Items views = Utils.jsonToClass(str, Items.class);
                     cb.onSuccess(views);
+                } catch (Exception e) {
+                    err.onError(e.getMessage());
                 }
             }
         }, err);
@@ -363,11 +388,11 @@ public class JfClient {
         SendGet(url, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject item = strToGson(str, JsonObject.class);
-                if (null != item) {
+                try {
+                    Item item = Utils.jsonToClass(str, Item.class);
                     cb.onSuccess(item);
-                } else {
-                    err.onError(str);
+                } catch (Exception e) {
+                    err.onError(e.getMessage());
                 }
             }
         }, err);
@@ -386,21 +411,25 @@ public class JfClient {
         SendPost(url, reqjson, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonObject userObj = strToGson(str, JsonObject.class);
+                JsonObject userObj = new Gson().fromJson(str, JsonObject.class);
                 if (userObj != null) {
-                    String userId = jeFromGson(jeFromGson(userObj, "User").getAsJsonObject(), "Id").getAsString();
-                    String Token = jeFromGson(userObj, "AccessToken").getAsString();
-                    if (!Token.equals("")) {
-                        UserId = userId;
-                        AccessToken = Token;
-                        if (saveUser) {
-                            config.setUserName(username);
-                            config.setPassWord(password);
+                    if (userObj.has("User") && userObj.has("AccessToken")) {
+                        String userId = userObj.get("User").getAsJsonObject().get("Id").getAsString();
+                        String Token = userObj.get("AccessToken").getAsString();
+                        if (!Token.equals("")) {
+                            UserId = userId;
+                            AccessToken = Token;
+                            if (saveUser) {
+                                config.setUserName(username);
+                                config.setPassWord(password);
+                            }
+                            SetHeaders();
+                            cb.onSuccess(true);
+                        } else {
+                            cb.onSuccess(false);
                         }
-                        SetHeaders();
-                        cb.onSuccess(true);
                     } else {
-                        cb.onSuccess(false);
+                        err.onError("验证失败：" + str);
                     }
                 } else {
                     cb.onSuccess(false);
@@ -419,7 +448,7 @@ public class JfClient {
         SendGet(url, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                JsonArray users = strToGson(str, JsonArray.class);
+                JsonArray users = new Gson().fromJson(str, JsonArray.class);
                 cb.onSuccess(users);
             }
         }, err);
@@ -434,22 +463,25 @@ public class JfClient {
     public static void VerityServerUrl(String url, JJCallBack cb, JJCallBack err) {
         if (url.length() > 0) {
             if (url.startsWith("http://") || url.startsWith("https://")) {
-
                 SendGet(url + "/system/info/public", new JJCallBack() {
                     @Override
                     public void onSuccess(String str) {
-                        JsonObject serverInfo = strToGson(str, JsonObject.class);
+                        JsonObject serverInfo = new Gson().fromJson(str, JsonObject.class);
                         Log.d(TAG, "onSuccess: " + str);
-                        String ServerId = jeFromGson(serverInfo, "Id") == null ? null : jeFromGson(serverInfo, "Id").getAsString();
-                        if (ServerId == null || ServerId.length() == 0) {
-                            cb.onSuccess(false);
+                        String ServerId = "";
+                        if (serverInfo.has("Id")) {
+                            ServerId = serverInfo.get("Id").getAsString();
+                            if (ServerId == null || ServerId.length() == 0) {
+                                cb.onSuccess(false);
+                            } else {
+                                config.setJellyfinUrl(url);
+                                cb.onSuccess(true);
+                            }
                         } else {
-                            config.setJellyfinUrl(url);
-                            cb.onSuccess(true);
+                            err.onError("联系服务器失败！");
                         }
                     }
                 }, err);
-
             }
         } else {
             cb.onSuccess(false);
@@ -495,7 +527,7 @@ public class JfClient {
             @Override
             public void onError(Response<String> response) {
                 if (errcb != null) {
-                    errcb.onError(response.body());
+                    errcb.onError(response.toString());
                 }
             }
         });
@@ -538,61 +570,10 @@ public class JfClient {
      *
      * @param url
      */
-    public static String SendGet(String url) {
+    public static String SendGet(String url) throws IOException {
         String response = "";
-        try {
-            response = OkGo.<String>get(url).headers(headers).execute().body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        response = OkGo.<String>get(url).headers(headers).execute().body().string();
         return response;
-    }
-
-    /**
-     * Json字符串转Gson对象
-     *
-     * @param jsonStr
-     * @param tClass
-     * @param <T>
-     * @return 可能是NULL
-     */
-    public static <T> T strToGson(String jsonStr, Class<T> tClass) {
-        if (jsonStr != null && jsonStr.length() > 0) {
-            try {
-                return new Gson().fromJson(jsonStr, tClass);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-        return null;
-    }
-
-    public static String strFromGson(JsonObject obj, String key) {
-        JsonElement jo = jeFromGson(obj, key);
-        if (jo == null) {
-            return "";
-        } else {
-            if(jo.getClass() == JsonArray.class){
-                List<String> list = new Gson().fromJson(jo,List.class);
-                return String.join(",",list);
-            }
-            return jo.getAsString();
-        }
-    }
-
-    /**
-     * 按key获取JsonElement
-     *
-     * @param obj
-     * @param key
-     * @return
-     */
-    public static JsonElement jeFromGson(JsonObject obj, String key) {
-        JsonElement jo = null;
-        if (obj != null && obj.has(key)) {
-            jo = obj.get(key);
-        }
-        return jo;
     }
 
     public static class JJCallBack implements JCallBack {
@@ -618,6 +599,16 @@ public class JfClient {
         }
 
         @Override
+        public void onSuccess(Item item) {
+
+        }
+
+        @Override
+        public void onSuccess(Items items) {
+
+        }
+
+        @Override
         public void onError(String str) {
 
         }
@@ -631,6 +622,10 @@ public class JfClient {
         void onSuccess(JsonObject jsonObject);
 
         void onSuccess(JsonArray jsonArray);
+
+        void onSuccess(Item item);
+
+        void onSuccess(Items items);
 
         void onError(String str);
     }

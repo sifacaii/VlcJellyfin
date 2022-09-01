@@ -17,9 +17,16 @@ import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.squareup.picasso.Picasso;
 
+import org.sifacai.vlcjellyfin.Bean.Item;
+import org.sifacai.vlcjellyfin.Bean.Items;
+import org.sifacai.vlcjellyfin.Bean.People;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class JAdapter extends RecyclerView.Adapter {
     private  String TAG = "JAdapter:";
-    private JsonArray items;
+    private List<Item> items;
     private boolean horizon;
 
     class VH extends RecyclerView.ViewHolder{
@@ -39,12 +46,12 @@ public class JAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public JAdapter(JsonArray items) {
+    public JAdapter(List<Item> items) {
         this.items = items;
         this.horizon = false;
     }
 
-    public JAdapter(JsonArray items,Boolean horizon) {
+    public JAdapter(List<Item> items,Boolean horizon) {
         this.items = items;
         this.horizon = horizon;
     }
@@ -64,33 +71,21 @@ public class JAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         VH v = (VH)holder;
-        JsonObject jo = items.get(position).getAsJsonObject();
-        String SeriesName = JfClient.strFromGson(jo,"SeriesName");
-        String SeasonName = JfClient.strFromGson(jo,"SeasonName");
-        String Name = JfClient.strFromGson(jo,"Name");
-        String itemid = JfClient.strFromGson(jo,"Id");
+        Item item = items.get(position);
+        String SeriesName = item.getSeriesName() == null ? "" : item.getSeriesName();
+        String SeasonName = item.getSeasonName() == null ? "" : item.getSeasonName();
+        String Name = item.getName();
+        String itemid = item.getId();
         v.id = itemid;
         v.tvName.setText(" " + SeriesName + " " + SeasonName + " " + Name);
 
-        if(jo.has("UserData")){
-            JsonObject ujo = jo.get("UserData").getAsJsonObject();
-            if(ujo.has("PlayedPercentage")){
-                int pp = ujo.get("PlayedPercentage").getAsInt();
-                v.tvPlayedPercentage.setProgress(pp);
-                v.tvPlayedPercentage.setVisibility(View.VISIBLE);
-            }
+        if(item.getUserData() != null){
+            int pp = (int) Math.round(item.getUserData().getPlayedPercentage());
+            v.tvPlayedPercentage.setProgress(pp);
+            v.tvPlayedPercentage.setVisibility(View.VISIBLE);
         }
-        v.type = JfClient.strFromGson(jo,"Type");
-        String imgUrl = "";
-        if(v.type.equals("Actor")){
-            String PrimaryImageTag = JfClient.strFromGson(jo,"PrimaryImageTag");
-            if(!PrimaryImageTag.equals("")){
-                imgUrl = JfClient.GetImgUrl(v.id,PrimaryImageTag);
-            }
-            Log.d(TAG, "onBindViewHolder: 图像URL" + imgUrl);
-        }else{
-            imgUrl = JfClient.GetImgUrl(jo);
-        }
+        v.type = item.getType();
+        String imgUrl = JfClient.GetImgUrl(item.getId(),item.getImageTags().getPrimary());
 
         if (!TextUtils.isEmpty(imgUrl)) {
             Picasso.get()
@@ -104,12 +99,12 @@ public class JAdapter extends RecyclerView.Adapter {
         v.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onClick(jo);
+                listener.onClick(item);
             }
         });
     }
 
-    public JsonArray getData(){
+    public List<Item> getData(){
         return items;
     }
 
@@ -123,7 +118,7 @@ public class JAdapter extends RecyclerView.Adapter {
      * 设置数据
      * @param items
      */
-    public void setItems(JsonArray items){
+    public void setItems(List<Item> items){
         this.items = items;
         notifyDataSetChanged();
     }
@@ -132,20 +127,20 @@ public class JAdapter extends RecyclerView.Adapter {
      * 添加数据
      * @param items
      */
-    public void addItems(JsonArray items){
+    public void addItems(List<Item> items){
         int c = this.items.size();
         this.items.addAll(items);
         notifyItemRangeInserted(c,items.size());
     }
 
     public void clearItems(){
-        this.items = new JsonArray();
+        this.items = new ArrayList<>();
         notifyDataSetChanged();
     }
 
     //定义OnItemClickListener接口
     public interface OnItemClickListener {
-        void onClick(JsonObject jo);
+        void onClick(Item item);
     }
 
     public OnItemClickListener listener;
