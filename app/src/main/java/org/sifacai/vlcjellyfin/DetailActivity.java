@@ -152,8 +152,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         } else if (type.equals("Person")){
             JsonElement ProductionLocations = JfClient.jeFromGson(detailObj,"ProductionLocations");
             String PremiereDate = JfClient.strFromGson(detailObj,"PremiereDate");
-            tvDetails.append("\n出生日期：" +Utils.UtcToLocal(PremiereDate)+"\n");
-            tvDetails.append("出生地：" + ProductionLocations == null ? "" : ProductionLocations.toString());
+            tvDetails.append("\n出生日期：" + Utils.UtcToLocal(PremiereDate)+"\n");
+            tvDetails.append("出生地：" + (ProductionLocations == null ? "" : ProductionLocations.toString()));
             fillItemsByPerson(Id);
         }
 
