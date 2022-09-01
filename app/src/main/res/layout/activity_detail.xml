@@ -48,55 +48,11 @@
                         android:textSize="30dp" />
 
                     <TextView
-                        android:id="@+id/tvGenres"
+                        android:id="@+id/tvDetails"
                         android:layout_width="match_parent"
-                        android:layout_height="28dp"
-                        android:layout_marginTop="2dp"
-                        android:text="风格："
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
-
-                    <TextView
-                        android:id="@+id/tvRating"
-                        android:layout_width="match_parent"
-                        android:layout_height="28dp"
-                        android:text="评分："
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
-
-                    <TextView
-                        android:id="@+id/tvVideo"
-                        android:layout_width="match_parent"
-                        android:layout_height="28dp"
-                        android:text="视频："
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
-
-                    <TextView
-                        android:id="@+id/tvAudio"
-                        android:layout_width="match_parent"
-                        android:layout_height="28dp"
-                        android:text="音频："
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
-
-                    <TextView
-                        android:id="@+id/tvSubtitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="28dp"
-                        android:text="字幕："
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
-
-                    <TextView
-                        android:id="@+id/tvOverview"
-                        android:layout_width="match_parent"
-                        android:layout_height="110dp"
-                        android:layout_marginTop="6dp"
-                        android:ellipsize="end"
-                        android:maxLines="4"
-                        android:text="简介："
-                        android:textColor="@android:color/white"
+                        android:layout_height="wrap_content"
+                        android:minHeight="260dp"
+                        android:layout_marginTop="20dp"
                         android:textSize="20dp" />
 
                     <ImageView
@@ -115,7 +71,7 @@
                     <org.sifacai.vlcjellyfin.JRecyclerView
                         android:id="@+id/mGridView"
                         android:layout_width="match_parent"
-                        android:layout_height="312dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:clipChildren="false"
                         android:clipToPadding="false"
@@ -128,6 +84,7 @@
                         app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
 
                 </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout

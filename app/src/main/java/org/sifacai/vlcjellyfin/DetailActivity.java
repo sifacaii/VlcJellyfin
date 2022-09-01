@@ -25,18 +25,14 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DetailActivity extends BaseActivity implements JAdapter.OnItemClickListener {
     private String TAG = "详情：";
     private String ItemId;
     private ImageView tvCover;
     private TextView tvTitle;
-    private TextView tvGenres;
-    private TextView tvRating;
-    private TextView tvVideo;
-    private TextView tvAudio;
-    private TextView tvSubtitle;
-    private TextView tvOverview;
+    private TextView tvDetails;
     private ImageView tvPlay;
     private JRecyclerView mGridView;
     private JRecyclerView mPeopleGridView;
@@ -58,12 +54,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     private void init() {
         tvCover = findViewById(R.id.tvCover);
         tvTitle = findViewById(R.id.tvTitle);
-        tvGenres = findViewById(R.id.tvGenres);
-        tvRating = findViewById(R.id.tvRating);
-        tvVideo = findViewById(R.id.tvVideo);
-        tvAudio = findViewById(R.id.tvAudio);
-        tvSubtitle = findViewById(R.id.tvSubtitle);
-        tvOverview = findViewById(R.id.tvOverview);
+        tvDetails = findViewById(R.id.tvDetails);
         tvPlay = findViewById(R.id.tvPlay);
         mGridView = findViewById(R.id.mGridView);
         tvPeopleLayout = findViewById(R.id.tvPersonLayout);
@@ -112,9 +103,11 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String Overview = JfClient.strFromGson(detailObj, "Overview");
 
         tvTitle.setText(Name);
-        tvGenres.setText("年份：" + ProductionYear + "  风格：" + Genres);
-        tvRating.setText("评分：" + CommunityRating + "  评级：" + OfficialRating);
-        tvOverview.setText("简介：    " + Overview);
+        tvDetails.append(ProductionYear.equals("") ? "" : "年份：" + ProductionYear + "  ");
+        tvDetails.append(Genres.equals("") ? "" : "风格：" + Genres + "\n");
+        tvDetails.append(CommunityRating.equals("") ? "" : "评分：" + CommunityRating + "  ");
+        tvDetails.append(OfficialRating.equals("") ? "" : "评级：" + OfficialRating + "\n");
+
 
         JsonArray MediaStreams = null;
         if (detailObj.has("MediaStreams")) {
@@ -135,13 +128,11 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                     else subtitle += JfClient.strFromGson(ms, "Codec") + "；";
                 }
             }
-            String finalVideo = video;
-            String finalAudio = audio;
-            String finalSubtitle = subtitle;
-            tvVideo.setText("视频：" + finalVideo);
-            tvAudio.setText("音频：" + finalAudio);
-            tvSubtitle.setText("字幕：" + finalSubtitle);
+            tvDetails.append(video.equals("") ? "" : "视频：" + video + "\n");
+            tvDetails.append(audio.equals("") ? "" : "音频：" + audio + "\n");
+            tvDetails.append(subtitle.equals("") ? "" : "字幕：" + subtitle + "\n");
         }
+        tvDetails.append("简介：  " + Overview );
 
         //填充列表
         String type = JfClient.strFromGson(detailObj, "Type");
@@ -156,47 +147,64 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             fillEpisodes(SeriesId, SeasonId);
         } else if (type.equals("Movie")) {
             fillMovie(detailObj);
+        } else if (type.equals("Person")){
+            JsonElement ProductionLocations = JfClient.jeFromGson(detailObj,"ProductionLocations");
+            String PremiereDate = JfClient.strFromGson(detailObj,"PremiereDate");
+            tvDetails.append("出生日期：" +PremiereDate+"\n");
+            tvDetails.append("出生地：" + ProductionLocations == null ? "" : ProductionLocations.toString());
+            fillItemsByPerson(Id);
         }
 
         JsonElement People = JfClient.jeFromGson(detailObj,"People");
         if(People != null){
-            fillPeople(People.getAsJsonArray());
+            JsonArray peoples = People.getAsJsonArray();
+            if(peoples.size() > 0) {
+                fillPeople(People.getAsJsonArray());
+            }
         }
     }
 
     private void fillMovie(JsonObject item) {
-        tvPlay.setVisibility(View.VISIBLE);
-        tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (view.hasFocus()) {
-                    view.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-                } else {
-                    view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-                }
-            }
-        });
-        tvPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                JfClient.playList.clear();
-                JfClient.playList.add(getMedia(item));
-                JfClient.playIndex = 0;
-                toVlcPlayer();
-            }
-        });
-        tvPlay.requestFocus();
+//        tvPlay.setVisibility(View.VISIBLE);
+//        tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean b) {
+//                if (view.hasFocus()) {
+//                    view.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+//                } else {
+//                    view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+//                }
+//            }
+//        });
+//        tvPlay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                JfClient.playList.clear();
+//                JfClient.playList.add(getMedia(item));
+//                JfClient.playIndex = 0;
+//                toVlcPlayer();
+//            }
+//        });
+//        tvPlay.requestFocus();
 
+        String Name = JfClient.strFromGson(item,"Name");
+        Name = "播放： " + Name;
+        item.remove("Name");
+        item.addProperty("Name" ,Name);
+
+        JsonArray plja = new JsonArray();
+        plja.add(item);
         if (item.has("PartCount")) {
             String Id = JfClient.strFromGson(item, "Id");
             JfClient.GetAddPart(Id, new JfClient.JJCallBack() {
                 @Override
                 public void onSuccess(JsonArray parts) {
-                    fillItems(parts);
+                    plja.addAll(parts);
+                    fillItems(plja);
                 }
             }, null);
         } else {
-            dismissLoadingDialog();
+            fillItems(plja);
         }
     }
 
@@ -241,6 +249,10 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         dismissLoadingDialog();
     }
 
+    /**
+     * 填充定员表
+     * @param items
+     */
     private void fillPeople(JsonArray items) {
         tvPeopleLayout.setVisibility(View.VISIBLE);
         JAdapter jAdapter = new JAdapter(items, false);
@@ -249,6 +261,37 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         jAdapter.setOnItemClickListener(this);
         mPeopleGridView.setLayoutManager(layoutManager);
         mPeopleGridView.setAdapter(jAdapter);
+    }
+
+    /**
+     * 填充演员作品
+     * @param personid
+     */
+    private void fillItemsByPerson(String personid) {
+        String Term = "&SortBy=DateCreated&SortOrder=Descending&PersonIds=" + personid;
+        JfClient.GetItemsByTerm(Term,new JfClient.JJCallBack(){
+            @Override
+            public void onSuccess(JsonObject jsonObject) {
+                JsonArray items = jsonObject.get("Items").getAsJsonArray();
+                JAdapter jAdapter = new JAdapter(items, false);
+                V7GridLayoutManager layoutManager = new V7GridLayoutManager(mGridView.getContext(),4);
+                jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
+                    @Override
+                    public void onClick(JsonObject jo) {
+                        //点击
+                    }
+                });
+                mGridView.setVisibility(View.VISIBLE);
+                mGridView.setLayoutManager(layoutManager);
+                mGridView.setAdapter(jAdapter);
+                dismissLoadingDialog();
+            }
+        },new JfClient.JJCallBack(){
+            @Override
+            public void onError(String str) {
+                dismissLoadingDialog();
+            }
+        });
     }
 
     @Override
@@ -281,7 +324,9 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             JfClient.playIndex = 0;
             toVlcPlayer();
         }else if(type.equals("Actor")){
-
+            intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("itemId", itemId);
+            startActivity(intent);
         }
     }
 

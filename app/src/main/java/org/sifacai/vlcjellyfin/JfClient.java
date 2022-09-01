@@ -228,6 +228,28 @@ public class JfClient {
     }
 
     /**
+     * 根据条件获取条目列表
+     * @param term 可以是 &Limit、&SortBy、&IncludeItemTypes、&PersonIds 等
+     * @param scb
+     * @param errcb
+     */
+    public static void GetItemsByTerm(String term,JJCallBack scb,JJCallBack errcb){
+        String BaseUrl = config.getJellyfinUrl() + "/Users/"+UserId+"/Items?Recursive=true&StartIndex=0&CollapseBoxSetItems=false";
+        BaseUrl += term;
+        SendGet(BaseUrl,new JJCallBack(){
+            @Override
+            public void onSuccess(String str) {
+                JsonObject items = strToGson(str,JsonObject.class);
+                if(items == null){
+                    errcb.onError("内容空!");
+                }else{
+                    scb.onSuccess(items);
+                }
+            }
+        },errcb);
+    }
+
+    /**
      * 获取合集条目
      *
      * @param parentId
