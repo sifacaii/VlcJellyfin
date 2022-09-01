@@ -406,6 +406,10 @@ public class JfClient {
      * @param cb
      */
     public static void AuthenticateByName(String username, String password, JJCallBack cb, JJCallBack err, boolean saveUser) {
+        if(username.equals("") || password.equals("")){
+            err.onError("用户名和密码验证失败！");
+            return;
+        }
         String url = config.getJellyfinUrl() + "/Users/authenticatebyname";
         String reqjson = "{\"Username\":\"" + username + "\",\"Pw\":\"" + password + "\"}";
         SendPost(url, reqjson, new JJCallBack() {
@@ -461,29 +465,27 @@ public class JfClient {
      * @param cb
      */
     public static void VerityServerUrl(String url, JJCallBack cb, JJCallBack err) {
-        if (url.length() > 0) {
-            if (url.startsWith("http://") || url.startsWith("https://")) {
-                SendGet(url + "/system/info/public", new JJCallBack() {
-                    @Override
-                    public void onSuccess(String str) {
-                        try {
-                            JsonObject serverInfo = new Gson().fromJson(str, JsonObject.class);
-                            String ServerId = "";
-                            ServerId = serverInfo.get("Id").getAsString();
-                            if (ServerId == null || ServerId.length() == 0) {
-                                err.onError("服务器连接失败！");
-                            } else {
-                                config.setJellyfinUrl(url);
-                                cb.onSuccess(true);
-                            }
-                        } catch (Exception e) {
-                            err.onError(e.getMessage());
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            SendGet(url + "/system/info/public", new JJCallBack() {
+                @Override
+                public void onSuccess(String str) {
+                    try {
+                        JsonObject serverInfo = new Gson().fromJson(str, JsonObject.class);
+                        String ServerId = "";
+                        ServerId = serverInfo.get("Id").getAsString();
+                        if (ServerId == null || ServerId.length() == 0) {
+                            err.onError("服务器连接失败！");
+                        } else {
+                            config.setJellyfinUrl(url);
+                            cb.onSuccess(true);
                         }
+                    } catch (Exception e) {
+                        err.onError(e.getMessage());
                     }
-                }, err);
-            }
+                }
+            }, err);
         } else {
-            err.onError("服务器地址不能为空！");
+            err.onError("服务器地址不正确！");
         }
     }
 

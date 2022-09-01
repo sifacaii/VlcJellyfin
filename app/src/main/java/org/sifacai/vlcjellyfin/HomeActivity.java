@@ -38,23 +38,6 @@ public class HomeActivity extends BaseActivity {
         tvContiner = findViewById(R.id.tvItems);
 
         JfClient.init(getApplication());
-
-        if (JfClient.AccessToken.equals("") || JfClient.UserId.equals("")) {
-            showLoadingDialog("正在验证服务器地址！");
-            JfClient.VerityServerUrl(JfClient.config.getJellyfinUrl(), new JfClient.JJCallBack() {
-                @Override
-                public void onSuccess(Boolean bool) {
-                    setLoadingText("正在验证用户名和密码！");
-                    JfClient.AuthenticateByName(JfClient.config.getUserName(), JfClient.config.getPassWord(), new JfClient.JJCallBack() {
-                        @Override
-                        public void onSuccess(Boolean bool) {
-                            dismissLoadingDialog();
-                            initView();
-                        }
-                    }, connErr, false);
-                }
-            }, connErr);
-        }
     }
 
     private JfClient.JJCallBack connErr = new JfClient.JJCallBack() {
@@ -69,10 +52,14 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        initView();
+        initData();
     }
 
+    /**
+     * 登录框
+     */
     private void showLoginDialog() {
+        Log.d(TAG, "showLoginDialog: 跳出登录框");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         AlertDialog alert = builder.setTitle("登录")
                 .setMessage("请输入登录信息")
@@ -129,6 +116,27 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
+    private void initData(){
+        if (JfClient.AccessToken.equals("") || JfClient.UserId.equals("")) {
+            showLoadingDialog("正在验证服务器地址！");
+            JfClient.VerityServerUrl(JfClient.config.getJellyfinUrl(), new JfClient.JJCallBack() {
+                @Override
+                public void onSuccess(Boolean bool) {
+                    setLoadingText("正在验证用户名和密码！");
+                    JfClient.AuthenticateByName(JfClient.config.getUserName(), JfClient.config.getPassWord(), new JfClient.JJCallBack() {
+                        @Override
+                        public void onSuccess(Boolean bool) {
+                            dismissLoadingDialog();
+                            initView();
+                        }
+                    }, connErr, false);
+                }
+            }, connErr);
+        }else{
+            Log.d(TAG, "initData: 跳出");
+            initView();
+        }
+    }
 
     private void initView() {
         showLoadingDialog("正在加载首页…………");
@@ -144,11 +152,11 @@ public class HomeActivity extends BaseActivity {
                         public void onSuccess(Items latests) {
                             addRowTvRecyclerView("新的 " + item.getName(), latests.getItems(), false);
                         }
-                    }, null);
+                    }, errcb);
                 }
                 dismissLoadingDialog();
             }
-        }, null);
+        }, errcb);
         JfClient.GetResume(new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items resumes) {
@@ -159,9 +167,8 @@ public class HomeActivity extends BaseActivity {
                 }
                 addRowTvRecyclerView("最近播放", resumes.getItems(), false);
             }
-        }, null);
+        }, errcb);
     }
-
 
     /**
      * 添加类别行
@@ -216,4 +223,12 @@ public class HomeActivity extends BaseActivity {
             System.exit(0);
         }
     }
+
+    public JfClient.JJCallBack errcb = new JfClient.JJCallBack(){
+        @Override
+        public void onError(String str) {
+            dismissLoadingDialog();
+            ShowToask(str);
+        }
+    };
 }

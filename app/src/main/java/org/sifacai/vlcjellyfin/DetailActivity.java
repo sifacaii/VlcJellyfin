@@ -122,10 +122,10 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 if (mstype.equals("Video")) {
                     video += ms.getDisplayTitle();
                 } else if (mstype.equals("Audio")) {
-                    if (!ms.getLanguage().equals("")) audio += ms.getLanguage() + "、";
+                    if (ms.getLanguage()!=null && !ms.getLanguage().equals("")) audio += ms.getLanguage() + "、";
                     else audio += ms.getCodec() + "；";
                 } else if (mstype.equals("Subtitle")) {
-                    if (!ms.getLanguage().equals("")) subtitle += ms.getLanguage() + "、";
+                    if (ms.getLanguage() != null && !ms.getLanguage().equals("")) subtitle += ms.getLanguage() + "、";
                     else subtitle += ms.getCodec() + "；";
                 }
             }

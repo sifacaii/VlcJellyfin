@@ -18,6 +18,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.videolan.libvlc.LibVLC;
+import org.videolan.libvlc.Media;
+import org.videolan.libvlc.MediaFactory;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
@@ -405,11 +407,22 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             if (JfClient.playIndex < JfClient.playList.size()) {
                 currItem = JfClient.playList.get(JfClient.playIndex);
                 videoTitle.setText(currItem.Name);
-                mediaPlayer.play(Uri.parse(currItem.Url));
+                Media media = getMedia();
+                mediaPlayer.setMedia(media);
+                media.release();
+                mediaPlayer.play();
             }
         } else {
             stop();
         }
+    }
+
+    private Media getMedia(){
+        Uri uri = Uri.parse(currItem.Url);
+        Media media = new Media(libVLC,uri);
+        media.setHWDecoderEnabled(true,false);
+        //media.addOption(":codec=mediacodec_ndk,mediacodec_jni,none"); //硬件加速
+        return media;
     }
 
     /**
