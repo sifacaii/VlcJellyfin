@@ -27,6 +27,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DetailActivity extends BaseActivity implements JAdapter.OnItemClickListener {
     private String TAG = "详情：";
@@ -96,8 +97,10 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 .error(R.drawable.img_loading_placeholder)
                 .into(tvCover);
 
+        Log.d(TAG, "fillDetails: " + detailObj.toString());
         JsonElement genres = JfClient.jeFromGson(detailObj, "Genres");
-        String Genres = genres == null ? "" : genres.getAsJsonArray().toString();
+        List<String> fg = new Gson().fromJson(genres,List.class);
+        String Genres = (genres == null ? "" : String.join(",",fg));
         String OfficialRating = JfClient.strFromGson(detailObj, "OfficialRating");
         String CommunityRating = JfClient.strFromGson(detailObj, "CommunityRating");
         String ProductionYear = JfClient.strFromGson(detailObj, "ProductionYear");

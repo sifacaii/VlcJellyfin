@@ -40,7 +40,9 @@ public class Utils {
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         String dt = "";
         try {
-            dt = df.parse(utcTime).toLocaleString();
+            Date date = df.parse(utcTime);
+            SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd");
+            dt = sdt.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
