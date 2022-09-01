@@ -141,9 +141,14 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         if (type.equals("Series")) {
             fillSeason(ItemId);
         } else if (type.equals("Season")) {
+            String SeriesName = details.getSeriesName() == null ? "" : details.getSeriesName() + "-";
+            tvTitle.setText(SeriesName + details.getName());
             String SeriesId = details.getSeriesId();
             fillEpisodes(SeriesId, ItemId);
         } else if (type.equals("Episode")) {
+            String SeriesName = details.getSeriesName() == null ? "" : details.getSeriesName() + "-";
+            String SeasonName = details.getSeasonName() == null ? "" : details.getSeasonName();
+            tvTitle.setText(SeriesName + SeasonName);
             String SeriesId = details.getSeriesId();
             String SeasonId = details.getSeasonId();
             fillEpisodes(SeriesId, SeasonId);
@@ -261,6 +266,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
      */
     private void fillItemsByPerson(String personid) {
         String Term = "&SortBy=DateCreated&SortOrder=Descending&PersonIds=" + personid;
+        Term += "&IncludeItemTypes=Movie,Series";
         JfClient.GetItemsByTerm(Term, new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items iitems) {

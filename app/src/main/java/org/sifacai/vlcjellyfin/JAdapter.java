@@ -72,12 +72,8 @@ public class JAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         VH v = (VH)holder;
         Item item = items.get(position);
-        String SeriesName = item.getSeriesName() == null ? "" : item.getSeriesName();
-        String SeasonName = item.getSeasonName() == null ? "" : item.getSeasonName();
-        String Name = item.getName();
-        String itemid = item.getId();
-        v.id = itemid;
-        v.tvName.setText(" " + SeriesName + " " + SeasonName + " " + Name);
+        v.id = item.getId();
+        v.tvName.setText(item.getName());
 
         if(item.getUserData() != null){
             int pp = (int) Math.round(item.getUserData().getPlayedPercentage());

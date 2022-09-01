@@ -152,6 +152,11 @@ public class HomeActivity extends BaseActivity {
         JfClient.GetResume(new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items resumes) {
+                for(Item it : resumes.getItems()){
+                    String SeriesName = it.getSeriesName() == null ? "" : it.getSeriesName() + "-";
+                    String SeasonName = it.getSeasonName() == null ? "" : it.getSeasonName() + "-";
+                    it.setName(SeriesName+SeasonName+it.getName());
+                }
                 addRowTvRecyclerView("最近播放", resumes.getItems(), false);
             }
         }, null);

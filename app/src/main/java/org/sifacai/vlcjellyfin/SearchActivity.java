@@ -116,12 +116,13 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
             case "Episode":
             case "Movie":
             case "Video":
+            case "Person":
                 intent = new Intent(this, DetailActivity.class);
                 intent.putExtra("itemId", itemId);
                 this.startActivity(intent);
                 break;
             default:
-                ShowToask("未知媒体类型！");
+                ShowToask("未知类型！");
         }
     }
 }
