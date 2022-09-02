@@ -13,6 +13,7 @@
         android:background="@drawable/shape_user_focus"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:padding="6dp"
         android:src="@drawable/ic_outline_arrow_back_ios_48" />
 
     <ImageView
@@ -48,6 +49,7 @@
         android:layout_height="match_parent"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:padding="6dp"
         android:background="@drawable/shape_user_focus"
         android:src="@drawable/ic_outline_search_48" />
 
@@ -63,13 +65,16 @@
         android:minWidth="100dp"
         android:text="排序"
         android:textSize="18dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:visibility="gone" />
 
     <ImageView
         android:id="@+id/actionBar_setBtn"
-        android:layout_width="32dp"
+        android:layout_width="50dp"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/button_margin_left"
+        android:padding="6dp"
         android:src="@drawable/avatar"
         android:focusableInTouchMode="true"
         android:focusable="true"
