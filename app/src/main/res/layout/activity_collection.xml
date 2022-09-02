@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding_border"
     android:orientation="vertical"
     tools:context=".CollectionActivity">
 
@@ -14,7 +13,10 @@
         android:layout_height="match_parent"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:padding="@dimen/padding_border"
+        android:paddingLeft="26dp"
+        android:paddingTop="@dimen/padding_border_10"
+        android:paddingRight="@dimen/padding_border_10"
+        android:paddingBottom="@dimen/padding_border_10"
         app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
         app:tv_selectedItemIsCentered="true"
         app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />

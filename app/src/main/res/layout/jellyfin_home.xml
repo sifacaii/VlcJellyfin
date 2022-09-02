@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/padding_border"
-    tools:context=".MainActivity">
+    tools:context=".HomeActivity">
 
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,8 +21,7 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/padding_border_10"
-            android:paddingTop="@dimen/padding_border_10"
+            android:padding="@dimen/padding_border_10"
             android:paddingRight="@dimen/padding_border_10"/>
 
     </ScrollView>
