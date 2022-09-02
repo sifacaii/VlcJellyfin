@@ -110,7 +110,7 @@ public class JfClient {
      * @return
      */
     public static String GetPlayUrl(String itemid) {
-        String playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&a";
+        String playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true";
         return playurl;
     }
 
