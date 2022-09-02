@@ -10,6 +10,8 @@ public class Config {
     private String PassWord = "";
     private String SortBy = "DateCreated";
     private String SortOrder = "Descending";
+    private boolean HAACC;  //硬解
+    private boolean FORCE_HAACC;  //强制硬解
 
     public Config(Context context) {
         this.context = context;
@@ -61,6 +63,24 @@ public class Config {
         saveConfigToSP("sortorder",sortOrder);
     }
 
+    public boolean isHAACC() {
+        return HAACC;
+    }
+
+    public void setHAACC(boolean HAACC) {
+        this.HAACC = HAACC;
+        saveConfigToSP("HAACC",HAACC);
+    }
+
+    public boolean isFORCE_HAACC() {
+        return FORCE_HAACC;
+    }
+
+    public void setFORCE_HAACC(boolean FORCE_HAACC) {
+        this.FORCE_HAACC = FORCE_HAACC;
+        saveConfigToSP("FORCE_HAACC",FORCE_HAACC);
+    }
+
     /**
      * 读取配置
      */
@@ -71,6 +91,8 @@ public class Config {
         this.PassWord = sp.getString("password", "");
         this.SortBy = sp.getString("sortby","DateCreated");
         this.SortOrder = sp.getString("sortorder","Descending");
+        this.HAACC = sp.getBoolean("HAACC",true);
+        this.FORCE_HAACC = sp.getBoolean("FORCE_HAACC",false);
     }
 
     /**
@@ -80,7 +102,16 @@ public class Config {
         SharedPreferences sp = context.getSharedPreferences("Jellyfin", context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(key, value);
-        editor.putString(key, value);
+        editor.commit();
+    }
+
+    /**
+     * 保存单项配置
+     */
+    public void saveConfigToSP(String key, boolean value) {
+        SharedPreferences sp = context.getSharedPreferences("Jellyfin", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(key, value);
         editor.commit();
     }
 

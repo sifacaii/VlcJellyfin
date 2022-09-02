@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/activeBar_option_logout"
+        android:id="@+id/actionBar_option_HAACC"
         android:orderInCategory="1"
+        android:checkable="true"
+        android:title="硬解解码" />
+
+    <item
+        android:id="@+id/actionBar_option_FORCE_HAACC"
+        android:orderInCategory="2"
+        android:checkable="false"
+        android:title="强制硬解解码" />
+
+    <item
+        android:id="@+id/activeBar_option_logout"
+        android:orderInCategory="9"
         android:title="注销" />
 
 </menu>

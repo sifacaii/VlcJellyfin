@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,6 +24,8 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
     public AppCompatActivity mAA = this;
     private ProgressDialog progressDialog;
     private ImageView activeBarBack;
+    private ImageView actionBarSetBtn;
+    private PopupMenu settingMenu;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,12 +52,30 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
                     startActivity(intent);
                 }
             });
+
+            //actionBar设置菜单
+            actionBarSetBtn = findViewById(R.id.actionBar_setBtn);
+            actionBarSetBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    settingMenu.show();
+                }
+            });
+            settingMenu = new PopupMenu(this,actionBarSetBtn);
+            settingMenu.getMenuInflater().inflate(R.menu.activebar_menu,settingMenu.getMenu());
+            settingMenu.setOnMenuItemClickListener(actionBarSetBtnOnclick);
         }
     }
 
-    private void actionBarSetBtnOnclick(){
-
-    }
+    private PopupMenu.OnMenuItemClickListener actionBarSetBtnOnclick = new PopupMenu.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            if(menuItem.getItemId() == R.id.activeBar_option_logout){
+                logout();
+            }
+            return true;
+        }
+    };
 
 //    @Override
 //    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
