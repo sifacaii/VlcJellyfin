@@ -4,8 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/title_height"
     android:gravity="center"
-    android:touchscreenBlocksFocus="false"
-    android:focusableInTouchMode="true"
     android:orientation="horizontal">
 
     <ImageView
@@ -14,6 +12,9 @@
         android:layout_height="match_parent"
         android:background="@drawable/shape_user_focus"
         android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:defaultFocusHighlightEnabled="true"
+        android:screenReaderFocusable="true"
         android:src="@drawable/ic_outline_arrow_back_ios_48" />
 
     <ImageView
