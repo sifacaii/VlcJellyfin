@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -348,7 +349,16 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     }
 
     public void toVlcPlayer() {
-        Intent intent = new Intent(this, VlcPlayerActivity.class);
+        Intent intent;
+        if(JfClient.config.isExtensionPlayer()){
+            String videourl = JfClient.playList.get(JfClient.playIndex).Url;
+            Uri uri = Uri.parse(videourl);
+            intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri,"video/mp4");
+        }else{
+            intent = new Intent(this, VlcPlayerActivity.class);
+        }
         this.startActivity(intent);
     }
 

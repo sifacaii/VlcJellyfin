@@ -13,6 +13,16 @@ public class Config {
     private boolean PlayStartInBegin; //是否从头开始播放 （接上次播放进度）
     private boolean HAACC;  //硬解
     private boolean FORCE_HAACC;  //强制硬解
+    private boolean ExtensionPlayer; //调用外部播放器
+
+    public boolean isExtensionPlayer() {
+        return ExtensionPlayer;
+    }
+
+    public void setExtensionPlayer(boolean extensionPlayer) {
+        ExtensionPlayer = extensionPlayer;
+        saveConfigToSP("ExtensionPlayer",extensionPlayer);
+    }
 
     public boolean isPlayStartInBegin() {
         return PlayStartInBegin;
@@ -104,6 +114,7 @@ public class Config {
         this.HAACC = sp.getBoolean("HAACC",true);
         this.FORCE_HAACC = sp.getBoolean("FORCE_HAACC",false);
         this.PlayStartInBegin = sp.getBoolean("PlayStartInBegin",true);
+        this.ExtensionPlayer = sp.getBoolean("ExtensionPlayer",false);
     }
 
     /**

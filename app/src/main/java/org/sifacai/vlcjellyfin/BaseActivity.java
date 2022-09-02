@@ -70,20 +70,30 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             setmenu.findItem(R.id.actionBar_option_PlayStartInBegin).setChecked(JfClient.config.isPlayStartInBegin());
             setmenu.findItem(R.id.actionBar_option_HAACC).setChecked(JfClient.config.isHAACC());
             setmenu.findItem(R.id.actionBar_option_FORCE_HAACC).setChecked(JfClient.config.isFORCE_HAACC());
+            setmenu.findItem(R.id.actionBar_option_ExtensionPlayer).setChecked(JfClient.config.isExtensionPlayer());
         }
     };
 
     private PopupMenu.OnMenuItemClickListener settingMenuItemOnclick = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            if(menuItem.getItemId() == R.id.activeBar_option_logout){
-                logout();
-            }else if(menuItem.getItemId() == R.id.actionBar_option_HAACC){
-                JfClient.config.setHAACC(!JfClient.config.isHAACC());
-            }else if(menuItem.getItemId() == R.id.actionBar_option_FORCE_HAACC){
-                JfClient.config.setFORCE_HAACC(!JfClient.config.isFORCE_HAACC());
-            }else if(menuItem.getItemId() == R.id.actionBar_option_PlayStartInBegin){
-                JfClient.config.setPlayStartInBegin(!JfClient.config.isPlayStartInBegin());
+            int menuid = menuItem.getItemId();
+            switch (menuid){
+                case R.id.activeBar_option_logout:
+                    logout();
+                    break;
+                case R.id.actionBar_option_HAACC:
+                    JfClient.config.setHAACC(!JfClient.config.isHAACC());
+                    break;
+                case R.id.actionBar_option_FORCE_HAACC:
+                    JfClient.config.setFORCE_HAACC(!JfClient.config.isFORCE_HAACC());
+                    break;
+                case R.id.actionBar_option_PlayStartInBegin:
+                    JfClient.config.setPlayStartInBegin(!JfClient.config.isPlayStartInBegin());
+                    break;
+                case R.id.actionBar_option_ExtensionPlayer:
+                    JfClient.config.setExtensionPlayer(!JfClient.config.isExtensionPlayer());
+                    break;
             }
             return true;
         }
