@@ -67,7 +67,8 @@ public class Utils {
 
     public static <T> T jsonToClass(String jsonstr, Type tClass) {
         if (jsonstr != null && jsonstr.length() > 0) {
-            Gson gson = new GsonBuilder().registerTypeAdapterFactory(new NullStringToEmptyAdapterFactory()).create();
+            //Gson gson = new GsonBuilder().registerTypeAdapterFactory(new NullStringToEmptyAdapterFactory()).create();
+            Gson gson = new Gson();
             return gson.fromJson(jsonstr, tClass);
         }
         return null;
