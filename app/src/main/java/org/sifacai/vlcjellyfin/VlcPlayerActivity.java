@@ -417,7 +417,10 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         Media media = new Media(libVLC,uri);
         media.setHWDecoderEnabled(JfClient.config.isHAACC(),JfClient.config.isFORCE_HAACC());
         //media.addOption(":codec=mediacodec_ndk,mediacodec_jni,none"); //硬件加速
-        //media.addOption(":start-time=${start/1000L}"); //设置开始位置
+        if(!JfClient.config.isPlayStartInBegin()){
+            long startTime = currItem.startPositionTicks / 10000L / 1000L;
+            if( startTime > 60) media.addOption(":start-time=" + startTime); //设置开始位置
+        }
         return media;
     }
 

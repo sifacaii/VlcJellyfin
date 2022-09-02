@@ -10,8 +10,18 @@ public class Config {
     private String PassWord = "";
     private String SortBy = "DateCreated";
     private String SortOrder = "Descending";
+    private boolean PlayStartInBegin; //是否从头开始播放 （接上次播放进度）
     private boolean HAACC;  //硬解
     private boolean FORCE_HAACC;  //强制硬解
+
+    public boolean isPlayStartInBegin() {
+        return PlayStartInBegin;
+    }
+
+    public void setPlayStartInBegin(boolean playStartInBegin) {
+        PlayStartInBegin = playStartInBegin;
+        saveConfigToSP("PlayStartInBegin",playStartInBegin);
+    }
 
     public Config(Context context) {
         this.context = context;
@@ -93,6 +103,7 @@ public class Config {
         this.SortOrder = sp.getString("sortorder","Descending");
         this.HAACC = sp.getBoolean("HAACC",true);
         this.FORCE_HAACC = sp.getBoolean("FORCE_HAACC",false);
+        this.PlayStartInBegin = sp.getBoolean("PlayStartInBegin",true);
     }
 
     /**

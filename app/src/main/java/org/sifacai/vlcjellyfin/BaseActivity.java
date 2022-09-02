@@ -67,6 +67,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         public void onClick(View view) {
             settingMenu.show();
             Menu setmenu = settingMenu.getMenu();
+            setmenu.findItem(R.id.actionBar_option_PlayStartInBegin).setChecked(JfClient.config.isPlayStartInBegin());
             setmenu.findItem(R.id.actionBar_option_HAACC).setChecked(JfClient.config.isHAACC());
             setmenu.findItem(R.id.actionBar_option_FORCE_HAACC).setChecked(JfClient.config.isFORCE_HAACC());
         }
@@ -81,6 +82,8 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
                 JfClient.config.setHAACC(!JfClient.config.isHAACC());
             }else if(menuItem.getItemId() == R.id.actionBar_option_FORCE_HAACC){
                 JfClient.config.setFORCE_HAACC(!JfClient.config.isFORCE_HAACC());
+            }else if(menuItem.getItemId() == R.id.actionBar_option_PlayStartInBegin){
+                JfClient.config.setPlayStartInBegin(!JfClient.config.isPlayStartInBegin());
             }
             return true;
         }
