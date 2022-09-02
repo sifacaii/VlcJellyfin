@@ -55,23 +55,32 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
 
             //actionBar设置菜单
             actionBarSetBtn = findViewById(R.id.actionBar_setBtn);
-            actionBarSetBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    settingMenu.show();
-                }
-            });
+            actionBarSetBtn.setOnClickListener(actionBarSetBtnOnclick);
             settingMenu = new PopupMenu(this,actionBarSetBtn);
             settingMenu.getMenuInflater().inflate(R.menu.activebar_menu,settingMenu.getMenu());
-            settingMenu.setOnMenuItemClickListener(actionBarSetBtnOnclick);
+            settingMenu.setOnMenuItemClickListener(settingMenuItemOnclick);
         }
     }
 
-    private PopupMenu.OnMenuItemClickListener actionBarSetBtnOnclick = new PopupMenu.OnMenuItemClickListener() {
+    private View.OnClickListener actionBarSetBtnOnclick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            settingMenu.show();
+            Menu setmenu = settingMenu.getMenu();
+            setmenu.findItem(R.id.actionBar_option_HAACC).setChecked(JfClient.config.isHAACC());
+            setmenu.findItem(R.id.actionBar_option_FORCE_HAACC).setChecked(JfClient.config.isFORCE_HAACC());
+        }
+    };
+
+    private PopupMenu.OnMenuItemClickListener settingMenuItemOnclick = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             if(menuItem.getItemId() == R.id.activeBar_option_logout){
                 logout();
+            }else if(menuItem.getItemId() == R.id.actionBar_option_HAACC){
+                JfClient.config.setHAACC(!JfClient.config.isHAACC());
+            }else if(menuItem.getItemId() == R.id.actionBar_option_FORCE_HAACC){
+                JfClient.config.setFORCE_HAACC(!JfClient.config.isFORCE_HAACC());
             }
             return true;
         }

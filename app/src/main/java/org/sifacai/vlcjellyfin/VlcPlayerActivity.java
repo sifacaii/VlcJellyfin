@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,20 +12,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
-import org.videolan.libvlc.MediaFactory;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.EventListener
         , View.OnClickListener {
@@ -420,7 +415,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
     private Media getMedia(){
         Uri uri = Uri.parse(currItem.Url);
         Media media = new Media(libVLC,uri);
-        media.setHWDecoderEnabled(true,false);
+        media.setHWDecoderEnabled(JfClient.config.isHAACC(),JfClient.config.isFORCE_HAACC());
         //media.addOption(":codec=mediacodec_ndk,mediacodec_jni,none"); //硬件加速
         //media.addOption(":start-time=${start/1000L}"); //设置开始位置
         return media;
