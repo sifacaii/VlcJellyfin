@@ -156,7 +156,9 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             fillMovie(details);
         } else if (type.equals("Person")) {
             tvDetails.append("\n出生日期：" + Utils.UtcToLocal(details.getPremiereDate()) + "\n");
-            tvDetails.append("出生地：" + String.join(",",details.getProductionLocations()));
+            if(null != details.getProductionLocations()) {
+                tvDetails.append("出生地：" + String.join(",", details.getProductionLocations()));
+            }
             fillItemsByPerson(Id);
         }
 
