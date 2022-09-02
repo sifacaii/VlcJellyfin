@@ -39,7 +39,6 @@ public class MediaSources {
     private List<MediaAttachments> MediaAttachments;
     private List<String> Formats;
     private long Bitrate;
-    private RequiredHttpHeaders RequiredHttpHeaders;
     private int DefaultAudioStreamIndex;
     private int DefaultSubtitleStreamIndex;
     public void setProtocol(String Protocol) {
@@ -229,13 +228,6 @@ public class MediaSources {
      }
      public long getBitrate() {
          return Bitrate;
-     }
-
-    public void setRequiredHttpHeaders(RequiredHttpHeaders RequiredHttpHeaders) {
-         this.RequiredHttpHeaders = RequiredHttpHeaders;
-     }
-     public RequiredHttpHeaders getRequiredHttpHeaders() {
-         return RequiredHttpHeaders;
      }
 
     public void setDefaultAudioStreamIndex(int DefaultAudioStreamIndex) {

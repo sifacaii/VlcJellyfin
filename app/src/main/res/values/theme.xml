@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="jellyfin" parent="Theme.Material3.Dark">
+    <style name="jellyfin" parent="Theme.AppCompat">
         <!-- hide title bar -->
 <!--        <item name="windowNoTitle">true</item>-->
 <!--        <item name="android:background">@drawable/bg_purplehaze</item>-->

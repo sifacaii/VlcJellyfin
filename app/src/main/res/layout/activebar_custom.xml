@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/title_height"
     android:gravity="center"
+    android:touchscreenBlocksFocus="false"
+    android:focusableInTouchMode="true"
     android:orientation="horizontal">
 
     <ImageView

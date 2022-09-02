@@ -39,7 +39,7 @@ public class Item {
     private long RunTimeTicks;
     private String PlayAccess;
     private String ProductionYear;
-    private List<String> RemoteTrailers;
+//    private List<String> RemoteTrailers;
     private ProviderIds ProviderIds;
     private boolean IsHD;
     private boolean IsFolder;
@@ -317,12 +317,12 @@ public class Item {
          return ProductionYear;
      }
 
-    public void setRemoteTrailers(List<String> RemoteTrailers) {
-         this.RemoteTrailers = RemoteTrailers;
-     }
-     public List<String> getRemoteTrailers() {
-         return RemoteTrailers;
-     }
+//    public void setRemoteTrailers(List<String> RemoteTrailers) {
+//         this.RemoteTrailers = RemoteTrailers;
+//     }
+//     public List<String> getRemoteTrailers() {
+//         return RemoteTrailers;
+//     }
 
     public void setProviderIds(ProviderIds ProviderIds) {
          this.ProviderIds = ProviderIds;
