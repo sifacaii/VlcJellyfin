@@ -4,7 +4,7 @@
         <!-- hide title bar -->
 <!--        <item name="windowNoTitle">true</item>-->
 <!--        <item name="android:background">@drawable/bg_purplehaze</item>-->
-<!--        <item name="android:windowBackground">@drawable/bg_blueradiance</item>-->
+        <item name="android:windowBackground">@drawable/bg_purplehaze</item>
 
         <item name="android:textSize">22dp</item>
         <!-- 默认 Button,TextView的文字颜色 -->
