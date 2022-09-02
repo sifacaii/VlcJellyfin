@@ -56,7 +56,7 @@ public class CollectionActivity extends BaseActivity {
         }
 
         mGridContiner = findViewById(R.id.mGridView);
-        tvTitleTip = findViewById(R.id.activeBar_titleTip);
+        tvTitleTip = findViewById(R.id.actionBar_titleTip);
         V7GridLayoutManager v7GridLayoutManager = new V7GridLayoutManager(this,6);
         mGridContiner.setLayoutManager(v7GridLayoutManager);
         mGridContiner.setItemAnimator(null);  //防崩溃
@@ -157,7 +157,7 @@ public class CollectionActivity extends BaseActivity {
     }
 
     private void initSortByMenu(){
-        sortMenuBtn = findViewById(R.id.activeBar_sortBtn);
+        sortMenuBtn = findViewById(R.id.actionBar_sortBtn);
         sortMenuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

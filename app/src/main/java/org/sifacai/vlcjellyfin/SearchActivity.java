@@ -43,7 +43,7 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
 
         ActionBar actionBar = getSupportActionBar();
         if (null != actionBar) {
-            ImageView acb = actionBar.getCustomView().findViewById(R.id.activeBar_searchBtn);
+            ImageView acb = actionBar.getCustomView().findViewById(R.id.actionBar_searchBtn);
             if (null != acb) {
                 acb.setVisibility(View.GONE);
             }

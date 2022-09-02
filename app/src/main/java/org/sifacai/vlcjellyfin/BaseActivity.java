@@ -33,7 +33,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.activebar_custom);
 
-            activeBarBack = findViewById(R.id.activeBar_back);
+            activeBarBack = findViewById(R.id.actionBar_back);
             activeBarBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -41,7 +41,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
                 }
             });
 
-            ImageView activeBarSearch = findViewById(R.id.activeBar_searchBtn);
+            ImageView activeBarSearch = findViewById(R.id.actionBar_searchBtn);
             activeBarSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -52,19 +52,23 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        getMenuInflater().inflate(R.menu.activebar_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+    private void actionBarSetBtnOnclick(){
+
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.activeBar_option_logout) {
-            logout();
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+//        getMenuInflater().inflate(R.menu.activebar_menu, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        if (item.getItemId() == R.id.activeBar_option_logout) {
+//            logout();
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * 禁用标题栏返回按钮
