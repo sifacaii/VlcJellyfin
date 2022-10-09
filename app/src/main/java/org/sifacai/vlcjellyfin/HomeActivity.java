@@ -140,6 +140,7 @@ public class HomeActivity extends BaseActivity {
 
     private void initView() {
         showLoadingDialog("正在加载首页…………");
+        tvContiner.removeAllViews();
         JfClient.GetViews(new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items views) {
