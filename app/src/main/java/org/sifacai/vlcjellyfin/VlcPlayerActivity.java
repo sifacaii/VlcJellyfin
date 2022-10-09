@@ -190,11 +190,14 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 boolean rv = false;
-                int keycode = keyEvent.getKeyCode();
-                if (keycode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                    rv = setTimeOnSeekBar(currItem.PositionTicks + (long) (mediaPlayer.getLength() * 0.05));
-                } else if (keycode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    rv = setTimeOnSeekBar(currItem.PositionTicks - (long) (mediaPlayer.getLength() * 0.05));
+                int action = keyEvent.getAction();
+                if(action == 1) {  //按键up
+                    int keycode = keyEvent.getKeyCode();
+                    if (keycode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        rv = setTimeOnSeekBar(currItem.PositionTicks + (long) (mediaPlayer.getLength() * 0.05));
+                    } else if (keycode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        rv = setTimeOnSeekBar(currItem.PositionTicks - (long) (mediaPlayer.getLength() * 0.05));
+                    }
                 }
                 return rv;
             }
@@ -463,7 +466,7 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
      */
     public boolean setTimeOnSeekBar(Long p) {
         if (p < mediaPlayer.getLength() && p > 0) {
-            mediaPlayer.setTime(p);
+            mediaPlayer.setTime(p,true);
             setSeekBar(p);
         }
         return true;
