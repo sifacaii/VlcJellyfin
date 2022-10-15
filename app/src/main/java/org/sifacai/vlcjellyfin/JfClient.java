@@ -11,6 +11,8 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import org.sifacai.vlcjellyfin.Bean.Item;
 import org.sifacai.vlcjellyfin.Bean.Items;
@@ -130,6 +132,10 @@ public class JfClient {
         OkGo.getInstance().init(application)
                 .setOkHttpClient(builder.build())
                 .setRetryCount(3);
+        Picasso.setSingletonInstance(new Picasso.Builder(application.getBaseContext())
+                                            .downloader(new OkHttp3Downloader(builder.build()))
+                                            .build()
+                                    );
     }
 
     /**
