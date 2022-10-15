@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.lzy.okgo.OkGo;
@@ -18,9 +17,18 @@ import org.sifacai.vlcjellyfin.Bean.Items;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 
@@ -42,6 +50,70 @@ public class JfClient {
     }
 
     /**
+     * description 忽略https证书验证
+     *
+     * @author yanzy
+     * @version 1.0
+     * @date 2021/9/8 14:42
+     */
+    private static TrustManager[] getTrustManager() {
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[]{};
+                    }
+                }
+        };
+        return trustAllCerts;
+    }
+
+
+    /**
+     * description 忽略https证书验证
+     *`在这里插入代码片`
+     * @author yanzy
+     * @version 1.0
+     * @date 2021/9/8 14:42
+     */
+    public static SSLSocketFactory getSSLSocketFactory() {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, getTrustManager(), new SecureRandom());
+            return sslContext.getSocketFactory();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * description 忽略https证书验证
+     *
+     * @author yanzy
+     * @version 1.0
+     * @date 2021/9/8 14:42
+     */
+    public static HostnameVerifier getHostnameVerifier() {
+        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+            @Override
+            public boolean verify(String s, SSLSession sslSession) {
+                return true;
+            }
+        };
+        return hostnameVerifier;
+    }
+
+
+    /**
      * 初始化配置
      *
      * @param application
@@ -50,6 +122,8 @@ public class JfClient {
         config = new Config(application);
         SetHeaders();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.sslSocketFactory(getSSLSocketFactory());
+        builder.hostnameVerifier(getHostnameVerifier());
         builder.connectTimeout(5, TimeUnit.SECONDS);
         builder.readTimeout(3, TimeUnit.SECONDS);
         builder.writeTimeout(5, TimeUnit.SECONDS);
