@@ -13,10 +13,15 @@ android {
         versionName "1.0.4"
 
         multiDexEnabled true
-        ndk {
-            abiFilters 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
-        }
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    splits {
+        abi {
+            enable true
+            include 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
     }
 
     buildTypes {
