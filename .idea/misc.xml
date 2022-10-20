@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/drawable/ic_outline_play_circle_outline_128.xml" value="0.1555" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/drawable/played_percentage.xml" value="0.1765" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/drawable/popmenu_focus.xml" value="0.1555" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/drawable/shape_user_focus_vholder.xml" value="0.1555" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/activity_detail.xml" value="0.14583333333333334" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/activity_search.xml" value="0.14583333333333334" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/activity_vlc_player.xml" value="0.286231884057971" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/dialog_login.xml" value="0.14479166666666668" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/item_h.xml" value="0.16770833333333332" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/item_v.xml" value="0.14583333333333334" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/popmenu.xml" value="0.14479166666666668" />
+        <entry key="..\:/code/VlcJellyfin/app/src/main/res/layout/popmenu_item.xml" value="0.14479166666666668" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/img_loading_placeholder.xml" value="0.1625" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/played_percentage.xml" value="0.1615" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/popmenu_focus.xml" value="0.1625" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus.xml" value="0.1625" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus_VH.xml" value="0.1625" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/drawable/shape_user_focus_vholder.xml" value="0.1625" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activebar_custom.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_collection.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_detail.xml" value="0.1" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_search.xml" value="0.14791666666666667" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/activity_vlc_player.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/dialog_login.xml" value="0.4" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/home_horizon_tvrecycler.xml" value="0.14791666666666667" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/item_h.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/item_title.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/item_v.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/jellyfin_home.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/loading.xml" value="0.2957427536231884" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/loading_alert.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/menu_item.xml" value="0.2957427536231884" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/popmenu.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/layout/popmenu_item.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/menu/activebar_menu.xml" value="0.14895833333333333" />
+        <entry key="..\:/work/VlcJellyfin/app/src/main/res/menu/activebar_sort_menu.xml" value="0.14895833333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

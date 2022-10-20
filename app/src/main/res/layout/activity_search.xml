@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/searchTermEdit"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:maxLength="20"
+            android:inputType="text"
+            android:lines="1"
+            android:focusable="true"
+            android:tooltipText="关键字" />
+
+        <ImageView
+            android:id="@+id/searchBtn"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/button_margin_left"
+            android:focusable="true"
+            android:background="@drawable/shape_user_focus"
+            android:src="@drawable/ic_outline_search_48" />
+
+    </LinearLayout>
+
+    <org.sifacai.vlcjellyfin.JRecyclerView
+        android:id="@+id/mGridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="@dimen/padding_border"
+        app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
+        app:tv_selectedItemIsCentered="true"
+        app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
+
+</LinearLayout>

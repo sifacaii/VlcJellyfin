@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.sifacai.vlcjellyfin.JRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:padding="20dp"
+    app:tv_layoutManager="V7LinearLayoutManager"
+    app:tv_horizontalSpacingWithMargins="10dp"
+    app:tv_selectedItemIsCentered="true">
+
+</org.sifacai.vlcjellyfin.JRecyclerView>
