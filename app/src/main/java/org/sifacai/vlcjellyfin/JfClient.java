@@ -36,7 +36,8 @@ import okhttp3.OkHttpClient;
 
 public class JfClient {
     public static final String TAG = "JellyfinClient";
-    public static final String XEmbyAuthorization = "MediaBrowser Client=\"Vlc_J_TV\", Device=\"Vlc_J_TV\", DeviceId=\"TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXa\", Version=\"10.8.1\"";
+    public static final String DeviceId = "TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXa";
+    public static final String XEmbyAuthorization = "MediaBrowser Client=\"Vlc_J_TV\", Device=\"Vlc_J_TV\", DeviceId=\""+DeviceId+"\", Version=\"10.8.1\"";
     public static HttpHeaders headers;
     public static Config config;
     public static String UserId = "";
@@ -190,7 +191,7 @@ public class JfClient {
      * @return
      */
     public static String GetPlayUrl(String itemid) {
-        String playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true";
+        String playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
         return playurl;
     }
 
