@@ -88,48 +88,11 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         vlcoptions.add("-v");
         vlcVideoLayout = findViewById(R.id.VideoView);
         libVLC = new LibVLC(this,vlcoptions);
-        Dialog.setCallbacks(libVLC,callbacks);
 
         mediaPlayer = new MediaPlayer(libVLC);
         mediaPlayer.attachViews(vlcVideoLayout, null, true, false);
         mediaPlayer.setEventListener(this);
     }
-
-    Dialog.Callbacks callbacks = new Dialog.Callbacks() {
-        @Override
-        public void onDisplay(Dialog.ErrorMessage dialog) {
-
-        }
-
-        @Override
-        public void onDisplay(Dialog.LoginDialog dialog) {
-
-        }
-
-        @Override
-        public void onDisplay(Dialog.QuestionDialog dialog) {
-            if(dialog.getQuestionType() == 1){
-                dialog.postAction(1);
-            }else {
-                Log.d(TAG, "onDisplay_QuestionDialog: " + dialog.getQuestionType() + " : " + dialog.getTitle() + " : " + dialog.getText());
-            }
-        }
-
-        @Override
-        public void onDisplay(Dialog.ProgressDialog dialog) {
-
-        }
-
-        @Override
-        public void onCanceled(Dialog dialog) {
-
-        }
-
-        @Override
-        public void onProgressUpdate(Dialog.ProgressDialog dialog) {
-
-        }
-    };
 
     @Override
     public void onEvent(MediaPlayer.Event event) {
