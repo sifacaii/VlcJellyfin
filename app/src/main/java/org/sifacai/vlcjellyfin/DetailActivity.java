@@ -228,6 +228,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         mGridView.setLayoutManager(layoutManager);
         mGridView.setAdapter(jAdapter);
         dismissLoadingDialog();
+        mGridView.requestFocus();
     }
 
     /**
@@ -290,6 +291,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 mGridView.setLayoutManager(layoutManager);
                 mGridView.setAdapter(jAdapter);
                 dismissLoadingDialog();
+                mGridView.requestFocus();
             }
         }, errcb);
     }
