@@ -222,8 +222,6 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         });
     }
 
-
-
     /**
      * 登 出
      */
