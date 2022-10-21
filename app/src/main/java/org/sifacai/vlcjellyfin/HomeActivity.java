@@ -59,7 +59,7 @@ public class HomeActivity extends BaseActivity {
      * 登录框
      */
     private void showLoginDialog() {
-        Log.d(TAG, "showLoginDialog: 跳出登录框");
+        //Log.d(TAG, "showLoginDialog: 跳出登录框");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         AlertDialog alert = builder.setTitle("登录")
                 .setMessage("请输入登录信息")
@@ -201,6 +201,9 @@ public class HomeActivity extends BaseActivity {
         titleView.setText(title);
         tvContiner.addView(titleView);
         tvContiner.addView(tvRecyclerView);
+        if(title=="我的媒体"){
+            tvRecyclerView.requestFocus();
+        }
     }
 
     @Override
