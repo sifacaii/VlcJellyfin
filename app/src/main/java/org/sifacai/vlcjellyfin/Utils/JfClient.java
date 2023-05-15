@@ -281,7 +281,7 @@ public class JfClient {
     public static void GetEpisodes(String seriesId, String seasonId, JJCallBack cb, JJCallBack errcb) {
         String EpisodesUrl = config.getJellyfinUrl() + "/Shows/" + seriesId + "/Episodes?seasonId=" + seasonId;
         EpisodesUrl += "&userId=" + UserId;
-        EpisodesUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,CanDelete,MediaSourceCount,Overview";
+        EpisodesUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,CanDelete,MediaSourceCount,Overview,Path";
 
         SendGet(EpisodesUrl, new JJCallBack() {
             @Override

@@ -252,7 +252,9 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 //        mGridView.setLayoutManager(layoutManager);
 //        mGridView.setAdapter(jAdapter);
         dismissLoadingDialog();
-        tabContainer.requestFocus();
+        if(tabContainer.getTabCount() > 0) {
+            tabContainer.getTabAt(0).view.requestFocus();
+        }
 //        mGridView.requestFocus();
     }
 
