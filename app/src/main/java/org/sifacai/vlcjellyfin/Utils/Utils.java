@@ -1,4 +1,4 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Utils;
 
 import android.app.Activity;
 import android.util.DisplayMetrics;

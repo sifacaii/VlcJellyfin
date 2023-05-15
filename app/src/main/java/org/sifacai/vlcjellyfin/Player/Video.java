@@ -1,4 +1,4 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Player;
 
 import android.net.Uri;
 

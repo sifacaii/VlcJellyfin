@@ -1,4 +1,4 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

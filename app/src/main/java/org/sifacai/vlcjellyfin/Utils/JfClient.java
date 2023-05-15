@@ -1,7 +1,6 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Utils;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -16,6 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import org.sifacai.vlcjellyfin.Bean.Item;
 import org.sifacai.vlcjellyfin.Bean.Items;
+import org.sifacai.vlcjellyfin.Player.Video;
+import org.sifacai.vlcjellyfin.Utils.Config;
+import org.sifacai.vlcjellyfin.Utils.Utils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

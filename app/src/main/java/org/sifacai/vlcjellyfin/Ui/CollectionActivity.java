@@ -1,29 +1,22 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 
 import org.sifacai.vlcjellyfin.Bean.Item;
 import org.sifacai.vlcjellyfin.Bean.Items;
+import org.sifacai.vlcjellyfin.Utils.Config;
+import org.sifacai.vlcjellyfin.Component.JAdapter;
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.R;
 
 import java.util.ArrayList;
 import java.util.List;

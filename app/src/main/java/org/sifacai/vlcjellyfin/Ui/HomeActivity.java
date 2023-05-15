@@ -1,4 +1,4 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +15,14 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
 import org.sifacai.vlcjellyfin.Bean.Item;
 import org.sifacai.vlcjellyfin.Bean.Items;
+import org.sifacai.vlcjellyfin.Component.JAdapter;
+import org.sifacai.vlcjellyfin.Component.JRecyclerView;
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.R;
 
 import java.util.List;
 

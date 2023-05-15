@@ -5,6 +5,8 @@ import android.content.Context;
 
 import androidx.multidex.MultiDex;
 
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+
 public class application extends Application {
     @Override
     public void onCreate() {

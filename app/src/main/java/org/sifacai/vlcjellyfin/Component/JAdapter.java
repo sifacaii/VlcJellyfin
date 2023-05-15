@@ -1,7 +1,6 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Component;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.squareup.picasso.Picasso;
 
 import org.sifacai.vlcjellyfin.Bean.Item;
-import org.sifacai.vlcjellyfin.Bean.Items;
-import org.sifacai.vlcjellyfin.Bean.People;
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.R;
 
 import java.util.ArrayList;
 import java.util.List;

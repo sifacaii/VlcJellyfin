@@ -1,27 +1,14 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.content.Intent;
-import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
-import android.webkit.MimeTypeMap;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import com.squareup.picasso.Picasso;
@@ -32,9 +19,15 @@ import org.sifacai.vlcjellyfin.Bean.Items;
 import org.sifacai.vlcjellyfin.Bean.MediaStreams;
 import org.sifacai.vlcjellyfin.Bean.People;
 import org.sifacai.vlcjellyfin.Bean.UserData;
+import org.sifacai.vlcjellyfin.Component.JAdapter;
+import org.sifacai.vlcjellyfin.Component.JRecyclerView;
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.R;
+import org.sifacai.vlcjellyfin.Utils.Utils;
+import org.sifacai.vlcjellyfin.Player.Video;
+import org.sifacai.vlcjellyfin.Player.VlcPlayerActivity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class DetailActivity extends BaseActivity implements JAdapter.OnItemClickListener {

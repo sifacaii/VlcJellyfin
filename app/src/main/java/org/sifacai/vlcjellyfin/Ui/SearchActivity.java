@@ -1,9 +1,7 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.telecom.Call;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,13 +9,14 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 
 import org.sifacai.vlcjellyfin.Bean.Item;
 import org.sifacai.vlcjellyfin.Bean.Items;
+import org.sifacai.vlcjellyfin.Component.JAdapter;
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.R;
 
 import java.util.ArrayList;
 import java.util.List;

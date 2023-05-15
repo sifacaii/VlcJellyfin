@@ -1,6 +1,5 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Ui;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,12 +11,15 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.R;
+
 import me.jessyan.autosize.internal.CustomAdapt;
 
 public class BaseActivity extends AppCompatActivity implements CustomAdapt {

@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".CollectionActivity">
+    tools:context=".Ui.CollectionActivity">
 
-    <org.sifacai.vlcjellyfin.JRecyclerView
+    <org.sifacai.vlcjellyfin.Component.JRecyclerView
         android:id="@+id/mGridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

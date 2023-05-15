@@ -1,4 +1,4 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Player;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -15,7 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.videolan.libvlc.Dialog;
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.R;
+import org.sifacai.vlcjellyfin.Ui.BaseActivity;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;

@@ -1,4 +1,4 @@
-package org.sifacai.vlcjellyfin;
+package org.sifacai.vlcjellyfin.Component;
 
 import android.content.Context;
 import android.util.AttributeSet;

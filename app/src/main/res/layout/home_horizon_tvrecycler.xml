@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.sifacai.vlcjellyfin.JRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<org.sifacai.vlcjellyfin.Component.JRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -11,4 +11,4 @@
     app:tv_horizontalSpacingWithMargins="10dp"
     app:tv_selectedItemIsCentered="true">
 
-</org.sifacai.vlcjellyfin.JRecyclerView>
+</org.sifacai.vlcjellyfin.Component.JRecyclerView>
