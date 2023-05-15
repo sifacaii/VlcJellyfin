@@ -130,7 +130,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
      */
     @Override
     public boolean isBaseOnWidth() {
-        return true;
+        return false;
     }
 
     /**
