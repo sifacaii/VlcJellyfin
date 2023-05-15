@@ -62,13 +62,20 @@
                         android:layout_marginTop="30dp"
                         android:text="播放列表：" />
 
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tab_container"
+                    <HorizontalScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:tabGravity="start">
+                        android:layout_height="wrap_content">
 
-                    </com.google.android.material.tabs.TabLayout>
+                        <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/tab_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:tabGravity="start">
+
+                        </com.google.android.material.tabs.TabLayout>
+
+                    </HorizontalScrollView>
+
 
                     <org.sifacai.vlcjellyfin.Component.JRecyclerView
                         android:id="@+id/mGridView"

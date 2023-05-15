@@ -305,7 +305,7 @@ public class JfClient {
      */
     public static void GetSeasons(String seriesId, JJCallBack cb, JJCallBack errcb) {
         String SeasonsUrl = config.getJellyfinUrl() + "/Shows/" + seriesId + "/Seasons?userId=" + UserId;
-        SeasonsUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,MediaSourceCount";
+        SeasonsUrl += "&Fields=ItemCounts,PrimaryImageAspectRatio,BasicSyncInfo,MediaSourceCount,Path";
 
         SendGet(SeasonsUrl, new JJCallBack() {
             @Override
@@ -358,7 +358,7 @@ public class JfClient {
      */
     public static void GetCollection(String parentId, String type, String sortBy, String sortOrder, int limit, int page, JJCallBack cb, JJCallBack errcb) {
         String itemsUrl = config.getJellyfinUrl() + "/Users/" + UserId + "/Items?ParentId=" + parentId + "&Limit=" + limit;
-        itemsUrl += "&Recursive=true&Fields=PrimaryImageAspectRatio,BasicSyncInfo,Seasons,Episodes&ImageTypeLimit=1";
+        itemsUrl += "&Recursive=true&Fields=PrimaryImageAspectRatio,BasicSyncInfo,Seasons,Episodes,Path&ImageTypeLimit=1";
         itemsUrl += "&EnableImageTypes=Primary,Backdrop,Banner,Thumb";
         itemsUrl += "&SortBy=" + sortBy + ",SortName,ProductionYear&SortOrder=" + sortOrder;
 
