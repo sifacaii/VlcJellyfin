@@ -51,8 +51,8 @@
                         android:id="@+id/tvDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="200dp"
                         android:layout_marginTop="20dp"
+                        android:minHeight="200dp"
                         android:textSize="20dp" />
 
                     <TextView
@@ -62,20 +62,15 @@
                         android:layout_marginTop="30dp"
                         android:text="播放列表：" />
 
-                    <HorizontalScrollView
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tab_container"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        app:tabGravity="start"
+                        app:tabMode="scrollable">
 
-                        <com.google.android.material.tabs.TabLayout
-                            android:id="@+id/tab_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:tabGravity="start">
-
-                        </com.google.android.material.tabs.TabLayout>
-
-                    </HorizontalScrollView>
-
+                    </com.google.android.material.tabs.TabLayout>
 
                     <org.sifacai.vlcjellyfin.Component.JRecyclerView
                         android:id="@+id/mGridView"
@@ -100,13 +95,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone" >
+                android:visibility="gone">
 
                 <TextView
-                    android:text="演员表："
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="20dp"
+                    android:text="演员表：" />
 
                 <org.sifacai.vlcjellyfin.Component.JRecyclerView
                     android:id="@+id/mPersonGridView"
