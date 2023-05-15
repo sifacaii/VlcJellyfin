@@ -23,6 +23,7 @@ import org.sifacai.vlcjellyfin.Bean.People;
 import org.sifacai.vlcjellyfin.Bean.UserData;
 import org.sifacai.vlcjellyfin.Component.JAdapter;
 import org.sifacai.vlcjellyfin.Component.JRecyclerView;
+import org.sifacai.vlcjellyfin.Component.JTAdapter;
 import org.sifacai.vlcjellyfin.Utils.JfClient;
 import org.sifacai.vlcjellyfin.R;
 import org.sifacai.vlcjellyfin.Utils.Utils;
@@ -42,6 +43,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     private JRecyclerView mPeopleGridView;
     private LinearLayout tvPeopleLayout;
     private TabLayout tabContainer;
+    private Item currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +81,13 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         JfClient.GetItemInfo(itemId, new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Item item) {
-                fillDetails(item);
+                String type = item.getType();
+                if (type.equals("Season") || type.equals("Episode")) {
+                    currentItem = item;
+                    initData(item.getSeriesId());
+                } else {
+                    fillDetails(item);
+                }
             }
         }, new JfClient.JJCallBack() {
             @Override
@@ -118,10 +126,12 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 if (mstype.equals("Video")) {
                     video += ms.getDisplayTitle();
                 } else if (mstype.equals("Audio")) {
-                    if (ms.getLanguage()!=null && !ms.getLanguage().equals("")) audio += ms.getLanguage() + "、";
+                    if (ms.getLanguage() != null && !ms.getLanguage().equals(""))
+                        audio += ms.getLanguage() + "、";
                     else audio += ms.getCodec() + "；";
                 } else if (mstype.equals("Subtitle")) {
-                    if (ms.getLanguage() != null && !ms.getLanguage().equals("")) subtitle += ms.getLanguage() + "、";
+                    if (ms.getLanguage() != null && !ms.getLanguage().equals(""))
+                        subtitle += ms.getLanguage() + "、";
                     else subtitle += ms.getCodec() + "；";
                 }
             }
@@ -135,24 +145,12 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         //填充列表
         String type = details.getType();
         if (type.equals("Series")) {
-            fillSeason(ItemId);
-        } else if (type.equals("Season")) {
-            String SeriesName = details.getSeriesName() == null ? "" : details.getSeriesName() + "-";
-            tvTitle.setText(SeriesName + details.getName());
-            String SeriesId = details.getSeriesId();
-            fillEpisodes(SeriesId, ItemId);
-        } else if (type.equals("Episode")) {
-            String SeriesName = details.getSeriesName() == null ? "" : details.getSeriesName() + "-";
-            String SeasonName = details.getSeasonName() == null ? "" : details.getSeasonName();
-            tvTitle.setText(SeriesName + SeasonName);
-            String SeriesId = details.getSeriesId();
-            String SeasonId = details.getSeasonId();
-            fillEpisodes(SeriesId, SeasonId);
+            fillSeason(details.getId());
         } else if (type.equals("Movie")) {
-            fillMovie(details);
+            fillMovie(details, details.getId());
         } else if (type.equals("Person")) {
             tvDetails.append("\n出生日期：" + Utils.UtcToLocal(details.getPremiereDate()) + "\n");
-            if(null != details.getProductionLocations()) {
+            if (null != details.getProductionLocations()) {
                 tvDetails.append("出生地：" + String.join(",", details.getProductionLocations()));
             }
             fillItemsByPerson(Id);
@@ -166,8 +164,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         }
     }
 
-    private void fillMovie(Item item) {
-
+    private void fillMovie(Item item, String focusId) {
         item.setName("播放： " + item.getName());
         List<Item> plist = new ArrayList<>();
         plist.add(item);
@@ -193,7 +190,28 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         JfClient.GetSeasons(SeriesId, new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items seasons) {
-                fillItems(seasons.getItems());
+                for (Item item : seasons.getItems()) {
+                    TabLayout.Tab tab = tabContainer.newTab();
+                    tab.setText(item.getName());
+                    tab.view.setTag(item);
+                    tab.view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Item it = (Item) view.getTag();
+                            fillEpisodes(it.getSeriesId(), it.getId());
+                        }
+                    });
+                    tabContainer.addTab(tab);
+                    if (currentItem != null && currentItem.getSeasonId() != null) {
+                        if (item.getId().equals(currentItem.getSeasonId())) {
+                            tab.view.setSelected(true);
+                            tab.view.performClick();
+                        }
+                    } else {
+                        tabContainer.getTabAt(0).view.performClick();
+                    }
+                    //tabContainer.getTabAt(0).view.setFocusable(false);
+                }
             }
         }, errcb);
     }
@@ -215,47 +233,14 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     }
 
     private void fillItems(List<Item> items) {
-        for (Item item:items) {
-            TabLayout.Tab tab = tabContainer.newTab();
-            tab.setText(item.getName());
-            tab.view.setTag(item);
-            tab.view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Item it = (Item)view.getTag();
-                    Log.d(TAG, "onClick: " + it.getName());
-                }
-            });
-            tabContainer.addTab(tab);
-        }
-        tabContainer.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Log.d(TAG, "onTabSelected: " );
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-//        JAdapter jAdapter = new JAdapter(items, false);
-//        V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
-//        layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
-//        jAdapter.setOnItemClickListener(this);
-//        mGridView.setVisibility(View.VISIBLE);
-//        mGridView.setLayoutManager(layoutManager);
-//        mGridView.setAdapter(jAdapter);
+        JTAdapter jtAdapter = new JTAdapter(items);
+        V7GridLayoutManager layoutManager = new V7GridLayoutManager(mGridView.getContext(), 6);
+        jtAdapter.setOnItemClickListener(this);
+        mGridView.setVisibility(View.VISIBLE);
+        mGridView.setLayoutManager(layoutManager);
+        mGridView.setAdapter(jtAdapter);
         dismissLoadingDialog();
-        if(tabContainer.getTabCount() > 0) {
-            tabContainer.getTabAt(0).view.requestFocus();
-        }
-//        mGridView.requestFocus();
+        mGridView.requestFocus();
     }
 
     /**
@@ -328,14 +313,15 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String itemId = item.getId();
         String type = item.getType();
         Intent intent = null;
-        if (type.equals("Season")) {
-            intent = new Intent(this, DetailActivity.class);
-            intent.putExtra("itemId", itemId);
-            startActivity(intent);
-        } else if (type.equals("Episode")) {
+//        if (type.equals("Season")) {
+//            intent = new Intent(this, DetailActivity.class);
+//            intent.putExtra("itemId", itemId);
+//            startActivity(intent);
+//        } else
+        if (type.equals("Episode")) {
             JfClient.playList.clear();
-            JAdapter JA = (JAdapter) mGridView.getAdapter();
-            List<Item> ja = JA.getData();
+            JTAdapter JT = (JTAdapter) mGridView.getAdapter();
+            List<Item> ja = JT.getData();
             if (ja != null) {
                 for (int i = 0; i < ja.size(); i++) {
                     Video media = getMedia(ja.get(i));
@@ -379,13 +365,13 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 
     public void toVlcPlayer() {
         Intent intent;
-        if(JfClient.config.isExtensionPlayer()){
+        if (JfClient.config.isExtensionPlayer()) {
             String videourl = JfClient.playList.get(JfClient.playIndex).Url;
             Uri uri = Uri.parse(videourl);
             intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri,"video/mp4");
-        }else{
+            intent.setDataAndType(uri, "video/mp4");
+        } else {
             intent = new Intent(this, VlcPlayerActivity.class);
         }
         this.startActivity(intent);
