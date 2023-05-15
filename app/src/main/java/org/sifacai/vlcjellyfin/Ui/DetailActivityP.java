@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.material.tabs.TabLayout;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import com.squareup.picasso.Picasso;
@@ -23,30 +21,30 @@ import org.sifacai.vlcjellyfin.Bean.People;
 import org.sifacai.vlcjellyfin.Bean.UserData;
 import org.sifacai.vlcjellyfin.Component.JAdapter;
 import org.sifacai.vlcjellyfin.Component.JRecyclerView;
-import org.sifacai.vlcjellyfin.Utils.JfClient;
-import org.sifacai.vlcjellyfin.R;
-import org.sifacai.vlcjellyfin.Utils.Utils;
 import org.sifacai.vlcjellyfin.Player.Video;
 import org.sifacai.vlcjellyfin.Player.VlcPlayerActivity;
+import org.sifacai.vlcjellyfin.R;
+import org.sifacai.vlcjellyfin.Utils.JfClient;
+import org.sifacai.vlcjellyfin.Utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailActivity extends BaseActivity implements JAdapter.OnItemClickListener {
+public class DetailActivityP extends BaseActivity implements JAdapter.OnItemClickListener {
     private String TAG = "详情：";
     private String ItemId;
     private ImageView tvCover;
     private TextView tvTitle;
     private TextView tvDetails;
+    private ImageView tvPlay;
     private JRecyclerView mGridView;
     private JRecyclerView mPeopleGridView;
     private LinearLayout tvPeopleLayout;
-    private TabLayout tabContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_detail_p);
         getSupportActionBar().hide();
 
         if (JfClient.UserId.equals("") || JfClient.AccessToken.equals("")) {
@@ -60,10 +58,10 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         tvCover = findViewById(R.id.tvCover);
         tvTitle = findViewById(R.id.tvTitle);
         tvDetails = findViewById(R.id.tvDetails);
+        tvPlay = findViewById(R.id.tvPlay);
         mGridView = findViewById(R.id.mGridView);
         tvPeopleLayout = findViewById(R.id.tvPersonLayout);
         mPeopleGridView = findViewById(R.id.mPersonGridView);
-        tabContainer = findViewById(R.id.tab_container);
 
         Intent intent = getIntent();
         ItemId = intent.getStringExtra("itemId");
@@ -215,45 +213,15 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     }
 
     private void fillItems(List<Item> items) {
-        for (Item item:items) {
-            TabLayout.Tab tab = tabContainer.newTab();
-            tab.setText(item.getName());
-            tab.view.setTag(item);
-            tab.view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Item it = (Item)view.getTag();
-                    Log.d(TAG, "onClick: " + it.getName());
-                }
-            });
-            tabContainer.addTab(tab);
-        }
-        tabContainer.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Log.d(TAG, "onTabSelected: " );
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-//        JAdapter jAdapter = new JAdapter(items, false);
-//        V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
-//        layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
-//        jAdapter.setOnItemClickListener(this);
-//        mGridView.setVisibility(View.VISIBLE);
-//        mGridView.setLayoutManager(layoutManager);
-//        mGridView.setAdapter(jAdapter);
+        JAdapter jAdapter = new JAdapter(items, false);
+        V7LinearLayoutManager layoutManager = new V7LinearLayoutManager(mGridView.getContext());
+        layoutManager.setOrientation(V7LinearLayoutManager.HORIZONTAL);
+        jAdapter.setOnItemClickListener(this);
+        mGridView.setVisibility(View.VISIBLE);
+        mGridView.setLayoutManager(layoutManager);
+        mGridView.setAdapter(jAdapter);
         dismissLoadingDialog();
-        tabContainer.requestFocus();
-//        mGridView.requestFocus();
+        mGridView.requestFocus();
     }
 
     /**
@@ -307,7 +275,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                     @Override
                     public void onClick(Item item) {
                         String itemId = item.getId();
-                        Intent intent = new Intent(DetailActivity.this, DetailActivity.class);
+                        Intent intent = new Intent(DetailActivityP.this, DetailActivityP.class);
                         intent.putExtra("itemId", itemId);
                         startActivity(intent);
                     }
@@ -316,7 +284,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 mGridView.setLayoutManager(layoutManager);
                 mGridView.setAdapter(jAdapter);
                 dismissLoadingDialog();
-                //mGridView.requestFocus();
+                mGridView.requestFocus();
             }
         }, errcb);
     }
@@ -327,7 +295,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String type = item.getType();
         Intent intent = null;
         if (type.equals("Season")) {
-            intent = new Intent(this, DetailActivity.class);
+            intent = new Intent(this, DetailActivityP.class);
             intent.putExtra("itemId", itemId);
             startActivity(intent);
         } else if (type.equals("Episode")) {
@@ -350,7 +318,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
             JfClient.playIndex = 0;
             toVlcPlayer();
         } else if (type.equals("Actor") || type.equals("Director")) {
-            intent = new Intent(this, DetailActivity.class);
+            intent = new Intent(this, DetailActivityP.class);
             intent.putExtra("itemId", itemId);
             startActivity(intent);
         }

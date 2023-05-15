@@ -62,13 +62,17 @@
                         android:layout_marginTop="30dp"
                         android:text="播放列表：" />
 
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tab_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:tabGravity="fill">
-
-                    </com.google.android.material.tabs.TabLayout>
+                    <ImageView
+                        android:id="@+id/tvPlay"
+                        android:layout_width="160dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="50dp"
+                        android:background="@drawable/shape_user_focus_vholder"
+                        android:focusable="true"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_outline_play_circle_outline_128"
+                        android:visibility="gone" />
 
                     <org.sifacai.vlcjellyfin.Component.JRecyclerView
                         android:id="@+id/mGridView"
