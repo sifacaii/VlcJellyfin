@@ -58,7 +58,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(alert != null && alert.isShowing()){
+        if (alert != null && alert.isShowing()) {
             alert.dismiss();
         }
     }
@@ -68,7 +68,6 @@ public class HomeActivity extends BaseActivity {
      * 登录框
      */
     private void showLoginDialog() {
-        //Log.d(TAG, "showLoginDialog: 跳出登录框");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         alert = builder.setTitle("登录")
                 .setMessage("请输入登录信息")
@@ -105,7 +104,7 @@ public class HomeActivity extends BaseActivity {
                                 alert.dismiss();
                                 initView(); //加载首页
                             }
-                        }, new JfClient.JJCallBack(){
+                        }, new JfClient.JJCallBack() {
                             @Override
                             public void onError(String str) {
                                 dismissLoadingDialog();
@@ -125,7 +124,7 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    private void initData(){
+    private void initData() {
         if (JfClient.AccessToken.equals("") || JfClient.UserId.equals("")) {
             showLoadingDialog("正在验证服务器地址！");
             JfClient.VerityServerUrl(JfClient.config.getJellyfinUrl(), new JfClient.JJCallBack() {
@@ -141,7 +140,7 @@ public class HomeActivity extends BaseActivity {
                     }, connErr, false);
                 }
             }, connErr);
-        }else{
+        } else {
             Log.d(TAG, "initData: 跳出");
             initView();
         }
@@ -170,10 +169,10 @@ public class HomeActivity extends BaseActivity {
         JfClient.GetResume(new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items resumes) {
-                for(Item it : resumes.getItems()){
+                for (Item it : resumes.getItems()) {
                     String SeriesName = it.getSeriesName() == null ? "" : it.getSeriesName() + "-";
                     String SeasonName = it.getSeasonName() == null ? "" : it.getSeasonName() + "-";
-                    it.setName(SeriesName+SeasonName+it.getName());
+                    it.setName(SeriesName + SeasonName + it.getName());
                 }
                 addRowTvRecyclerView("最近播放", resumes.getItems(), false);
             }
@@ -210,7 +209,7 @@ public class HomeActivity extends BaseActivity {
         titleView.setText(title);
         tvContiner.addView(titleView);
         tvContiner.addView(tvRecyclerView);
-        if(title=="我的媒体"){
+        if (title == "我的媒体") {
             tvRecyclerView.requestFocus();
         }
     }
@@ -237,7 +236,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    public JfClient.JJCallBack errcb = new JfClient.JJCallBack(){
+    public JfClient.JJCallBack errcb = new JfClient.JJCallBack() {
         @Override
         public void onError(String str) {
             dismissLoadingDialog();
