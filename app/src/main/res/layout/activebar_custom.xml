@@ -76,7 +76,6 @@
         android:layout_marginLeft="@dimen/button_margin_left"
         android:padding="6dp"
         android:src="@drawable/avatar"
-        android:focusableInTouchMode="true"
         android:focusable="true"
         android:scaleType="fitCenter"
         android:background="@drawable/shape_user_focus" />
