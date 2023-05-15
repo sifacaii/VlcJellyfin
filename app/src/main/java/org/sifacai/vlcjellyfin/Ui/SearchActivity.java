@@ -49,7 +49,7 @@ public class SearchActivity extends BaseActivity implements JAdapter.OnItemClick
         }
 
         mGridView = findViewById(R.id.mGridView);
-        V7GridLayoutManager v7GridLayoutManager = new V7GridLayoutManager(this, 6);
+        V7GridLayoutManager v7GridLayoutManager = new V7GridLayoutManager(this, getSpanCount());
         mGridView.setLayoutManager(v7GridLayoutManager);
         mGridView.setItemAnimator(null);  //防崩溃
 
