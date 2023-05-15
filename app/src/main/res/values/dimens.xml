@@ -3,8 +3,8 @@
     <dimen name="title_height">32dp</dimen>
     <dimen name="title_size">22dp</dimen>
 
-    <dimen name="horizon_cover_width">400dp</dimen>
-    <dimen name="horizon_cover_height">228dp</dimen>
+    <dimen name="horizon_cover_width">360dp</dimen>
+    <dimen name="horizon_cover_height">205dp</dimen>
     <dimen name="vertical_cover_width">180dp</dimen>
     <dimen name="vertical_cover_height">270dp</dimen>
 
