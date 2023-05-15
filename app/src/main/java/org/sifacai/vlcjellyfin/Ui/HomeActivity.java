@@ -55,13 +55,22 @@ public class HomeActivity extends BaseActivity {
         initData();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(alert != null && alert.isShowing()){
+            alert.dismiss();
+        }
+    }
+
+    AlertDialog alert;
     /**
      * 登录框
      */
     private void showLoginDialog() {
         //Log.d(TAG, "showLoginDialog: 跳出登录框");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        AlertDialog alert = builder.setTitle("登录")
+        alert = builder.setTitle("登录")
                 .setMessage("请输入登录信息")
                 .setView(R.layout.dialog_login)
                 .show();
