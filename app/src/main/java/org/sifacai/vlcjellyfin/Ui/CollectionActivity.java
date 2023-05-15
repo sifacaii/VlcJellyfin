@@ -50,7 +50,7 @@ public class CollectionActivity extends BaseActivity {
 
         mGridContiner = findViewById(R.id.mGridView);
         tvTitleTip = findViewById(R.id.actionBar_titleTip);
-        V7GridLayoutManager v7GridLayoutManager = new V7GridLayoutManager(this,6);
+        V7GridLayoutManager v7GridLayoutManager = new V7GridLayoutManager(this,getSpanCount());
         mGridContiner.setLayoutManager(v7GridLayoutManager);
         mGridContiner.setItemAnimator(null);  //防崩溃
         init();

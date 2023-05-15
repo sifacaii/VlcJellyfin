@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -222,6 +223,18 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
                 Toast.makeText(mAA, msg, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * 获取recycler列数
+     * @return
+     */
+    public int getSpanCount(){
+        int count = 6;
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            count = 2;
+        }
+        return count;
     }
 
     /**
