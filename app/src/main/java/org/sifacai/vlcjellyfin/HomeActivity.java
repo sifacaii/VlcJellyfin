@@ -36,8 +36,6 @@ public class HomeActivity extends BaseActivity {
         disableActiveBarBack();
 
         tvContiner = findViewById(R.id.tvItems);
-
-        JfClient.init(getApplication());
     }
 
     private JfClient.JJCallBack connErr = new JfClient.JJCallBack() {
