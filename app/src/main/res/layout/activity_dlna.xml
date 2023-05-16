@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Dlna.DlnaActivity">
+
+    <LinearLayout
+        android:id="@+id/dlna_tool_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:text="投屏播放"
+            android:layout_width="0dp"
+            android:layout_weight="9"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:focusable="true"
+            android:src="@drawable/baseline_sync_white_42dp" />
+
+    </LinearLayout>
+
+    <org.sifacai.vlcjellyfin.Component.JRecyclerView
+        android:id="@+id/mDeviceGridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="@dimen/padding_border"
+        app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
+        app:tv_selectedItemIsCentered="true"
+        app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
+
+</LinearLayout>

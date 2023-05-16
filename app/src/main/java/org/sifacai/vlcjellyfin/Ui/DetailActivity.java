@@ -24,6 +24,7 @@ import org.sifacai.vlcjellyfin.Bean.UserData;
 import org.sifacai.vlcjellyfin.Component.JAdapter;
 import org.sifacai.vlcjellyfin.Component.JRecyclerView;
 import org.sifacai.vlcjellyfin.Component.JTAdapter;
+import org.sifacai.vlcjellyfin.Dlna.DlnaActivity;
 import org.sifacai.vlcjellyfin.Utils.JfClient;
 import org.sifacai.vlcjellyfin.R;
 import org.sifacai.vlcjellyfin.Utils.Utils;
@@ -377,8 +378,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     public void toVlcPlayer() {
         Intent intent;
         if (JfClient.config.isDlnaPlayer()) {
-            ShowToask("投屏播放");
-            return;
+            intent = new Intent(this, DlnaActivity.class);
         } else if (JfClient.config.isExtensionPlayer()) {
             String videourl = JfClient.playList.get(JfClient.playIndex).Url;
             Uri uri = Uri.parse(videourl);

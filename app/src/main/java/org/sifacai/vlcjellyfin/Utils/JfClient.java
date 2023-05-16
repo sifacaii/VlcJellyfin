@@ -666,6 +666,12 @@ public class JfClient {
         return response;
     }
 
+    public static String SendPost(String url,String body) throws IOException {
+        String response = "";
+        response = OkGo.<String>post(url).upBytes(body.getBytes()).execute().body().string();
+        return response;
+    }
+
     public static class JJCallBack implements JCallBack {
 
         @Override

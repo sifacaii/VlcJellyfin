@@ -3,23 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.sifacai.vlcjellyfin">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".application"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/touchicon144"
         android:label="@string/app_name"
         android:roundIcon="@drawable/touchicon144"
         android:supportsRtl="true"
         android:theme="@style/jellyfin"
         android:usesCleartextTraffic="true"
-        android:hardwareAccelerated="true"
         tools:targetApi="31">
+        <activity
+            android:name=".Dlna.DlnaControllActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Dlna.DlnaActivity"
+            android:exported="false" />
         <activity
             android:name=".Ui.HomeActivity"
             android:exported="true">
@@ -41,7 +47,7 @@
         <activity
             android:name=".Player.VlcPlayerActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <meta-data
             android:name="design_width_in_dp"
