@@ -74,6 +74,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             setmenu.findItem(R.id.actionBar_option_HAACC).setChecked(JfClient.config.isHAACC());
             setmenu.findItem(R.id.actionBar_option_FORCE_HAACC).setChecked(JfClient.config.isFORCE_HAACC());
             setmenu.findItem(R.id.actionBar_option_ExtensionPlayer).setChecked(JfClient.config.isExtensionPlayer());
+            setmenu.findItem(R.id.actionBar_option_DlnaPlayer).setChecked(JfClient.config.isDlnaPlayer());
         }
     };
 
@@ -96,6 +97,9 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
                     break;
                 case R.id.actionBar_option_ExtensionPlayer:
                     JfClient.config.setExtensionPlayer(!JfClient.config.isExtensionPlayer());
+                    break;
+                case R.id.actionBar_option_DlnaPlayer:
+                    JfClient.config.setDlnaPlayer(!JfClient.config.isDlnaPlayer());
                     break;
             }
             return true;

@@ -14,7 +14,7 @@ public class Config {
     private boolean HAACC;  //硬解
     private boolean FORCE_HAACC;  //强制硬解
     private boolean ExtensionPlayer; //调用外部播放器
-
+    private boolean DlnaPlayer; //投屏播放
     public boolean isExtensionPlayer() {
         return ExtensionPlayer;
     }
@@ -101,6 +101,15 @@ public class Config {
         saveConfigToSP("FORCE_HAACC",FORCE_HAACC);
     }
 
+    public boolean isDlnaPlayer() {
+        return DlnaPlayer;
+    }
+
+    public void setDlnaPlayer(boolean dlnaPlayer) {
+        this.DlnaPlayer = dlnaPlayer;
+        saveConfigToSP("DlnaPlayer",dlnaPlayer);
+    }
+
     /**
      * 读取配置
      */
@@ -115,6 +124,7 @@ public class Config {
         this.FORCE_HAACC = sp.getBoolean("FORCE_HAACC",false);
         this.PlayStartInBegin = sp.getBoolean("PlayStartInBegin",true);
         this.ExtensionPlayer = sp.getBoolean("ExtensionPlayer",false);
+        this.DlnaPlayer = sp.getBoolean("DlnaPlayer",false);
     }
 
     /**

@@ -109,7 +109,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 .into(tvCover);
 
         List<String> backdrops = details.getBackdropImageTags();
-        if(backdrops != null && backdrops.size() > 0){
+        if (backdrops != null && backdrops.size() > 0) {
             Picasso.get()
                     .load(JfClient.GetBackdropUrl(Id, backdrops.get(0)))
                     .placeholder(R.drawable.img_loading_placeholder)
@@ -118,11 +118,11 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         }
 
         tvTitle.setText(Name);
-        ((TextView)findViewById(R.id.tvYear)).setText(details.getProductionYear() == null ? "" : details.getProductionYear());
-        long duration =  (details.getRunTimeTicks() / 10000 / 1000 / 60);
-        ((TextView)findViewById(R.id.tvDuration)).setText(duration > 0 ? String.valueOf(duration) + "分钟" : "");
-        ((TextView)findViewById(R.id.tvRating)).setText(details.getCommunityRating() == null ? "" : details.getCommunityRating());
-        ((TextView)findViewById(R.id.tvLevel)).setText(details.getOfficialRating() == null ? "" : details.getOfficialRating());
+        ((TextView) findViewById(R.id.tvYear)).setText(details.getProductionYear() == null ? "" : details.getProductionYear());
+        long duration = (details.getRunTimeTicks() / 10000 / 1000 / 60);
+        ((TextView) findViewById(R.id.tvDuration)).setText(duration > 0 ? String.valueOf(duration) + "分钟" : "");
+        ((TextView) findViewById(R.id.tvRating)).setText(details.getCommunityRating() == null ? "" : details.getCommunityRating());
+        ((TextView) findViewById(R.id.tvLevel)).setText(details.getOfficialRating() == null ? "" : details.getOfficialRating());
 
         String Genres = String.join("，", details.getGenres());
         tvDetails.append(Genres.equals("") ? "" : "风格：" + Genres + "\n");
@@ -144,8 +144,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 }
             }
             tvDetails.append(video.equals("") ? "" : "格式：" + video + "\n");
-            tvDetails.append(audio.size() > 1 ? "音轨：" + String.join("，",audio) + "\n" : "");
-            tvDetails.append(subtitle.size() > 1 ? "字幕：" + String.join("，",subtitle) + "\n" : "");
+            tvDetails.append(audio.size() > 1 ? "音轨：" + String.join("，", audio) + "\n" : "");
+            tvDetails.append(subtitle.size() > 1 ? "字幕：" + String.join("，", subtitle) + "\n" : "");
         }
         String overview = details.getOverview() == null ? "" : details.getOverview();
         tvDetails.append("简介：  " + Html.fromHtml(overview));
@@ -198,7 +198,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         JfClient.GetSeasons(SeriesId, new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items seasons) {
-                for (int i=0;i<seasons.getItems().size();i++) {
+                for (int i = 0; i < seasons.getItems().size(); i++) {
                     Item item = seasons.getItems().get(i);
                     TabLayout.Tab tab = tabContainer.newTab();
                     tab.setText(item.getName());
@@ -216,12 +216,12 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                             tab.view.setSelected(true);
                             tab.view.performClick();
                         }
-                    }else if(i == 0){
+                    } else if (i == 0) {
                         tabContainer.getTabAt(0).view.performClick();
                     }
                     //tabContainer.getTabAt(0).view.setFocusable(false);
                 }
-                if(tabContainer.getTabCount() > 1){
+                if (tabContainer.getTabCount() > 1) {
                     tabContainer.setVisibility(View.VISIBLE);
                 }
             }
@@ -246,7 +246,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 
     private void fillItems(List<Item> items) {
         int spanCount = 3;
-        if(getResources().getDisplayMetrics().widthPixels >getResources().getDisplayMetrics().heightPixels ){
+        if (getResources().getDisplayMetrics().widthPixels > getResources().getDisplayMetrics().heightPixels) {
             spanCount = 6;
         }
         JTAdapter jtAdapter = new JTAdapter(items);
@@ -376,7 +376,10 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
 
     public void toVlcPlayer() {
         Intent intent;
-        if (JfClient.config.isExtensionPlayer()) {
+        if (JfClient.config.isDlnaPlayer()) {
+            ShowToask("投屏播放");
+            return;
+        } else if (JfClient.config.isExtensionPlayer()) {
             String videourl = JfClient.playList.get(JfClient.playIndex).Url;
             Uri uri = Uri.parse(videourl);
             intent = new Intent();

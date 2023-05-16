@@ -29,6 +29,12 @@
         android:title="调用外部播放器" />
 
     <item
+        android:id="@+id/actionBar_option_DlnaPlayer"
+        android:orderInCategory="10"
+        android:checkable="true"
+        android:title="投屏播放" />
+
+    <item
         android:id="@+id/activeBar_option_logout"
         android:orderInCategory="99"
         android:title="注销" />
