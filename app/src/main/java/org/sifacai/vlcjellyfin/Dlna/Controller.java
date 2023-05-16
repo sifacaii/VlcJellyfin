@@ -5,6 +5,7 @@ import android.util.Log;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 
 import java.io.IOException;
@@ -23,15 +24,17 @@ public class Controller {
                 "<CurrentURIMetaData></CurrentURIMetaData>" +
                 "</u:SetAVTransportURI>" +
                 "</s:Body></s:Envelope>";
-        PostXML(controlUrl,xml);
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("SOAPAction", "\"urn:schemas-upnp-org:service:AVTransport:1#SetAVTransportURI\"");
+        PostXML(controlUrl,xml,headers);
     }
 
-    public static void PostXML(String url,String xml){
+    public static void PostXML(String url, String xml, HttpHeaders headers){
 
         OkGo.<String>post(url)
                 .upString(xml)
-                .headers("Content-Type","text/xml")
-                .headers("charset","utf-8")
+                .headers(headers)
+                .headers("Content-Type","text/xml; encoding=\"utf-8\"")
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
