@@ -26,6 +26,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
+import java.util.List;
 
 public class DlnaActivity extends BaseActivity {
     private String TAG = "Dlna播放器";
@@ -64,7 +65,6 @@ public class DlnaActivity extends BaseActivity {
                     avt.eventSubURL = b.getString("eventSubURL");
                     avt.iconurl = b.getString("iconurl");
                     avTransportAdapter.addDevice(avt);
-                    Log.d(TAG, "handleMessage: " + avt);
                     break;
             }
         }
@@ -105,7 +105,19 @@ public class DlnaActivity extends BaseActivity {
                 //intent.putExtra("AVT",avTransport);
                 //startActivity(intent);
                 String vurl = JfClient.playList.get(JfClient.playIndex).Url;
-                Controller.SetAVTransportURI(avTransport.controlURL,vurl);
+                Controller.SetAVTransportURI(avTransport.controlURL, vurl, new JfClient.JJCallBack() {
+                    @Override
+                    public void onSuccess(String str) {
+                        Log.d(TAG, "onSuccess: " + str);
+                        ShowToask(str);
+                    }
+
+                    @Override
+                    public void onError(String str) {
+                        Log.d(TAG, "onError: " + str);
+                        ShowToask(str);
+                    }
+                });
             }
         });
     }
@@ -113,7 +125,7 @@ public class DlnaActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        listen_thread.start();
+        if (!listen_thread.isAlive()) listen_thread.start();
         refresh();
     }
 
@@ -157,15 +169,14 @@ public class DlnaActivity extends BaseActivity {
     private Runnable listen_Runnable = new Runnable() {
         @Override
         public void run() {
-            byte[] buff = new byte[1024];
-            DatagramPacket packet = new DatagramPacket(buff, buff.length);
             while (mSocket != null) {
                 try {
+                    byte[] buff = new byte[1024];
+                    DatagramPacket packet = new DatagramPacket(buff, buff.length);
                     mSocket.receive(packet);
                     String clientIP = packet.getAddress().getHostAddress();
                     int clientPort = packet.getPort();
                     String data = new String(packet.getData()).trim();
-                    Log.d(TAG, "listen: " + clientIP + ":" + clientPort + "：" + data);
                     ProgressNOTIFY(data);
                 } catch (IOException | XmlPullParserException e) {
                     throw new RuntimeException(e);
@@ -181,26 +192,23 @@ public class DlnaActivity extends BaseActivity {
         String location = "";
         for (String n : notify) {
             String[] ns = n.split(":", 2);
-            //Log.d(TAG, "ProgressNOTIFY: " + String.join(",",ns));
             if (ns.length < 2) continue;
             else if (ns[0].equals("Location")) location = ns[1];
-            else if (ns[0].equals("ST")) {
+            else if (ns[0].equals("NT")) {
                 String nsnt = ns[1].trim();
-                if (nsnt.equals("upnp:rootdevice") || nsnt.indexOf("device:MediaRenderer") >= 0) {
+                if (DlnaDevice.isMediaRenderer(nsnt)) {
                     isav = true;
                 }
             }
         }
         if (isav && !location.equals("")) {
-            Log.d(TAG, "ProgressNOTIFY: " + location);
             String finalLocation = location;
-            JfClient.SendGet(location,new JfClient.JJCallBack(){
+            JfClient.SendGet(location, new JfClient.JJCallBack() {
                 @Override
                 public void onSuccess(String str) {
-                    Log.d(TAG, "onSuccess: " + str);
-                    findDevice(finalLocation,str);
+                    findDevice(finalLocation, str);
                 }
-            },new JfClient.JJCallBack(){
+            }, new JfClient.JJCallBack() {
                 @Override
                 public void onError(String str) {
                     ShowToask(str);
@@ -209,10 +217,10 @@ public class DlnaActivity extends BaseActivity {
         }
     }
 
-    public void findDevice(String location,String xml){
+    public void findDevice(String location, String xml) {
         DlnaDevice device;
         try {
-            device = ParseXML(xml);
+            device = XmlParser.ParseXML2(xml);
             for (int i = 0; i < device.DlnaServices.size(); i++) {
                 DlnaService ds = device.DlnaServices.get(i);
                 if (ds.serviceType.indexOf("service:AVTransport") > -1) {
@@ -220,12 +228,12 @@ public class DlnaActivity extends BaseActivity {
                     String url = si > -1 ? location.substring(0, si) : location;
                     String moduleName = device.friendlyName.equals("") ? device.modelName : device.friendlyName;
                     Bundle bundle = new Bundle();
-                    bundle.putString("moduleName",moduleName);
+                    bundle.putString("moduleName", moduleName);
                     bundle.putString("UDN", device.UDN);
-                    bundle.putString("serviceId",ds.serviceId);
-                    bundle.putString("controlURL",url + "/" + ds.controlURL);
-                    bundle.putString("eventSubURL",url + "/" + ds.eventSubURL);
-                    bundle.putString("iconurl",device.icon.size() > 0 ? url + "/" + device.icon.get(0) : "");
+                    bundle.putString("serviceId", ds.serviceId);
+                    bundle.putString("controlURL", url + (ds.controlURL.startsWith("/") ? ds.controlURL : "/" + ds.controlURL));
+                    bundle.putString("eventSubURL", url + "/" + ds.eventSubURL);
+                    bundle.putString("iconurl", device.icon.size() > 0 ? url + "/" + device.icon.get(0) : "");
                     Message msg = new Message();
                     msg.what = 1;
                     msg.setData(bundle);
@@ -237,69 +245,5 @@ public class DlnaActivity extends BaseActivity {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public DlnaDevice ParseXML(String xml) throws XmlPullParserException, IOException {
-        Log.d(TAG, "ParseXML: " + xml);
-        XmlPullParser xmlPullParser = Xml.newPullParser();
-        xmlPullParser.setInput(new StringReader(xml));
-
-        DlnaDevice device = new DlnaDevice();
-
-        int eventType = xmlPullParser.getEventType();
-        String tagName = "";
-        DlnaService service = null;
-        String icon = "";
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            switch (eventType) {
-                case XmlPullParser.START_TAG:
-                    tagName = xmlPullParser.getName().toLowerCase();
-                    if (tagName.equals("service")) service = new DlnaService();
-                    if (tagName.equals("icon")) icon = "";
-                    break;
-                case XmlPullParser.TEXT:
-                    String value = xmlPullParser.getText();
-                    value = value == null ? "" : value.trim();
-                    if (tagName.equals("friendlyname")) device.friendlyName = value;
-                    if (tagName.equals("devicetype")) device.deviceType = value;
-                    if (tagName.equals("modelname")) device.modelName = value;
-                    if (tagName.equals("udn")) device.UDN = value;
-
-                    if (tagName.equals("url")) icon = value;
-
-                    if (tagName.equals("servicetype")) service.serviceType = value;
-                    if (tagName.equals("serviceid")) service.serviceId = value;
-                    if (tagName.equals("controlurl")) service.controlURL = value;
-                    if (tagName.equals("scpdurl")) service.SCPDURL = value;
-                    if (tagName.equals("eventsuburl")) service.eventSubURL = value;
-                    break;
-                case XmlPullParser.END_TAG:
-                    if (xmlPullParser.getName().toLowerCase().equals("service")) device.DlnaServices.add(service);
-                    if (xmlPullParser.getName().toLowerCase().equals("icon")) device.icon.add(icon);
-                    break;
-            }
-            eventType = xmlPullParser.next();
-        }
-        return device;
-    }
-
-    private String getRspXML(String action, HashMap<String, String> map) {
-        String rsp = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"" +
-                " s:encodingstyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" +
-                "<s:Body>" +
-                "<u:" + action + "Response xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">";
-
-        if (map != null) {
-            for (String key : map.keySet()) {
-                rsp += "<" + key + ">" + map.get(key) + "</" + key + ">";
-            }
-        }
-
-        rsp += "</u:" + action + "Response>" +
-                "</s:Body>" +
-                "</s:Envelope>";
-
-        return rsp;
     }
 }
