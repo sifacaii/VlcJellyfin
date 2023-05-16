@@ -1,123 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/padding_border"
-    tools:context=".Ui.DetailActivity">
+    android:layout_height="match_parent">
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fadingEdge="vertical"
-        android:scrollbars="vertical">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/tvBackdrop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:maxHeight="720dp"
+            android:src="@drawable/img_loading_placeholder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/title_panel"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="180dp"
+            android:background="#99000000"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tvBackdrop"></LinearLayout>
+
+        <ImageView
+            android:id="@+id/tvCover"
+            android:layout_width="180dp"
+            android:layout_height="280dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="100dp"
+            android:src="@drawable/img_loading_placeholder"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLength="16"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:textSize="30dp"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            app:layout_constraintStart_toEndOf="@+id/tvCover"
+            app:layout_constraintTop_toTopOf="@+id/title_panel" />
+
+        <TextView
+            android:id="@+id/tvYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="60dp"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@+id/tvCover"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="60dp"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@+id/tvYear"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="60dp"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@+id/tvDuration"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="60dp"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@+id/tvLevel"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text=""
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCover" />
+
+        <TextView
+            android:id="@+id/tvListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:text="播放列表："
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDetails" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvListTitle"
+            app:tabGravity="start"
+            app:tabMode="scrollable">
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <org.sifacai.vlcjellyfin.Component.JRecyclerView
+            android:id="@+id/mGridView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="@dimen/padding_border"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_container"
+            app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
+            app:tv_selectedItemIsCentered="true"
+            app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
+
+        <LinearLayout
+            android:id="@+id/tvPersonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mGridView">
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="20dp"
+                android:text="演员表：" />
 
-                <ImageView
-                    android:id="@+id/tvCover"
-                    android:layout_width="420dp"
-                    android:layout_height="620dp"
-                    android:scaleType="fitXY"
-                    app:srcCompat="@drawable/icon_img_placeholder" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/padding_border"
-                    android:paddingTop="6dp"
-                    android:paddingRight="@dimen/padding_border"
-                    android:paddingBottom="6dp">
-
-                    <TextView
-                        android:id="@+id/tvTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="38dp"
-                        android:text="标题："
-                        android:textColor="@android:color/white"
-                        android:textSize="30dp" />
-
-                    <TextView
-                        android:id="@+id/tvDetails"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:minHeight="200dp"
-                        android:textSize="20dp" />
-
-                    <TextView
-                        android:id="@+id/tvListTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:text="播放列表：" />
-
-
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tab_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:tabGravity="start"
-                        app:tabMode="scrollable">
-
-                    </com.google.android.material.tabs.TabLayout>
-
-                    <org.sifacai.vlcjellyfin.Component.JRecyclerView
-                        android:id="@+id/mGridView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:padding="@dimen/padding_border"
-                        android:visibility="gone"
-                        app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
-                        app:tv_selectedItemIsCentered="true"
-                        app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tvPersonLayout"
+            <org.sifacai.vlcjellyfin.Component.JRecyclerView
+                android:id="@+id/mPersonGridView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:layout_height="312dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:padding="@dimen/padding_border"
+                app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
+                app:tv_selectedItemIsCentered="true"
+                app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="演员表：" />
-
-                <org.sifacai.vlcjellyfin.Component.JRecyclerView
-                    android:id="@+id/mPersonGridView"
-                    android:layout_width="match_parent"
-                    android:layout_height="312dp"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:padding="@dimen/padding_border"
-                    app:tv_horizontalSpacingWithMargins="@dimen/vh_space_width"
-                    app:tv_selectedItemIsCentered="true"
-                    app:tv_verticalSpacingWithMargins="@dimen/vh_space_width" />
-
-            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
 
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

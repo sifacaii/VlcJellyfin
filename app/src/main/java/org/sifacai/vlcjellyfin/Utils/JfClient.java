@@ -179,6 +179,12 @@ public class JfClient {
         return url;
     }
 
+    public static String GetBackdropUrl(String itemid, String tagid) {
+        String url = config.getJellyfinUrl() + "/Items/" + itemid + "/Images/Backdrop";
+        url += "?maxWidth=1280&quality=90&tag=" + tagid;
+        return url;
+    }
+
     public static String GetImgUrl(Item item) {
         if (item.getImageTags() == null) return "";
         if (item.getImageTags().getPrimary() == null || item.getImageTags().getPrimary().equals(""))

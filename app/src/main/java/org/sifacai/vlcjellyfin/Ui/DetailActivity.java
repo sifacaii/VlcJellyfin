@@ -108,18 +108,28 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 .error(R.drawable.img_loading_placeholder)
                 .into(tvCover);
 
-        String Genres = String.join(",", details.getGenres());
+        List<String> backdrops = details.getBackdropImageTags();
+        if(backdrops != null && backdrops.size() > 0){
+            Picasso.get()
+                    .load(JfClient.GetBackdropUrl(Id, backdrops.get(0)))
+                    .placeholder(R.drawable.img_loading_placeholder)
+                    .error(R.drawable.img_loading_placeholder)
+                    .into((ImageView) findViewById(R.id.tvBackdrop));
+        }
 
         tvTitle.setText(Name);
-        tvDetails.append(details.getProductionYear() == null ? "" : "年份：" + details.getProductionYear() + "  ");
-        tvDetails.append(Genres.equals("") ? "" : "风格：" + Genres + "\n");
-        tvDetails.append(details.getCommunityRating() == null ? "" : "评分：" + details.getCommunityRating() + "  ");
-        tvDetails.append(details.getOfficialRating() == null ? "" : "评级：" + details.getOfficialRating() + "\n");
+        ((TextView)findViewById(R.id.tvYear)).setText(details.getProductionYear() == null ? "" : details.getProductionYear());
+        long duration =  (details.getRunTimeTicks() / 10000 / 1000 / 60);
+        ((TextView)findViewById(R.id.tvDuration)).setText(duration > 0 ? String.valueOf(duration) + "分钟" : "");
+        ((TextView)findViewById(R.id.tvRating)).setText(details.getCommunityRating() == null ? "" : details.getCommunityRating());
+        ((TextView)findViewById(R.id.tvLevel)).setText(details.getOfficialRating() == null ? "" : details.getOfficialRating());
 
+        String Genres = String.join("，", details.getGenres());
+        tvDetails.append(Genres.equals("") ? "" : "风格：" + Genres + "\n");
         if (details.getMediaStreams() != null) {
             String video = "";
-            String audio = "";
-            String subtitle = "";
+            ArrayList<String> audio = new ArrayList<>();
+            ArrayList<String> subtitle = new ArrayList<>();
             for (int i = 0; i < details.getMediaStreams().size(); i++) {
                 MediaStreams ms = details.getMediaStreams().get(i);
                 String mstype = ms.getType();
@@ -127,17 +137,15 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                     video += ms.getDisplayTitle();
                 } else if (mstype.equals("Audio")) {
                     if (ms.getLanguage() != null && !ms.getLanguage().equals(""))
-                        audio += ms.getLanguage() + "、";
-                    else audio += ms.getCodec() + "；";
+                        audio.add(ms.getLanguage());
                 } else if (mstype.equals("Subtitle")) {
                     if (ms.getLanguage() != null && !ms.getLanguage().equals(""))
-                        subtitle += ms.getLanguage() + "、";
-                    else subtitle += ms.getCodec() + "；";
+                        subtitle.add(ms.getLanguage());
                 }
             }
-            tvDetails.append(video.equals("") ? "" : "视频：" + video + "\n");
-            tvDetails.append(audio.equals("") ? "" : "音频：" + audio + "\n");
-            tvDetails.append(subtitle.equals("") ? "" : "字幕：" + subtitle + "\n");
+            tvDetails.append(video.equals("") ? "" : "格式：" + video + "\n");
+            tvDetails.append(audio.size() > 1 ? "音轨：" + String.join("，",audio) + "\n" : "");
+            tvDetails.append(subtitle.size() > 1 ? "字幕：" + String.join("，",subtitle) + "\n" : "");
         }
         String overview = details.getOverview() == null ? "" : details.getOverview();
         tvDetails.append("简介：  " + Html.fromHtml(overview));
@@ -147,7 +155,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         if (type.equals("Series")) {
             fillSeason(details.getId());
         } else if (type.equals("Movie")) {
-            fillMovie(details, details.getId());
+            fillMovie(details);
         } else if (type.equals("Person")) {
             tvDetails.append("\n出生日期：" + Utils.UtcToLocal(details.getPremiereDate()) + "\n");
             if (null != details.getProductionLocations()) {
@@ -164,8 +172,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         }
     }
 
-    private void fillMovie(Item item, String focusId) {
-        item.setName("播放： " + item.getName());
+    private void fillMovie(Item item) {
+        item.setName(item.getName());
         List<Item> plist = new ArrayList<>();
         plist.add(item);
         if (item.getPartCount() > 0) {
@@ -190,7 +198,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         JfClient.GetSeasons(SeriesId, new JfClient.JJCallBack() {
             @Override
             public void onSuccess(Items seasons) {
-                for (Item item : seasons.getItems()) {
+                for (int i=0;i<seasons.getItems().size();i++) {
+                    Item item = seasons.getItems().get(i);
                     TabLayout.Tab tab = tabContainer.newTab();
                     tab.setText(item.getName());
                     tab.view.setTag(item);
@@ -207,10 +216,13 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                             tab.view.setSelected(true);
                             tab.view.performClick();
                         }
-                    } else {
+                    }else if(i == 0){
                         tabContainer.getTabAt(0).view.performClick();
                     }
                     //tabContainer.getTabAt(0).view.setFocusable(false);
+                }
+                if(tabContainer.getTabCount() > 1){
+                    tabContainer.setVisibility(View.VISIBLE);
                 }
             }
         }, errcb);
@@ -233,8 +245,12 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
     }
 
     private void fillItems(List<Item> items) {
+        int spanCount = 3;
+        if(getResources().getDisplayMetrics().widthPixels >getResources().getDisplayMetrics().heightPixels ){
+            spanCount = 6;
+        }
         JTAdapter jtAdapter = new JTAdapter(items);
-        V7GridLayoutManager layoutManager = new V7GridLayoutManager(mGridView.getContext(), 6);
+        V7GridLayoutManager layoutManager = new V7GridLayoutManager(mGridView.getContext(), spanCount);
         jtAdapter.setOnItemClickListener(this);
         mGridView.setVisibility(View.VISIBLE);
         mGridView.setLayoutManager(layoutManager);
@@ -289,7 +305,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 ((TextView) findViewById(R.id.tvListTitle)).setText("演员作品：");
                 List<Item> items = iitems.getItems();
                 JAdapter jAdapter = new JAdapter(items, false);
-                V7GridLayoutManager layoutManager = new V7GridLayoutManager(mGridView.getContext(), 4);
+                V7GridLayoutManager layoutManager = new V7GridLayoutManager(mGridView.getContext(), getSpanCount());
                 jAdapter.setOnItemClickListener(new JAdapter.OnItemClickListener() {
                     @Override
                     public void onClick(Item item) {
@@ -313,11 +329,6 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
         String itemId = item.getId();
         String type = item.getType();
         Intent intent = null;
-//        if (type.equals("Season")) {
-//            intent = new Intent(this, DetailActivity.class);
-//            intent.putExtra("itemId", itemId);
-//            startActivity(intent);
-//        } else
         if (type.equals("Episode")) {
             JfClient.playList.clear();
             JTAdapter JT = (JTAdapter) mGridView.getAdapter();
