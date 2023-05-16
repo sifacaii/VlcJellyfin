@@ -101,9 +101,11 @@ public class DlnaActivity extends BaseActivity {
         avTransportAdapter.setOnItemClickListener(new AVTransportAdapter.OnItemClickListener() {
             @Override
             public void onClick(AVTransport avTransport) {
-                Intent intent = new Intent(DlnaActivity.this, DlnaControllActivity.class);
-                intent.putExtra("AVT",avTransport);
-                startActivity(intent);
+                //Intent intent = new Intent(DlnaActivity.this, DlnaControllActivity.class);
+                //intent.putExtra("AVT",avTransport);
+                //startActivity(intent);
+                String vurl = JfClient.playList.get(JfClient.playIndex).Url;
+                Controller.SetAVTransportURI(avTransport.controlURL,vurl);
             }
         });
     }
