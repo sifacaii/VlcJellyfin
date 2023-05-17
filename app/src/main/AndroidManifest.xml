@@ -47,6 +47,7 @@
         <activity
             android:name=".Player.VlcPlayerActivity"
             android:exported="false"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <meta-data

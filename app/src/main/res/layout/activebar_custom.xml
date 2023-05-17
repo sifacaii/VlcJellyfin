@@ -20,7 +20,7 @@
         android:id="@+id/actionBar_banner"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         app:srcCompat="@drawable/banner" />
 
     <TextView

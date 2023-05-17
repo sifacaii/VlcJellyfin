@@ -39,6 +39,10 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.activebar_custom);
 
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+                findViewById(R.id.actionBar_banner).setVisibility(View.GONE);
+            }
+
             activeBarBack = findViewById(R.id.actionBar_back);
             activeBarBack.setOnClickListener(new View.OnClickListener() {
                 @Override

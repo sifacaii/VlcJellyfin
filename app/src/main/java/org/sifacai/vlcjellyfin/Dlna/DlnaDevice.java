@@ -18,6 +18,7 @@ public class DlnaDevice {
         if(nt == null) return false;
         if(nt.equals("upnp:rootdevice")) return  true;
         if(nt.indexOf("device:MediaRenderer") >= 0) return true;
+        if(nt.indexOf("service:AVTransport") >= 0) return true;
         return false;
     }
 

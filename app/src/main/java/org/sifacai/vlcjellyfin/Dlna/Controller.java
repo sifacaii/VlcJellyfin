@@ -11,18 +11,23 @@ import com.lzy.okgo.model.Response;
 import org.sifacai.vlcjellyfin.Utils.JfClient;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class Controller {
 
     public static String TAG = "ＤＬＮＡ控制";
 
     public static void SetAVTransportURI(String controlUrl, String url, JfClient.JJCallBack cb) {
+        url = url.substring(0,url.indexOf("stream.mp4")) + "stream.mp4";
+        //Log.d(TAG, "SetAVTransportURI: " + url);
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
                 "<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                 "<s:Body>" +
                 "<u:SetAVTransportURI xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">" +
                 "<InstanceID>0</InstanceID>" +
-                "<CurrentURI><![CDATA[" + url + "]]></CurrentURI>" +
+                //"<CurrentURI><![CDATA[" + url + "]]></CurrentURI>" +
+                "<CurrentURI>" + url + "</CurrentURI>" +
                 "<CurrentURIMetaData></CurrentURIMetaData>" +
                 "</u:SetAVTransportURI>" +
                 "</s:Body></s:Envelope>";

@@ -202,6 +202,7 @@ public class DlnaActivity extends BaseActivity {
     };
 
     public void ProgressNOTIFY(String data) throws IOException, XmlPullParserException {
+        //Log.d(TAG, "ProgressNOTIFY: " + data);
         if(data.startsWith("M-SEARCH")) return;
         HashMap<String,String> dh = DlnaDevice.parseNOTIFY(data);
         boolean isav = DlnaDevice.isMediaRenderer(dh.get("NT"));

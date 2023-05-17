@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -546,6 +547,13 @@ public class VlcPlayerActivity extends BaseActivity implements MediaPlayer.Event
         } else if (id == R.id.speedBtn) {
             speedMenu.show(String.valueOf(mediaPlayer.getRate()));
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //return super.onTouchEvent(event);
+        Show();
+        return true;
     }
 
     private void ReportPlayState(JfClient.ReportType type) {
