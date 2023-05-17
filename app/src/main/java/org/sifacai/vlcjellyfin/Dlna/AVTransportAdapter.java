@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.sifacai.vlcjellyfin.R;
+
 import java.util.ArrayList;
 
 public class AVTransportAdapter extends RecyclerView.Adapter{
@@ -24,16 +26,16 @@ public class AVTransportAdapter extends RecyclerView.Adapter{
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View ll = LayoutInflater.from(context).inflate(android.R.layout.simple_spinner_item, parent, false);
+        View ll = LayoutInflater.from(context).inflate(R.layout.item_text, parent, false);
         return new RecyclerView.ViewHolder(ll) {
         };
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        TextView tv = holder.itemView.findViewById(android.R.id.text1);
+        TextView tv = holder.itemView.findViewById(R.id.item_title);
         tv.setText(avTransports.get(position).moduleName);
-        tv.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(listener != null){

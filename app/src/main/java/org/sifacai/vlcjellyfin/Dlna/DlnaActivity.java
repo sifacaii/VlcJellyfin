@@ -106,7 +106,17 @@ public class DlnaActivity extends BaseActivity {
                         Controller.GetMediaInfo(avTransport.controlURL,new JfClient.JJCallBack(){
                             @Override
                             public void onSuccess(String str) {
-                                Controller.Play(avTransport.controlURL,null);
+                                Controller.Play(avTransport.controlURL,new JfClient.JJCallBack(){
+                                    @Override
+                                    public void onSuccess(String str) {
+                                        ShowToask("已发送！");
+                                    }
+
+                                    @Override
+                                    public void onError(String str) {
+                                        ShowToask(str);
+                                    }
+                                });
                             }
 
                             @Override
