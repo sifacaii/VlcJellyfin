@@ -8,11 +8,10 @@
 
     <ImageView
         android:id="@+id/actionBar_back"
-        android:layout_width="20dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
         android:background="@drawable/shape_user_focus"
         android:focusable="true"
-        android:focusableInTouchMode="true"
         android:padding="6dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_outline_arrow_back_ios_48" />
@@ -21,7 +20,7 @@
         android:id="@+id/actionBar_banner"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:scaleType="fitStart"
+        android:scaleType="fitXY"
         app:srcCompat="@drawable/banner" />
 
     <TextView
@@ -32,6 +31,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text=""
+        android:visibility="gone"
         android:textSize="18dp" />
 
     <TextView
@@ -40,7 +40,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/button_margin_left"
         android:layout_weight="1"
-        android:gravity="center"
+        android:gravity="right|center"
         android:text=""
         android:textSize="18dp" />
 
@@ -50,6 +50,7 @@
         android:layout_height="match_parent"
         android:focusable="true"
         android:padding="6dp"
+        android:scaleType="fitCenter"
         android:background="@drawable/shape_user_focus"
         android:src="@drawable/ic_outline_search_48" />
 
