@@ -1,131 +1,24 @@
 package org.sifacai.vlcjellyfin.Dlna;
 
 import android.util.Log;
-import android.util.Xml;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class XmlParser {
     private static String TAG = "XML解析器";
-
-    public static void readServiceValue(XmlPullParser parser, DlnaService service, String tagName) throws XmlPullParserException, IOException {
-        String value = parser.nextText();
-        if (tagName.equals("servicetype")) service.serviceType = value;
-        if (tagName.equals("serviceid")) service.serviceId = value;
-        if (tagName.equals("controlurl")) service.controlURL = value;
-        if (tagName.equals("scpdurl")) service.SCPDURL = value;
-        if (tagName.equals("eventsuburl")) service.eventSubURL = value;
-    }
-
-    public static DlnaService readService(XmlPullParser parser) throws XmlPullParserException, IOException {
-        DlnaService ds = new DlnaService();
-        String tagName = "";
-        int eventType = parser.next();
-        while (!tagName.equals("service") && eventType != XmlPullParser.END_DOCUMENT) {
-            tagName = parser.getName();
-            if (tagName == null) tagName = "";
-            if (eventType == XmlPullParser.START_TAG) {
-                tagName = tagName.toLowerCase();
-                readServiceValue(parser, ds, tagName);
-            }
-            eventType = parser.next();
-        }
-        return ds;
-    }
-
-    public static void readDevice(XmlPullParser parser, DlnaDevice de, String tagName) throws XmlPullParserException, IOException {
-        int et = parser.next();
-        if(et == XmlPullParser.END_TAG) return;
-        String value = parser.getText();
-        value = value == null ? "" : value.trim();
-        if (tagName.equals("friendlyname")) de.friendlyName = value;
-        if (tagName.equals("devicetype")) de.deviceType = value;
-        if (tagName.equals("modelname")) de.modelName = value;
-        if (tagName.equals("udn")) de.UDN = value;
-    }
-
-    public static DlnaDevice ParseXML2(String xml) throws XmlPullParserException, IOException {
-        XmlPullParser xmlPullParser = Xml.newPullParser();
-        xmlPullParser.setInput(new StringReader(xml));
-
-        DlnaDevice device = new DlnaDevice();
-
-        int eventType = xmlPullParser.getEventType();
-        String tagName = "";
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if (eventType == XmlPullParser.START_TAG) {
-                tagName = xmlPullParser.getName().toLowerCase();
-                if (tagName.equals("service")) {
-                    DlnaService service = readService(xmlPullParser);
-                    device.DlnaServices.add(service);
-                } else {
-                    readDevice(xmlPullParser, device, tagName);
-                }
-            }
-            eventType = xmlPullParser.next();
-        }
-        return device;
-    }
-
-    public static DlnaDevice ParseXML(String xml) throws XmlPullParserException, IOException {
-        XmlPullParser xmlPullParser = Xml.newPullParser();
-        xmlPullParser.setInput(new StringReader(xml));
-
-        DlnaDevice device = new DlnaDevice();
-
-        int eventType = xmlPullParser.getEventType();
-        String tagName = "";
-        DlnaService service = null;
-        String icon = "";
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            String value = "";
-            switch (eventType) {
-                case XmlPullParser.START_TAG:
-                    tagName = xmlPullParser.getName().toLowerCase();
-                    Log.d(TAG, "ParseXML: tagName:" + tagName);
-                    if (tagName.equals("service")) service = new DlnaService();
-                    if (tagName.equals("icon")) icon = "";
-                    break;
-                case XmlPullParser.TEXT:
-
-                    break;
-                case XmlPullParser.END_TAG:
-                    value = xmlPullParser.getText();
-                    value = value == null ? "" : value.trim();
-                    Log.d(TAG, "ParseXML: tagName:" + tagName + " value:" + value);
-                    if (tagName.equals("friendlyname")) {
-                        device.friendlyName = value;
-                        //Log.d(TAG, "ParseXML: friendlyname" + value);
-                    }
-                    if (tagName.equals("devicetype")) device.deviceType = value;
-                    if (tagName.equals("modelname")) device.modelName = value;
-                    if (tagName.equals("udn")) device.UDN = value;
-
-                    if (tagName.equals("url")) icon = value;
-
-                    if (tagName.equals("servicetype")) service.serviceType = value;
-                    if (tagName.equals("serviceid")) service.serviceId = value;
-                    if (tagName.equals("controlurl")) service.controlURL = value;
-                    if (tagName.equals("scpdurl")) service.SCPDURL = value;
-                    if (tagName.equals("eventsuburl")) service.eventSubURL = value;
-
-                    String endTag = xmlPullParser.getName().toLowerCase();
-                    Log.d(TAG, "ParseXML: endTag:" + endTag);
-                    if (endTag.equals("service"))
-                        device.DlnaServices.add(service);
-                    if (endTag.equals("icon")) device.icon.add(icon);
-                    break;
-            }
-            eventType = xmlPullParser.next();
-        }
-        return device;
-    }
 
     private String getRspXML(String action, HashMap<String, String> map) {
         String rsp = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
@@ -145,5 +38,69 @@ public class XmlParser {
                 "</s:Envelope>";
 
         return rsp;
+    }
+
+    public static void ReadNode(XmlPullParser p, HashMap phm, String endTag) throws XmlPullParserException, IOException {
+        int et = p.next();
+        String tagName = p.getName();
+        do {
+            if (et == p.START_TAG) {
+                HashMap chm = new HashMap();
+                phm.put(tagName, chm);
+                ReadNode(p, chm, tagName);
+            } else if (et == p.TEXT) {
+                phm.put("TEXT-VALUE", p.getText());
+            } else if (et == p.END_TAG) {
+                Log.d(TAG, "ReadNode: END:" + p.getName());
+                if (tagName.equals(endTag)) return;
+            }
+            et = p.next();
+            tagName = p.getName();
+        } while (et != p.END_DOCUMENT);
+    }
+
+    public static DlnaDevice parseX(String xml) throws ParserConfigurationException, IOException, SAXException {
+        DlnaDevice dd = new DlnaDevice();
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+
+        NodeList nl = doc.getElementsByTagName("friendlyName");
+        dd.friendlyName = nl.getLength() > 0 ? nl.item(0).getTextContent() : "";
+        nl = doc.getElementsByTagName("modelName");
+        dd.modelName = nl.getLength() > 0 ? nl.item(0).getTextContent() : "";
+        nl = doc.getElementsByTagName("UDN");
+        dd.UDN = nl.getLength() > 0 ? nl.item(0).getTextContent() : "";
+        nl = doc.getElementsByTagName("deviceType");
+        dd.deviceType = nl.getLength() > 0 ? nl.item(0).getTextContent() : "";
+
+
+        nl = doc.getElementsByTagName("service");
+        for (int i = 0; i < nl.getLength(); i++) {
+            NodeList ns = nl.item(i).getChildNodes();
+            DlnaService ds = new DlnaService();
+            dd.DlnaServices.add(ds);
+            for (int j = 0; j < ns.getLength(); j++) {
+                Node nd = ns.item(j);
+                switch (nd.getNodeName()){
+                    case "serviceType":
+                        ds.serviceType = nd.getTextContent();
+                        break;
+                    case "serviceId":
+                        ds.serviceId = nd.getTextContent();
+                        break;
+                    case "controlURL":
+                        ds.controlURL = nd.getTextContent();
+                        break;
+                    case "eventSubURL":
+                        ds.eventSubURL = nd.getTextContent();
+                        break;
+                    case "SCPDURL":
+                        ds.SCPDURL = nd.getTextContent();
+                        break;
+                }
+            }
+        }
+        return dd;
     }
 }

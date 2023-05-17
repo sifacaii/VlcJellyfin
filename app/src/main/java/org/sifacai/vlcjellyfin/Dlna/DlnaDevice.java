@@ -1,6 +1,7 @@
 package org.sifacai.vlcjellyfin.Dlna;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DlnaDevice {
@@ -14,8 +15,20 @@ public class DlnaDevice {
 
     public String[] MediaRendererDesc = {"upnp:rootdevice","device:MediaRenderer"};
     public static boolean isMediaRenderer(String nt){
+        if(nt == null) return false;
         if(nt.equals("upnp:rootdevice")) return  true;
         if(nt.indexOf("device:MediaRenderer") >= 0) return true;
         return false;
+    }
+
+    public static HashMap<String,String> parseNOTIFY(String data){
+        HashMap<String,String> hm = new HashMap<>();
+        String[] notify = data.split("\n");
+        for (String n:notify) {
+            String[] ns = n.split(":", 2);
+            if (ns.length < 2) continue;
+            hm.put(ns[0],ns[1].trim());
+        }
+        return hm;
     }
 }

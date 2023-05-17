@@ -1,14 +1,9 @@
 package org.sifacai.vlcjellyfin.Dlna;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.util.Log;
-import android.util.Xml;
 import android.view.View;
 
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
@@ -17,16 +12,16 @@ import org.sifacai.vlcjellyfin.Component.JRecyclerView;
 import org.sifacai.vlcjellyfin.R;
 import org.sifacai.vlcjellyfin.Ui.BaseActivity;
 import org.sifacai.vlcjellyfin.Utils.JfClient;
-import org.xmlpull.v1.XmlPullParser;
+import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
-import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 public class DlnaActivity extends BaseActivity {
     private String TAG = "Dlna播放器";
@@ -108,13 +103,23 @@ public class DlnaActivity extends BaseActivity {
                 Controller.SetAVTransportURI(avTransport.controlURL, vurl, new JfClient.JJCallBack() {
                     @Override
                     public void onSuccess(String str) {
-                        Log.d(TAG, "onSuccess: " + str);
-                        ShowToask(str);
+                        Controller.GetMediaInfo(avTransport.controlURL,new JfClient.JJCallBack(){
+                            @Override
+                            public void onSuccess(String str) {
+                                Controller.Play(avTransport.controlURL,null);
+                            }
+
+                            @Override
+                            public void onError(String str) {
+                                Log.d(TAG, "onError: GetMediaInfo:" + str);
+                            }
+                        });
+                        //ShowToask(str);
                     }
 
                     @Override
                     public void onError(String str) {
-                        Log.d(TAG, "onError: " + str);
+                        Log.d(TAG, "onError: SetAVTransportURI" + str);
                         ShowToask(str);
                     }
                 });
@@ -187,20 +192,11 @@ public class DlnaActivity extends BaseActivity {
     };
 
     public void ProgressNOTIFY(String data) throws IOException, XmlPullParserException {
-        String[] notify = data.split("\n");
-        boolean isav = false;
-        String location = "";
-        for (String n : notify) {
-            String[] ns = n.split(":", 2);
-            if (ns.length < 2) continue;
-            else if (ns[0].equals("Location")) location = ns[1];
-            else if (ns[0].equals("NT")) {
-                String nsnt = ns[1].trim();
-                if (DlnaDevice.isMediaRenderer(nsnt)) {
-                    isav = true;
-                }
-            }
-        }
+        if(data.startsWith("M-SEARCH")) return;
+        HashMap<String,String> dh = DlnaDevice.parseNOTIFY(data);
+        boolean isav = DlnaDevice.isMediaRenderer(dh.get("NT"));
+        String location = dh.get("Location");
+        if(location == null) location = "";
         if (isav && !location.equals("")) {
             String finalLocation = location;
             JfClient.SendGet(location, new JfClient.JJCallBack() {
@@ -220,7 +216,7 @@ public class DlnaActivity extends BaseActivity {
     public void findDevice(String location, String xml) {
         DlnaDevice device;
         try {
-            device = XmlParser.ParseXML2(xml);
+            device = XmlParser.parseX(xml);
             for (int i = 0; i < device.DlnaServices.size(); i++) {
                 DlnaService ds = device.DlnaServices.get(i);
                 if (ds.serviceType.indexOf("service:AVTransport") > -1) {
@@ -240,9 +236,11 @@ public class DlnaActivity extends BaseActivity {
                     handler.sendMessage(msg);
                 }
             }
-        } catch (XmlPullParserException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        } catch (SAXException e) {
             throw new RuntimeException(e);
         }
     }
