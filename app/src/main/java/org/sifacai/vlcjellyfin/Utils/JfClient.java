@@ -617,7 +617,7 @@ public class JfClient {
             @Override
             public void onError(Response<String> response) {
                 if (errcb != null) {
-                    errcb.onError(response.message());
+                    errcb.onError(response.getException().getMessage());
                 }
             }
         });
@@ -649,7 +649,7 @@ public class JfClient {
             @Override
             public void onError(Response<String> response) {
                 if (errcb != null) {
-                    errcb.onError(response.message());
+                    errcb.onError(response.getException().getMessage());
                 }
             }
         });

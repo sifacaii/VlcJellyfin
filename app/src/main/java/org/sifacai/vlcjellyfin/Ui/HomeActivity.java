@@ -141,7 +141,7 @@ public class HomeActivity extends BaseActivity {
                 }
             }, connErr);
         } else {
-            Log.d(TAG, "initData: 跳出");
+            //Log.d(TAG, "initData: 跳出");
             initView();
         }
     }
