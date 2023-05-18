@@ -39,7 +39,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.activebar_custom);
 
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 findViewById(R.id.actionBar_banner).setVisibility(View.GONE);
             }
 
@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             activeBarSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(mAA,SearchActivity.class);
+                    Intent intent = new Intent(mAA, SearchActivity.class);
                     startActivity(intent);
                 }
             });
@@ -63,8 +63,8 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             //actionBar设置菜单
             actionBarSetBtn = findViewById(R.id.actionBar_setBtn);
             actionBarSetBtn.setOnClickListener(actionBarSetBtnOnclick);
-            settingMenu = new PopupMenu(this,actionBarSetBtn);
-            settingMenu.getMenuInflater().inflate(R.menu.activebar_menu,settingMenu.getMenu());
+            settingMenu = new PopupMenu(this, actionBarSetBtn);
+            settingMenu.getMenuInflater().inflate(R.menu.activebar_menu, settingMenu.getMenu());
             settingMenu.setOnMenuItemClickListener(settingMenuItemOnclick);
         }
     }
@@ -86,7 +86,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             int menuid = menuItem.getItemId();
-            switch (menuid){
+            switch (menuid) {
                 case R.id.activeBar_option_logout:
                     logout();
                     break;
@@ -128,7 +128,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
      * 禁用标题栏返回按钮
      */
     public void disableActiveBarBack() {
-        if(null != activeBarBack)
+        if (null != activeBarBack)
             activeBarBack.setVisibility(View.GONE);
     }
 
@@ -167,8 +167,8 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         mAA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(null != progressDialog){
-                    if(progressDialog.isShowing()){
+                if (null != progressDialog) {
+                    if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
                     progressDialog = null;
@@ -217,7 +217,7 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
             public void run() {
                 if (null != progressDialog && progressDialog.isShowing()) {
                     progressDialog.setMessage(text);
-                }else{
+                } else {
                     showLoadingDialog(text);
                 }
             }
@@ -228,18 +228,19 @@ public class BaseActivity extends AppCompatActivity implements CustomAdapt {
         mAA.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mAA, msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(mAA, msg == null ? null : msg, Toast.LENGTH_LONG).show();
             }
         });
     }
 
     /**
      * 获取recycler列数
+     *
      * @return
      */
-    public int getSpanCount(){
+    public int getSpanCount() {
         int count = 6;
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             count = 2;
         }
         return count;
