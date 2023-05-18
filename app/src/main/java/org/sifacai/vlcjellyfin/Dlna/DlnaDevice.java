@@ -28,7 +28,7 @@ public class DlnaDevice {
         for (String n:notify) {
             String[] ns = n.split(":", 2);
             if (ns.length < 2) continue;
-            hm.put(ns[0],ns[1].trim());
+            hm.put(ns[0].toLowerCase(),ns[1].trim());
         }
         return hm;
     }

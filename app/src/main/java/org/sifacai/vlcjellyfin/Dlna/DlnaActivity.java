@@ -205,8 +205,8 @@ public class DlnaActivity extends BaseActivity {
         //Log.d(TAG, "ProgressNOTIFY: " + data);
         if(data.startsWith("M-SEARCH")) return;
         HashMap<String,String> dh = DlnaDevice.parseNOTIFY(data);
-        boolean isav = DlnaDevice.isMediaRenderer(dh.get("NT"));
-        String location = dh.get("Location");
+        boolean isav = DlnaDevice.isMediaRenderer(dh.get("nt"));
+        String location = dh.get("location");
         if(location == null) location = "";
         if (isav && !location.equals("")) {
             String finalLocation = location;
