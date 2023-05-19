@@ -18,9 +18,9 @@ public class AVTransportAdapter extends RecyclerView.Adapter{
     private Context context;
     private ArrayList<AVTransport> avTransports;
 
-    public AVTransportAdapter(Context context) {
+    public AVTransportAdapter(Context context,ArrayList<AVTransport> avTransports) {
         this.context = context;
-        this.avTransports = new ArrayList<>();
+        this.avTransports = avTransports;
     }
 
     @NonNull
