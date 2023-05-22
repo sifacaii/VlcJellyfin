@@ -55,6 +55,7 @@ public class DlnaActivity extends BaseActivity {
         getSupportActionBar().hide();
 
         broadCastTheader.SetHandler(handler);
+        broadCastTheader.start();
 
         findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,25 +115,9 @@ public class DlnaActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        broadCastTheader.start();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        broadCastTheader.Stop();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
+        broadCastTheader.Stop();
     }
 
 }
