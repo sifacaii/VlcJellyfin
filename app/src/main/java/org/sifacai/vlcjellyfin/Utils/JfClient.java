@@ -39,7 +39,7 @@ import okhttp3.OkHttpClient;
 public class JfClient {
     public static final String TAG = "JellyfinClient";
     public static final String DeviceId = "TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXa";
-    public static final String XEmbyAuthorization = "MediaBrowser Client=\"Vlc_J_TV\", Device=\"Vlc_J_TV\", DeviceId=\""+DeviceId+"\", Version=\"10.8.1\"";
+    public static final String XEmbyAuthorization = "MediaBrowser Client=\"Vlc_J_TV\", Device=\"Vlc_J_TV\", DeviceId=\"" + DeviceId + "\", Version=\"10.8.1\"";
     public static HttpHeaders headers;
     public static Config config;
     public static String UserId = "";
@@ -84,7 +84,8 @@ public class JfClient {
 
     /**
      * description 忽略https证书验证
-     *`在这里插入代码片`
+     * `在这里插入代码片`
+     *
      * @author yanzy
      * @version 1.0
      * @date 2021/9/8 14:42
@@ -136,9 +137,9 @@ public class JfClient {
                 .setOkHttpClient(builder.build())
                 .setRetryCount(3);
         Picasso.setSingletonInstance(new Picasso.Builder(application.getBaseContext())
-                                            .downloader(new OkHttp3Downloader(builder.build()))
-                                            .build()
-                                    );
+                .downloader(new OkHttp3Downloader(builder.build()))
+                .build()
+        );
     }
 
     /**
@@ -372,6 +373,8 @@ public class JfClient {
             itemsUrl += "&IncludeItemTypes=Series";
         } else if (type.equals("movies")) {
             itemsUrl += "&IncludeItemTypes=Movie";
+        } else if (type.equals("CollectionFolder") || type.equals("Folder")) {
+
         } else {
             itemsUrl += "&IncludeItemTypes=Movie,Series";
         }
@@ -495,7 +498,7 @@ public class JfClient {
      * @param cb
      */
     public static void AuthenticateByName(String username, String password, JJCallBack cb, JJCallBack err, boolean saveUser) {
-        if(username.equals("") || password.equals("")){
+        if (username.equals("") || password.equals("")) {
             err.onError("用户名和密码验证失败！");
             return;
         }
@@ -666,7 +669,7 @@ public class JfClient {
         return response;
     }
 
-    public static String SendPost(String url,String body) throws IOException {
+    public static String SendPost(String url, String body) throws IOException {
         String response = "";
         response = OkGo.<String>post(url).upBytes(body.getBytes()).execute().body().string();
         return response;

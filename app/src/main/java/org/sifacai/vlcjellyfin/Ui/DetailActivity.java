@@ -163,6 +163,8 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 tvDetails.append("出生地：" + String.join(",", details.getProductionLocations()));
             }
             fillItemsByPerson(Id);
+        }else {
+            fillMovie(details);
         }
 
         List<People> Peoples = details.getPeople();
@@ -344,7 +346,7 @@ public class DetailActivity extends BaseActivity implements JAdapter.OnItemClick
                 }
                 toVlcPlayer();
             }
-        } else if (type.equals("Movie") || type.equals("Video")) {
+        } else if (type.equals("Movie") || type.equals("Video") || type.equals("MusicVideo")) {
             JfClient.playList.clear();
             JfClient.playList.add(getMedia(item));
             JfClient.playIndex = 0;
