@@ -227,7 +227,7 @@ public class JfClient {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                }
+            }
         }, null);
 
         // if playurl is still "", return  config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
