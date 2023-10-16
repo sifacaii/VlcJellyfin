@@ -209,7 +209,7 @@ public class JfClient {
         SendPost(playbackurl, deviceProfile, new JJCallBack() {
             @Override
             public void onSuccess(String str) {
-                    try {
+                try {
                     // 使用Gson解析JSON数据
                     Gson gson = new Gson();
                     JsonObject jsonObject = gson.fromJson(str, JsonObject.class);
@@ -219,21 +219,21 @@ public class JfClient {
                     if (mediaSources != null && mediaSources.size() > 0) {
                         JsonObject mediaSource = mediaSources.get(0).getAsJsonObject();
                         String transcodingUrl = mediaSource.get("TranscodingUrl").getAsString();
-
                         // 检查TranscodingUrl是否为空
                         if (transcodingUrl != null && !transcodingUrl.isEmpty()) {
                             playurl = config.getJellyfinUrl() + transcodingUrl;
-                        } else {
-                            playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
-                        }
-                    } else {
-                        playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
-                    }
+                        } 
+                    } 
                 } catch (Exception e) {
-                    playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
+                    e.printStackTrace();
                 }
                 }
         }, null);
+
+        // if playurl is still "", return  config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
+        if (playurl == null || playurl.isEmpty()) {
+            playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
+        }
 
         return playurl; // Return the playurl variable
 }       
