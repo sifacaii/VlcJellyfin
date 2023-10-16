@@ -230,11 +230,10 @@ public class JfClient {
                         playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
                     }
                 } catch (Exception e) {
-                    err.onError("寻找播放地址失败：" + e.getMessage() + "\n" + str);
                     playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
                 }
                 }
-        }, err);
+        }, null);
 
         return playurl; // Return the playurl variable
 }       
