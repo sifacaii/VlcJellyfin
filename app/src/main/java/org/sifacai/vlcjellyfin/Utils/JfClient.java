@@ -218,8 +218,8 @@ public class JfClient {
                     if (mediaSources != null && mediaSources.size() > 0) {
                         JsonObject mediaSource = mediaSources.get(0).getAsJsonObject();
                         String transcodingUrl = mediaSource.get("TranscodingUrl").getAsString();
+                        final String playpath = transcodingUrl;
                     } 
-                    final String playpath = transcodingUrl;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
