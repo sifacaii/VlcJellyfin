@@ -221,7 +221,7 @@ public class JfClient {
                         String transcodingUrl = mediaSource.get("TranscodingUrl").getAsString();
                         // 检查TranscodingUrl是否为空
                         if (transcodingUrl != null && !transcodingUrl.isEmpty()) {
-                            playurl = config.getJellyfinUrl() + transcodingUrl;
+                            playurl = transcodingUrl;
                         } 
                     } 
                 } catch (Exception e) {
@@ -233,6 +233,8 @@ public class JfClient {
         // if playurl is still "", return  config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
         if (playurl == null || playurl.isEmpty()) {
             playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
+        } else {
+            playurl = config.getJellyfinUrl() + playurl;
         }
 
         return playurl; // Return the playurl variable
