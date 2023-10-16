@@ -234,7 +234,7 @@ public class JfClient {
                         return playurl;
                     }
                 } catch (Exception e) {
-                    err.onError("寻找播放地址失败：" + e.getMessage() + "\n" + str)
+                    err.onError("寻找播放地址失败：" + e.getMessage() + "\n" + str);
                     String playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
                     return playurl;
                 }
