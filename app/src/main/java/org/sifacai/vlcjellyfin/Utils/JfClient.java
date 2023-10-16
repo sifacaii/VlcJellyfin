@@ -219,6 +219,7 @@ public class JfClient {
                         JsonObject mediaSource = mediaSources.get(0).getAsJsonObject();
                         String transcodingUrl = mediaSource.get("TranscodingUrl").getAsString();
                     } 
+                    final String playpath = transcodingUrl;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -226,8 +227,8 @@ public class JfClient {
         }, null);
 
         String playurl = ""; // Declare the playurl variable
-        if (transcodingUrl != null && !transcodingUrl.isEmpty()) {
-            playurl = config.getJellyfinUrl() + transcodingUrl;
+        if (playpath != null && !playpath.isEmpty()) {
+            playurl = config.getJellyfinUrl() + playpath;
         } else {
             playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
         }
