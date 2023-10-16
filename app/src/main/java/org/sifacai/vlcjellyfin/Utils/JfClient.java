@@ -231,7 +231,7 @@ public class JfClient {
         if (playpath != null && !playpath.isEmpty()) {
             playurl = config.getJellyfinUrl() + playpath;
         } else {
-            playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken + "&debug=" + str;
+            playurl = config.getJellyfinUrl() + "/videos/" + itemid + "/stream.mp4?static=true&DeviceId=" + DeviceId + "&api_key=" + AccessToken;
         }
 
         return playurl; // Return the playurl variable
