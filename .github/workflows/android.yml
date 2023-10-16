@@ -25,10 +25,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: my-artifact
+        name: apks
         path: app/build/outputs/apk/release/*.apk
-    - name: Upload lint
-      uses: actions/upload-artifact@v3
-      with:
-        name: lint
-        path: app/build/reports
