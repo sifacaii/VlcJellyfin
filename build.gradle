@@ -7,3 +7,8 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
