@@ -92,7 +92,7 @@ public class JfClient {
      */
     public static SSLSocketFactory getSSLSocketFactory() {
         try {
-            SSLContext sslContext = SSLContext.getInstance("SSL");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, getTrustManager(), new SecureRandom());
             return sslContext.getSocketFactory();
         } catch (Exception e) {
@@ -128,7 +128,7 @@ public class JfClient {
         config = new Config(application);
         SetHeaders();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.sslSocketFactory(getSSLSocketFactory());
+        builder.sslSocketFactory(getSSLSocketFactory(), (X509TrustManager) getTrustManager()[0]);
         builder.hostnameVerifier(getHostnameVerifier());
         builder.connectTimeout(5, TimeUnit.SECONDS);
         builder.readTimeout(3, TimeUnit.SECONDS);
